@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import core.Orientation;
 
 public class Boat {
@@ -23,5 +25,25 @@ public class Boat {
 	public boolean isSunk(){
 		return hitCount == size;
 	}
+	
+	public int getSize(){
+		return size;
+	}
+	
+	public ArrayList<Move> getSquares(){
+		ArrayList<Move> squares = new ArrayList<Move>(size);
+		squares.add(new Move(x,y));
+		if(orientation == Orientation.HORIZONTAL){
+			for(int i=1;i<size;i++){
+				squares.add(new Move(x+i,y));
+			}
+		} else {
+			for(int i=1;i<size;i++){
+				squares.add(new Move(x,y+i));
+			}
+		}
+		return squares;
+	}
+	
 	
 }

@@ -2,12 +2,15 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import core.MoveState;
+import core.Orientation;
 
 public class ComputerPlayer extends Player{
 
-	ArrayList<Move> possibleMoves;
+	private ArrayList<Move> possibleMoves;
+	private static Random rand;
 	
 	public ComputerPlayer(Game game) {
 		super(game);
@@ -22,7 +25,27 @@ public class ComputerPlayer extends Player{
 			}
 		}
 	}
-
+	@Override
+	public boolean placeBoats(ArrayList<Boat> boats){
+		Boat boat;
+		for(Integer i : game.getBoatSizes()){
+			boolean placed = false;
+			while(!placed){
+				Move spot = pickSpot(i);
+				boat = new Boat(spot.x,spot.y,Orientation.HORIZONTAL,i);
+				if(this.gameBoard.addBoat(boat)){
+					placed = true;
+				}
+			}
+		}
+		return true;
+	}
+	
+	private Move pickSpot(Integer i) {
+		Move move = new Move(rand.nextInt(game.getHeight()), rand.nextInt(game.getHeight()));		
+		return move;
+	}
+	
 	@Override
 	public boolean makeMove(Move move) {
 		move = generateMove();

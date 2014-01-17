@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 import core.MoveState;
 
 public class Game {
@@ -9,11 +11,13 @@ public class Game {
 	
 	private int width, height;
 	
-	public Game(int width, int height){
-		this(width,height,false);
-		
+	private ArrayList<Integer> boatSizes;
+	
+	public Game(int width, int height, ArrayList<Integer> boatSizes){
+		this(width,height,boatSizes,false);
 	}
-	public Game(int width, int height, boolean multiplayer){
+	public Game(int width, int height, ArrayList<Integer> boatSizes, boolean multiplayer){
+		this.boatSizes = boatSizes;
 		player1 = new HumanPlayer(this);
 		if(multiplayer){
 			player2 = new HumanPlayer(this);
@@ -72,4 +76,14 @@ public class Game {
 	public int getHeight() {
 		return height;
 	}	
+	
+	public ArrayList<Integer> getBoatSizes(){
+		return boatSizes;
+	}
+	public Player getP1(){
+		return player1;
+	}
+	public Player getP2(){
+		return player2;
+	}
 }

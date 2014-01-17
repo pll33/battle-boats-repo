@@ -14,6 +14,9 @@ public abstract class Player {
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());
 	}
+	public boolean placeBoats(ArrayList<Boat> boats){
+		return gameBoard.addBoats(boats);
+	}
 	
 	@Override
 	public int hashCode() {

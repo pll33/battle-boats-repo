@@ -9,16 +9,12 @@ public class Board {
 
 	private ArrayList<Boat> boats;
 	private ArrayList<ArrayList<SquareState>> boardState;
+	int width,height;
 	
 	public Board(int width, int height){
-		boardState = new ArrayList<ArrayList<SquareState>>(width);
-		for(int i=0; i<width; i++){
-			ArrayList<SquareState> temp = new ArrayList<SquareState>(height);
-			for(int j=0; j<height;j++){
-				temp.set(j,SquareState.EMPTY);
-			}
-			boardState.add(temp);
-		}
+		this.width = width;
+		this.height = height;
+		reset();
 	}
 	
 	public MoveState move(Move move){
@@ -68,9 +64,37 @@ public class Board {
 
 	public boolean addBoats(ArrayList<Boat> boats){
 		for(Boat boat:boats){
-			this.boats.add(boat);
-			//TODO: update SquareState in board based on boat placement
+			//Sets every space occupied by boat to boat
+			if(!addBoat(boat)){
+				reset();
+				return false;
+			}
 		} 
+		return true;
+	}
+	
+	private void reset(){
+		boardState = new ArrayList<ArrayList<SquareState>>(width);
+		//Set whole boardState to empty
+		for(int i=0; i<width; i++){
+			ArrayList<SquareState> temp = new ArrayList<SquareState>(height);
+			for(int j=0; j<height;j++){
+				temp.set(j,SquareState.EMPTY);
+			}
+			boardState.add(temp);
+		}
+	}
+
+	public boolean addBoat(Boat boat) {
+		for(Move move:boat.getSquares()){
+			if(boardState.get(move.x).get(move.y) != SquareState.EMPTY){
+				return false;
+			}
+		}
+		for(Move move:boat.getSquares()){
+			boardState.get(move.x).set(move.y, SquareState.BOAT);
+		}
+		this.boats.add(boat);
 		return true;
 	}
 	

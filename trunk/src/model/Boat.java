@@ -7,6 +7,7 @@ public class Boat {
 	private int size;
 	private int x, y;
 	private Orientation orientation;
+	private int hitCount;
 	
 	private boolean onBoard;
 	
@@ -16,6 +17,11 @@ public class Boat {
 		this.y = y;
 		this.orientation = orientation;
 		this.size = size;
+		this.hitCount = 0;
+	}
+	
+	public boolean isSunk(){
+		return hitCount == size;
 	}
 	
 }

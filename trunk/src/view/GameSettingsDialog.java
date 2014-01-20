@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,37 +18,60 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 public class GameSettingsDialog extends JDialog {
+
+	protected int numPlayers;
+	protected boolean changesMade;
 	
 	private static final int TXTBOX_LENGTH = 6;
 	private Container content;
 
-	protected String player1Name;
-	protected String player2Name;
-	protected int numPlayers;
-	protected int numShips;
-	protected int numRows;
-	protected int numCols;
-	
+	private JTextField player1Name;
+	private JTextField player2Name;
+	private JComboBox<Integer> numRows;
+	private JComboBox<Integer> numCols;
+	private JComboBox<Integer> numBoats;
 	
 	public GameSettingsDialog(JFrame frame, int numPlayers) {
 		super(frame, true);
 		content = getContentPane();
 		this.numPlayers = numPlayers;
+		this.changesMade = false;
 		createComponents();
 	}
+	
+	public String getPlayerOneName() {
+		return player1Name.getText(); // default: "Player 1" if not set
+	}
+	
+	public String getPlayerTwoName() {
+		return player2Name.getText(); // default: "Player 2" for PvP if not set, 
+									  //		  "Computer" for PvC
+	}
 
+	public Integer getNumberOfRows() {
+		return (Integer) numRows.getSelectedItem();
+	}
+	
+	public Integer getNumberOfCols() {
+		return (Integer) numCols.getSelectedItem();
+	}
+	
+	public Integer getNumberOfBoats() {
+		return (Integer) numBoats.getSelectedItem();
+	}
+	
 	private void createComponents() {
 		JLabel label;
 		JTextField textBox;
 		JButton button;
-		JComboBox<String> comboBox;
+		JComboBox<Integer> comboBox;
 		JPanel pane = new JPanel(new SpringLayout());
 		
 		// custom settings:
-		// 	-# of ships [default: 5]
+		// 	-# of boats [default: 5]
 		// 	-board size [default: 10x10]
-		String[] cbNumShips = { "5" }; // TODO expand?
-		String[] cbBoardSize = { "10x10" };  // TODO expand?
+		Integer[] cbNumBoats = { 5 }; // TODO expand?
+		Integer[] cbBoardSize = { 10 };  // TODO expand?
 		
 		label = new JLabel("Players"); 
 		label.setFont(label.getFont().deriveFont(14.0f));
@@ -64,41 +89,55 @@ public class GameSettingsDialog extends JDialog {
 		
 		label = new JLabel("Player 1 name: ", JLabel.TRAILING);
 		pane.add(label);
-		textBox = new JTextField(TXTBOX_LENGTH);
-		label.setLabelFor(textBox);
-		pane.add(textBox);
+		player1Name = new JTextField(TXTBOX_LENGTH);
+		player1Name.setToolTipText("Player 1");
+		player1Name.addFocusListener(new TextFieldFocusListener());
+		label.setLabelFor(player1Name);
+		pane.add(player1Name);
 		
 		label = new JLabel("Player 2 name: ", JLabel.TRAILING);
 		pane.add(label);
-		textBox = new JTextField(TXTBOX_LENGTH);
+		player2Name = new JTextField(TXTBOX_LENGTH);
 		if (numPlayers == 1) {
-			textBox.setText("Computer");
-			textBox.setEnabled(false);
-			textBox.setDisabledTextColor(Color.DARK_GRAY);
+			
+			player2Name.setText("Computer");
+			player2Name.setEnabled(false);
+			player2Name.setDisabledTextColor(Color.DARK_GRAY);
 		}
-		label.setLabelFor(textBox);
-		pane.add(textBox);
+		else {
+			player2Name.setToolTipText("Player 2");
+			player2Name.addFocusListener(new TextFieldFocusListener());
+		}
+		label.setLabelFor(player2Name);
+		pane.add(player2Name);
 		
 		label = new JLabel("Custom");
 		label.setFont(label.getFont().deriveFont(14.0f));
 		pane.add(label);
 		pane.add(new JLabel(""));
 		
-		label = new JLabel("Number of ships: ", JLabel.TRAILING);
-		pane.add(label);
-		comboBox = new JComboBox<String>(cbNumShips);
-		label.setLabelFor(comboBox);
-		pane.add(comboBox);
-		
 		label = new JLabel("Board size: ", JLabel.TRAILING);
 		pane.add(label);
-		comboBox = new JComboBox<String>(cbBoardSize);
-		label.setLabelFor(comboBox);
-		pane.add(comboBox);
+		JPanel boardSizePanel = new JPanel();
+		boardSizePanel.setLayout(new BoxLayout(boardSizePanel, BoxLayout.X_AXIS));
+		numRows = new JComboBox<Integer>(cbBoardSize);
+		numCols = new JComboBox<Integer>(cbBoardSize);
+		label.setLabelFor(numRows);
+		boardSizePanel.add(numRows);
+		boardSizePanel.add(new JLabel(" x "));
+		boardSizePanel.add(numCols);
+		pane.add(boardSizePanel);
+		
+		label = new JLabel("Number of boats: ", JLabel.TRAILING);
+		pane.add(label);
+		numBoats = new JComboBox<Integer>(cbNumBoats);
+		label.setLabelFor(numBoats);
+		pane.add(numBoats);
 		
 		button = new JButton("Cancel");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				changesMade = false;
 				dispose();
 			}	
 		});
@@ -107,8 +146,8 @@ public class GameSettingsDialog extends JDialog {
 		button = new JButton("Start Game");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				changesMade = true;
 				setVisible(false);
-				// TODO use game settings to create GameUI
 			}	
 		});
 		pane.add(button);
@@ -120,4 +159,29 @@ public class GameSettingsDialog extends JDialog {
 		
 		content.add(pane);
 	}
+	
+	private class TextFieldFocusListener implements FocusListener {
+		public void focusGained(FocusEvent e) {
+			if (e.getComponent() != null)
+			{
+				JTextField txtField = (JTextField) e.getComponent();
+				if (txtField.getText().equals(txtField.getToolTipText()))
+				{
+					txtField.setText("");
+				}
+			}
+		}
+			
+		public void focusLost(FocusEvent e) {
+			if (e.getComponent() != null)
+			{
+				JTextField txtField = (JTextField) e.getComponent();
+				if (txtField.getText().equals(""))
+				{
+					txtField.setText(txtField.getToolTipText());
+				}
+			}
+		}
+	}
+	
 }

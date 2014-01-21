@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,23 +20,25 @@ import javax.swing.SpringLayout;
 
 public class GameSettingsDialog extends JDialog {
 
-	protected int numPlayers;
 	protected boolean changesMade;
 	
 	private static final int TXTBOX_LENGTH = 6;
 	private Container content;
-
 	private JTextField player1Name;
 	private JTextField player2Name;
 	private JComboBox<Integer> numRows;
 	private JComboBox<Integer> numCols;
 	private JComboBox<Integer> numBoats;
+	private JTextField boatSizes;
+	private int numPlayers;
 	
 	public GameSettingsDialog(JFrame frame, int numPlayers) {
 		super(frame, true);
 		content = getContentPane();
 		this.numPlayers = numPlayers;
 		this.changesMade = false;
+		
+		setTitle("BattleBoats Settings");
 		createComponents();
 	}
 	
@@ -60,11 +63,19 @@ public class GameSettingsDialog extends JDialog {
 		return (Integer) numBoats.getSelectedItem();
 	}
 	
+	public ArrayList<Integer> getBoatSizes() {
+		ArrayList<Integer> boatSizesArr = new ArrayList<Integer>(); 
+		String[] boatSizeStr = boatSizes.getText().split(",");
+		for (int i = 0; i < boatSizeStr.length; i++) {
+			boatSizesArr.add(Integer.parseInt(boatSizeStr[i].trim()));
+		}
+		return boatSizesArr;
+	}
+	
 	private void createComponents() {
 		JLabel label;
 		JTextField textBox;
 		JButton button;
-		JComboBox<Integer> comboBox;
 		JPanel pane = new JPanel(new SpringLayout());
 		
 		// custom settings:
@@ -91,6 +102,7 @@ public class GameSettingsDialog extends JDialog {
 		pane.add(label);
 		player1Name = new JTextField(TXTBOX_LENGTH);
 		player1Name.setToolTipText("Player 1");
+		player1Name.setText("Player 1");
 		player1Name.addFocusListener(new TextFieldFocusListener());
 		label.setLabelFor(player1Name);
 		pane.add(player1Name);
@@ -99,12 +111,12 @@ public class GameSettingsDialog extends JDialog {
 		pane.add(label);
 		player2Name = new JTextField(TXTBOX_LENGTH);
 		if (numPlayers == 1) {
-			
 			player2Name.setText("Computer");
 			player2Name.setEnabled(false);
 			player2Name.setDisabledTextColor(Color.DARK_GRAY);
 		}
 		else {
+			player2Name.setText("Player 2");
 			player2Name.setToolTipText("Player 2");
 			player2Name.addFocusListener(new TextFieldFocusListener());
 		}
@@ -134,6 +146,16 @@ public class GameSettingsDialog extends JDialog {
 		label.setLabelFor(numBoats);
 		pane.add(numBoats);
 		
+		label = new JLabel("Boat sizes: ", JLabel.TRAILING);
+		pane.add(label);
+		boatSizes = new JTextField();
+		boatSizes.setText("2, 3, 3, 4, 5"); // TODO placeholder
+		// expand to allow user input of boat sizes
+		boatSizes.setEnabled(false);
+		boatSizes.setDisabledTextColor(Color.DARK_GRAY);
+		label.setLabelFor(boatSizes);
+		pane.add(boatSizes);
+		
 		button = new JButton("Cancel");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -153,7 +175,7 @@ public class GameSettingsDialog extends JDialog {
 		pane.add(button);
 		
 		SpringUtilities.makeCompactGrid(pane,
-                8, 2, 	//rows, cols
+                9, 2, 	//rows, cols
                 10, 10,	//initX, initY
                 6, 6);	//xPad, yPad
 		

@@ -13,14 +13,17 @@ public class Game {
 	
 	private ArrayList<Integer> boatSizes;
 	
-	public Game(int width, int height, ArrayList<Integer> boatSizes){
-		this(width,height,boatSizes,false);
+	public Game(String player1name, String player2name,
+				int width, int height, ArrayList<Integer> boatSizes){
+		this(player1name,player2name,width,height,boatSizes,false);
 	}
-	public Game(int width, int height, ArrayList<Integer> boatSizes, boolean multiplayer){
+	
+	public Game(String player1name, String player2name, int width, int height, 
+				ArrayList<Integer> boatSizes, boolean multiplayer){
 		this.boatSizes = boatSizes;
-		player1 = new HumanPlayer(this);
+		player1 = new HumanPlayer(this,player1name);
 		if(multiplayer){
-			player2 = new HumanPlayer(this);
+			player2 = new HumanPlayer(this,player2name);
 		} else {
 			player2 = new ComputerPlayer(this);
 		}

@@ -10,9 +10,12 @@ public abstract class Player {
 	protected Board movedBoard;
 	protected Game game;
 	
-	public Player(Game game){
+	private String playerName;
+	
+	public Player(Game game, String name){
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());
+		playerName = name;
 	}
 	public boolean placeBoats(ArrayList<Boat> boats){
 		return gameBoard.addBoats(boats);

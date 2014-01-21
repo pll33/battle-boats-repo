@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import controller.GameController;
+
 public class BattleBoatsUI extends JFrame {
 
 	private final Container contentPane;
@@ -53,17 +55,23 @@ public class BattleBoatsUI extends JFrame {
 		addLabel(titlePane, "BattleBoats", FONT_SIZE_H1);
 
 		JPanel buttonPane = new JPanel(new SpringLayout());
-		// TODO add button for "connect to server"?
+		
+//		addButton(buttonPane, "Connect to Server", new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO show option dialog with username input
+//			}
+//		});
+		
 		addButton(buttonPane, "New Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "newgame");
 			}
-		});
+		}, true);
 		addButton(buttonPane, "Load Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "loadgame");
 			}
-		});
+		}, true);
 		addButton(buttonPane, "Exit", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int opt = JOptionPane.showConfirmDialog(null,
@@ -71,7 +79,7 @@ public class BattleBoatsUI extends JFrame {
 						"Exit?", JOptionPane.YES_NO_OPTION);
 				if (opt == 0) System.exit(0);
 			}
-		});
+		}, true);
 		setSpringLayout(buttonPane, 3, 1);
 		
 		titlePane.add(buttonPane);
@@ -84,14 +92,24 @@ public class BattleBoatsUI extends JFrame {
 		addLabel(newGamePane, "New Game", FONT_SIZE_H1);
 		
 		JPanel buttonPane = new JPanel(new SpringLayout());
-		addButton(buttonPane, "vs. Computer", new PvCListener());
-		addButton(buttonPane, "vs. Player", new PvPListener());
+		addButton(buttonPane, "vs. Computer", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// show dialog for 1 player
+				showGameSettingsDialog(1);
+			}
+		}, true);
+		addButton(buttonPane, "vs. Player", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// show dialog for 2 players
+				showGameSettingsDialog(2);
+			}
+		}, true);
 		//addButton(newGamePane, "vs. Player (online)", new PvPNetListener()); // move this to "connect server" option
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "title");
 			}
-		});
+		}, true);
 
 		setSpringLayout(buttonPane, 3, 1);
 		
@@ -108,14 +126,16 @@ public class BattleBoatsUI extends JFrame {
 		JPanel buttonPane = new JPanel(new SpringLayout());
 		
 		// placeholder load buttons
-		addButton(buttonPane, "<Empty>", new LoadGameListener());
-		addButton(buttonPane, "<Empty>", new LoadGameListener());
-		//addButton(loadGamePane, "<Empty>", new LoadGameListener());
+		// if user has saved games, generate list of last 3 saved games,
+		// else, generate list of 3 <empty> games
+		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
+		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
+		//addButton(loadGamePane, "<Empty>", new LoadGameListener(), false);
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "title");
 			}
-		});
+		}, true);
 
 		setSpringLayout(buttonPane, 3, 1);
 		loadGamePane.add(buttonPane);
@@ -123,18 +143,22 @@ public class BattleBoatsUI extends JFrame {
 		contentPane.add(loadGamePane, "loadgame");
 		loadGamePane.setLayout(new BoxLayout(loadGamePane, BoxLayout.Y_AXIS));
 	}
+	
 	private void addLabel(Container container, String text, float fontSize) {
 		JLabel label = new JLabel(text);
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		label.setFont(label.getFont().deriveFont(fontSize));
 		container.add(label);
 	}
-	private void addButton(Container container, String text, ActionListener al) {
+	
+	private void addButton(Container container, String text, ActionListener al, boolean enabled) {
 		JButton button = new JButton(text);
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		button.addActionListener(al);
+		button.setEnabled(enabled);
 		container.add(button);
 	}
+	
 	private void setSpringLayout(Container container, int numRows, int numCols) {
 		SpringUtilities.makeCompactGrid(container,
                 numRows, numCols,		//rows, cols
@@ -143,14 +167,32 @@ public class BattleBoatsUI extends JFrame {
 	}
 
 	protected void showGameSettingsDialog(int numPlayers) {
-		// show dialog
 		GameSettingsDialog gsDialog = new GameSettingsDialog(this, numPlayers);
-		gsDialog.setTitle("Game Settings");
 		gsDialog.pack();
 		gsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		gsDialog.setLocationRelativeTo(null);
 		gsDialog.setResizable(false);
 		gsDialog.setVisible(true);
+		
+		if (gsDialog.changesMade) {
+			// TODO use game settings to create PlacementUI
+			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
+						gsDialog.getPlayerTwoName(),
+						gsDialog.getNumberOfRows(),
+						gsDialog.getNumberOfCols(),
+						gsDialog.getBoatSizes(), 
+						false);
+			PlacementUI placeUI = new PlacementUI();
+			placeUI.pack();
+			placeUI.setLocationRelativeTo(null);
+			placeUI.setResizable(false);
+			placeUI.setVisible(true);
+			setVisible(false);
+		}
+	}
+	
+	protected void launchPlacement() {
+		
 	}
 	
 	private class LoadGameListener implements ActionListener {
@@ -158,26 +200,4 @@ public class BattleBoatsUI extends JFrame {
 			// TODO load game if not <empty>
 		}
 	}
-
-	private class PvCListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// TODO create GameUI for PvC
-			showGameSettingsDialog(1);
-		}
-	}
-
-	private class PvPListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// TODO create GameUI for PvP
-			showGameSettingsDialog(2);
-		}
-	}
-	
-	private class PvPNetListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			//TODO
-		}
-	}
-	
-
 }

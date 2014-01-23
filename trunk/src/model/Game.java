@@ -25,7 +25,8 @@ public class Game {
 	public Game(String player1name, String player2name, int width, int height, 
 				ArrayList<Integer> boatSizes, boolean multiplayer){
 		
-		this.server = new Server(/*port*/ 8080);
+		int port = 8080;
+		this.server = new Server(port);
 		this.server.start(); //start the server for accepting connections
 		
 		this.boatSizes = boatSizes;

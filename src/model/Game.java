@@ -32,7 +32,7 @@ public class Game {
 		this.boatSizes = boatSizes;
 		player1 = new HumanPlayer(this,player1name);
 		if(multiplayer){
-			player2 = new HumanPlayer(this,player2name);
+			player2 = new NetworkedPlayer(this,player2name);
 		} else {
 			player2 = new ComputerPlayer(this);
 		}

@@ -12,9 +12,11 @@ public class ClientThread extends Thread {
 	private final int id;
 	private PrintWriter out;
 	private BufferedReader in;
+	private boolean running;
 	
 	public ClientThread(final int id, final Socket socket, final Server server){
 		
+		this.running = true;
 		this.server = server;
 		this.id = id;
 		try {
@@ -34,12 +36,15 @@ public class ClientThread extends Thread {
 		out.println(message);
 	}
 	
+	public void setRunning(final boolean running){
+		this.running = running;
+	}
+	
 	@Override
 	public void run(){
 		String input; //what the client sends in		
-		try {
-			System.out.println("Waiting for message");
-			while((input = in.readLine()) != null){
+		try {			
+			while(running == true && (input = in.readLine()) != null){
 				server.sendMessageToAll(id, input);
 			}
 		} catch (IOException e) {

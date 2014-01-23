@@ -32,6 +32,8 @@ public class Server extends Thread {
 				count++;
 				threads.add(new ClientThread(count, clientSocket, this));
 				threads.get(threads.size() - 1).start();
+				
+				//two players have joined, so stop accepting connections
 				if(threads.size() == 2){
 					accepting = false;
 				}
@@ -58,8 +60,9 @@ public class Server extends Thread {
 
 	public void tearDown() {
 		
+		//setAllowConnections(false);
 		for(final ClientThread t : threads){
-			//stop threads
+			t.setRunning(false);
 		}
 		threads.clear();
 

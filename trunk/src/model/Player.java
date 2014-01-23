@@ -11,39 +11,46 @@ import java.util.ArrayList;
 import core.MoveState;
 
 public abstract class Player {
-	
+
 	protected Board gameBoard;
 	protected Board movedBoard;
 	protected Game game;
 	protected Socket socket;
 	protected PrintWriter out;
 	protected BufferedReader in;
-	
+
 	private String playerName;
-	
-	public Player(final Game game, final String name){
+
+	public Player(final Game game, final String name) {
+		this(game, name, true);
+	}
+
+	public Player(final Game game, final String name,
+			final boolean connectToServer) {
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());
 		playerName = name;
-		
-		//will have to change this from being hardcoded
-		String ip = "127.0.0.1";
-		int port = 8080;
-		
-		try {
-			this.socket = new Socket(ip, port);
-			this.out = new PrintWriter(socket.getOutputStream());
-			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-		
+
+		if (connectToServer == true) {
+			// will have to change this from being hardcoded
+			String ip = "127.0.0.1";
+			int port = 8080;
+
+			try {
+				this.socket = new Socket(ip, port);
+				this.out = new PrintWriter(socket.getOutputStream());
+				this.in = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
-	public boolean placeBoats(final ArrayList<Boat> boats){
+
+	public boolean placeBoats(final ArrayList<Boat> boats) {
 		return gameBoard.addBoats(boats);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -84,34 +91,33 @@ public abstract class Player {
 	}
 
 	public boolean makeMove(Move move) {
-		MoveState state = game.makeMove(this,move);
-		if(state == MoveState.INVALID){
+		MoveState state = game.makeMove(this, move);
+		if (state == MoveState.INVALID) {
 			return false;
 		}
-		
+
 		return false;
 	}
-	
-	public MoveState update(Move move){
+
+	public MoveState update(Move move) {
 		return gameBoard.move(move);
 	}
-	
-	public Board getGameBoard(){
+
+	public Board getGameBoard() {
 		return gameBoard;
 	}
-	
-	public ArrayList<MoveState> updatePosition(ArrayList<Move> moves){
+
+	public ArrayList<MoveState> updatePosition(ArrayList<Move> moves) {
 		ArrayList<MoveState> list = new ArrayList<MoveState>();
-		for (Move move: moves){
+		for (Move move : moves) {
 			MoveState state = gameBoard.move(move);
 			list.add(state);
 		}
 		return list;
 	}
-	
-	public void submitMove(Move move){
-		out.print(move);
+
+	public void submitMove(Move move) {
+		out.println(move.serializeToString());
 	}
-	
-	
+
 }

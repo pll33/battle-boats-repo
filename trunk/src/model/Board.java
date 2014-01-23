@@ -19,15 +19,17 @@ public class Board {
 	
 	public MoveState move(Move move){
 		SquareState state = boardState.get(move.x).get(move.y);
-		if(state == SquareState.HIT || state == SquareState.MISS){
-			return MoveState.INVALID;
-		}
-		if(state == SquareState.BOAT){
+		
+		if(state == SquareState.HIT){
 			boardState.get(move.x).set(move.y, SquareState.HIT);
 			return MoveState.HIT;
+		}else if(state == SquareState.MISS){
+			boardState.get(move.x).set(move.y, SquareState.MISS);
+			return MoveState.MISS;
+		}else{
+			return MoveState.MISS;
 		}
-		boardState.get(move.x).set(move.y, SquareState.MISS);
-		return MoveState.MISS;
+		
 	}
 	
 	@Override

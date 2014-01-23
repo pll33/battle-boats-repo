@@ -1,5 +1,11 @@
 package model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import core.MoveState;
@@ -9,15 +15,32 @@ public abstract class Player {
 	protected Board gameBoard;
 	protected Board movedBoard;
 	protected Game game;
+	protected Socket socket;
+	protected PrintWriter out;
+	protected BufferedReader in;
 	
 	private String playerName;
 	
-	public Player(Game game, String name){
+	public Player(final Game game, final String name){
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());
 		playerName = name;
+		
+		//will have to change this from being hardcoded
+		String ip = "127.0.0.1";
+		int port = 8080;
+		
+		try {
+			this.socket = new Socket(ip, port);
+			this.out = new PrintWriter(socket.getOutputStream());
+			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		
 	}
-	public boolean placeBoats(ArrayList<Boat> boats){
+	
+	public boolean placeBoats(final ArrayList<Boat> boats){
 		return gameBoard.addBoats(boats);
 	}
 	

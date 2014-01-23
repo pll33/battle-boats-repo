@@ -109,5 +109,9 @@ public abstract class Player {
 		return list;
 	}
 	
+	public void submitMove(Move move){
+		out.print(move);
+	}
+	
 	
 }

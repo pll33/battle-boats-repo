@@ -15,7 +15,7 @@ public class GameController {
 		sizes.add(3);
 		sizes.add(4);
 		sizes.add(5);
-		game = new Game(10,10,sizes,false);
+		game = new Game("Player 1", "Player 2", 10,10,sizes,false);
 	}
 	public void startGame(){
 		boolean gameOn = true;

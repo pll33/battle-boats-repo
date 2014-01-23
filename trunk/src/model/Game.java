@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
+import model.server.Server;
 import core.MoveState;
 
 public class Game {
@@ -13,13 +14,20 @@ public class Game {
 	
 	private ArrayList<Integer> boatSizes;
 	
+	private Server server;
+	
 	public Game(String player1name, String player2name,
 				int width, int height, ArrayList<Integer> boatSizes){
+		
 		this(player1name,player2name,width,height,boatSizes,false);
 	}
 	
 	public Game(String player1name, String player2name, int width, int height, 
 				ArrayList<Integer> boatSizes, boolean multiplayer){
+		
+		this.server = new Server(/*port*/ 8080);
+		this.server.start(); //start the server for accepting connections
+		
 		this.boatSizes = boatSizes;
 		player1 = new HumanPlayer(this,player1name);
 		if(multiplayer){

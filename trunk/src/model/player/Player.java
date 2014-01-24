@@ -3,6 +3,8 @@ package model.player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -20,8 +22,8 @@ public abstract class Player {
 	protected Board movedBoard;
 	protected Game game;
 	protected Socket socket;
-	protected PrintWriter out;
-	protected BufferedReader in;
+	protected ObjectOutputStream out;
+	protected ObjectInputStream in;
 
 	private String playerName;
 
@@ -42,9 +44,8 @@ public abstract class Player {
 
 			try {
 				this.socket = new Socket(ip, port);
-				this.out = new PrintWriter(socket.getOutputStream());
-				this.in = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
+				this.out = new ObjectOutputStream(socket.getOutputStream());
+				this.in = new ObjectInputStream(socket.getInputStream());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -121,7 +122,11 @@ public abstract class Player {
 	}
 
 	public void submitMove(Move move) {
-		out.println(move.serializeToString());
+		try {
+			out.writeObject(move);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

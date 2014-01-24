@@ -1,4 +1,6 @@
-package model;
+package model.player;
+
+import model.Game;
 
 
 public class HumanPlayer extends Player {

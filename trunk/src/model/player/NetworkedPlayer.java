@@ -1,6 +1,9 @@
-package model;
+package model.player;
 
 import java.io.IOException;
+
+import model.Game;
+import model.Move;
 
 public class NetworkedPlayer extends Player {
 

@@ -2,6 +2,10 @@ package model;
 
 import java.util.ArrayList;
 
+import model.player.ComputerPlayer;
+import model.player.HumanPlayer;
+import model.player.NetworkedPlayer;
+import model.player.Player;
 import model.server.Server;
 import core.MoveState;
 

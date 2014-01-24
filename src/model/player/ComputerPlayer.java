@@ -1,9 +1,12 @@
-package model;
+package model.player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import model.Boat;
+import model.Game;
+import model.Move;
 import core.MoveState;
 import core.Orientation;
 

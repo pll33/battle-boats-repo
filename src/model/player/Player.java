@@ -1,4 +1,4 @@
-package model;
+package model.player;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import model.Board;
+import model.Boat;
+import model.Game;
+import model.Move;
 import core.MoveState;
 
 public abstract class Player {

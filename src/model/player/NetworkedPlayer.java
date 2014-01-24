@@ -12,14 +12,14 @@ public class NetworkedPlayer extends Player {
 	}
 
 	public Move getMove() {
-		String input = "";
+		
+		Move m = null;
 		try {
-			input = in.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			m = (Move) in.readObject();
+		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
-		return new Move(input);
+		return m;
 	}
 
 }

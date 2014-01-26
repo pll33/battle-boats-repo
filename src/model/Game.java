@@ -29,8 +29,7 @@ public class Game {
 	public Game(String player1name, String player2name, int width, int height, 
 				ArrayList<Integer> boatSizes, boolean multiplayer){
 		
-		player1 = new HumanPlayer(this,player1name);
-		
+		player1 = new HumanPlayer(this,player1name,multiplayer);
 		if (multiplayer) {
 			int port = 8080;
 			this.server = new Server(port);

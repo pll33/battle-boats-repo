@@ -29,17 +29,20 @@ public class Game {
 	public Game(String player1name, String player2name, int width, int height, 
 				ArrayList<Integer> boatSizes, boolean multiplayer){
 		
-		int port = 8080;
-		this.server = new Server(port);
-		this.server.start(); //start the server for accepting connections
-		
-		this.boatSizes = boatSizes;
 		player1 = new HumanPlayer(this,player1name);
-		if(multiplayer){
+		
+		if (multiplayer) {
+			int port = 8080;
+			this.server = new Server(port);
+			this.server.start(); //start the server for accepting connections
+			
 			player2 = new NetworkedPlayer(this,player2name);
-		} else {
+		}
+		else {
 			player2 = new ComputerPlayer(this);
 		}
+	
+		this.boatSizes = boatSizes;
 		this.width = width;
 		this.height = height;
 	}

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import model.player.ComputerPlayer;
 import model.player.HumanPlayer;
@@ -13,46 +14,56 @@ public class Game {
 
 	private Player player1;
 	private Player player2;
-	
+
 	private int width, height;
-	
+
 	private ArrayList<Integer> boatSizes;
-	
+
 	private Server server;
-	
-	public Game(String player1name, String player2name,
-				int width, int height, ArrayList<Integer> boatSizes){
-		
-		this(player1name,player2name,width,height,boatSizes,false);
+
+	public Game(String player1name, String player2name, int width, int height,
+			ArrayList<Integer> boatSizes) {
+
+		this(player1name, player2name, width, height, boatSizes, false);
 	}
-	
-	public Game(String player1name, String player2name, int width, int height, 
-				ArrayList<Integer> boatSizes, boolean multiplayer){
+
+	public Game(String player1name, String player2name, int width, int height,
+			ArrayList<Integer> boatSizes, boolean multiplayer) {
+
+		Semaphore mutex = new Semaphore(0); //lock to wait for server to start
+		int port = 8080;
+		this.server = new Server(port, mutex);
+		this.server.start(); // start the server for accepting connections
 		
-		player1 = new HumanPlayer(this,player1name,multiplayer);
-		if (multiplayer) {
-			int port = 8080;
-			this.server = new Server(port);
-			this.server.start(); //start the server for accepting connections
-			
-			player2 = new NetworkedPlayer(this,player2name);
+		try {
+			mutex.acquire(); //wait for server to start
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		else {
+		
+		System.out.println("Human Player");
+		player1 = new HumanPlayer(this, player1name);
+		
+		if (multiplayer) {
+			System.out.println("Networked Player");
+			player2 = new NetworkedPlayer(this, player2name);
+		} else {
+			System.out.println("Computer Player");
 			player2 = new ComputerPlayer(this);
 		}
-	
+
 		this.boatSizes = boatSizes;
 		this.width = width;
 		this.height = height;
 	}
-	
-	public MoveState makeMove(Player movingPlayer, Move move){
-		if(player1.equals(movingPlayer)){
+
+	public MoveState makeMove(Player movingPlayer, Move move) {
+		if (player1.equals(movingPlayer)) {
 			return player2.update(move);
 		}
 		return player1.update(move);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -63,6 +74,7 @@ public class Game {
 		result = prime * result + width;
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -88,20 +100,24 @@ public class Game {
 			return false;
 		return true;
 	}
+
 	public int getWidth() {
 		return width;
-	}	
+	}
+
 	public int getHeight() {
 		return height;
-	}	
-	
-	public ArrayList<Integer> getBoatSizes(){
+	}
+
+	public ArrayList<Integer> getBoatSizes() {
 		return boatSizes;
 	}
-	public Player getP1(){
+
+	public Player getP1() {
 		return player1;
 	}
-	public Player getP2(){
+
+	public Player getP2() {
 		return player2;
 	}
 }

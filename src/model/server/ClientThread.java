@@ -1,17 +1,16 @@
 package model.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
 	
 	private final Server server;
 	private final int id;
-	private PrintWriter out;
-	private BufferedReader in;
+	private ObjectOutputStream out;
+	private ObjectInputStream in;
 	private boolean running;
 	
 	public ClientThread(final int id, final Socket socket, final Server server){
@@ -19,9 +18,11 @@ public class ClientThread extends Thread {
 		this.running = true;
 		this.server = server;
 		this.id = id;
+		
 		try {
-			this.out = new PrintWriter(socket.getOutputStream(), true);
-			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.out = new ObjectOutputStream(socket.getOutputStream());
+			this.in = new ObjectInputStream(socket.getInputStream());
+			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -33,7 +34,12 @@ public class ClientThread extends Thread {
 	}
 	
 	public void sendMessage(final String message){
-		out.println(message);
+		try {
+			out.writeObject(message);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setRunning(final boolean running){

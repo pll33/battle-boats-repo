@@ -38,19 +38,23 @@ public abstract class Player {
 		playerName = name;
 
 		if (connectToServer == true) {
-			System.out.println("Player " + name + " attempting to connect to server");
+			logMessage("attempting to connect to server");
 			// will have to change this from being hardcoded
 			String ip = "127.0.0.1";
 			int port = 8080;
 
 			try {
 				this.socket = new Socket(ip, port);
-				//this.out = new ObjectOutputStream(socket.getOutputStream());
-				//this.in = new ObjectInputStream(socket.getInputStream());
+				this.out = new ObjectOutputStream(socket.getOutputStream());
+				this.in = new ObjectInputStream(socket.getInputStream());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	protected void logMessage(final String message){
+		System.out.println(playerName + ": " + message);
 	}
 
 	public boolean placeBoats(final ArrayList<Boat> boats) {

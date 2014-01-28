@@ -37,7 +37,6 @@ public abstract class Player {
 		gameBoard = new Board(game.getWidth(), game.getHeight());
 		playerName = name;
 
-		System.out.println("connectToServer: " + connectToServer);
 		if (connectToServer == true) {
 			System.out.println("Player " + name + " attempting to connect to server");
 			// will have to change this from being hardcoded

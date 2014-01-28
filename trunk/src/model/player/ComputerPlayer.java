@@ -16,7 +16,7 @@ public class ComputerPlayer extends Player{
 	private static Random rand;
 	
 	public ComputerPlayer(Game game) {
-		super(game, "Computer", false);
+		super(game, "Computer");
 		int width = game.getWidth();
 		int height = game.getHeight();
 		

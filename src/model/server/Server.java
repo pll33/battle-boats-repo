@@ -25,24 +25,24 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("Server Started");
+		logMessage("Server Started");
 		waitForConnections();
 	}
 
 	public void waitForConnections() {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-			System.out.println("Accepting Connections");
+			logMessage("Accepting Connections");
 			mutex.release(); //server has started
 			
 			while (accepting) {
 				Socket clientSocket = serverSocket.accept();
-				System.out.println("Client Connected");
+				logMessage("Client Connected");
 				count++;
 				threads.add(new ClientThread(count, clientSocket, this));
 				threads.get(threads.size() - 1).start();
 				
-				System.out.println("Number of clients: " + threads.size());
+				logMessage("Number of clients connected: " + threads.size());
 				//two players have joined, so stop accepting connections
 				if(threads.size() == 2){
 					accepting = false;
@@ -52,6 +52,10 @@ public class Server extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void logMessage(final String message){
+		System.out.println("Server: " + message);
 	}
 	
 	public void setAllowConnections(final boolean accepting){

@@ -1,13 +1,9 @@
 package model.player;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import model.Board;
@@ -16,21 +12,68 @@ import model.Game;
 import model.Move;
 import core.MoveState;
 
+/**
+ * An abstract class to represent a Player.
+ * 
+ */
 public abstract class Player {
 
+	/**
+	 * The board on which this Player has their pieces placed.
+	 */
 	protected Board gameBoard;
+
+	/**
+	 * The board used to keep track of this Players moves (shots fired).
+	 */
 	protected Board movedBoard;
+
+	/**
+	 * The game in which this player is playing.
+	 */
 	protected Game game;
+	
+	/**
+	 * The socket used to communicated with the Server
+	 */
 	protected Socket socket;
+	
+	/**
+	 * Stream used for sending messages (Objects) to the server
+	 */
 	protected ObjectOutputStream out;
+	
+	/**
+	 * Stream used for receiving messages (Objects) from the server.
+	 */
 	protected ObjectInputStream in;
 
 	private String playerName;
 
+	/**
+	 * Abstract constructor for Player that has
+	 * <code>connectToServer = true</code>.
+	 * 
+	 * @param game
+	 *            The game that the player is playing in
+	 * @param name
+	 *            The name of the player
+	 */
 	public Player(final Game game, final String name) {
 		this(game, name, true);
 	}
 
+	/**
+	 * Abstract constructor for Player.
+	 * 
+	 * @param game
+	 *            The game that the player is playing in
+	 * @param name
+	 *            The name of the player
+	 * @param If
+	 *            set to true, the player will attempt to connect to the Battle
+	 *            Boats server for the game.
+	 */
 	public Player(final Game game, final String name,
 			final boolean connectToServer) {
 		movedBoard = new Board(game.getWidth(), game.getHeight());
@@ -52,13 +95,79 @@ public abstract class Player {
 			}
 		}
 	}
-	
-	protected void logMessage(final String message){
+
+	/**
+	 * Utility function for logging from Player class
+	 * 
+	 * @param message
+	 *            The message to be logged
+	 */
+	protected void logMessage(final String message) {
 		System.out.println(playerName + ": " + message);
 	}
 
+	/**
+	 * Places the list of boats on the game board
+	 * 
+	 * @param boats
+	 *            The list of boats
+	 * @return true if all boats were successfully places on the board.
+	 */
 	public boolean placeBoats(final ArrayList<Boat> boats) {
 		return gameBoard.addBoats(boats);
+	}
+
+	/**
+	 * Attempts to make the specified move on the gameboard by asking Game if
+	 * the move is valid.
+	 * 
+	 * @param move
+	 *            The Move to be made
+	 * @return true if a valid move, otherwise false.
+	 */
+	public boolean makeMove(Move move) {
+		MoveState state = game.makeMove(this, move);
+		if (state == MoveState.INVALID) {
+			return false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Updates the gameboard with the specified Move
+	 * 
+	 * @param move
+	 *            The Move used to updated the board
+	 * @return The results of the Move (Hit, Miss, Invalid)
+	 */
+	public MoveState update(Move move) {
+		return gameBoard.move(move);
+	}
+
+	/**
+	 * 
+	 * @return The players GameBoard
+	 */
+	public Board getGameBoard() {
+		return gameBoard;
+	}
+
+	/**
+	 * Attempts to update the GameBoard with the specified list of Moves
+	 * 
+	 * @param moves
+	 *            A List<Move> to attempt
+	 * @return A List<MoveState> of the results, in order, of each Move
+	 *         attempted.
+	 */
+	public ArrayList<MoveState> updatePosition(ArrayList<Move> moves) {
+		ArrayList<MoveState> list = new ArrayList<MoveState>();
+		for (Move move : moves) {
+			MoveState state = gameBoard.move(move);
+			list.add(state);
+		}
+		return list;
 	}
 
 	@Override
@@ -98,40 +207,6 @@ public abstract class Player {
 		} else if (!movedBoard.equals(other.movedBoard))
 			return false;
 		return true;
-	}
-
-	public boolean makeMove(Move move) {
-		MoveState state = game.makeMove(this, move);
-		if (state == MoveState.INVALID) {
-			return false;
-		}
-
-		return false;
-	}
-
-	public MoveState update(Move move) {
-		return gameBoard.move(move);
-	}
-
-	public Board getGameBoard() {
-		return gameBoard;
-	}
-
-	public ArrayList<MoveState> updatePosition(ArrayList<Move> moves) {
-		ArrayList<MoveState> list = new ArrayList<MoveState>();
-		for (Move move : moves) {
-			MoveState state = gameBoard.move(move);
-			list.add(state);
-		}
-		return list;
-	}
-
-	public void submitMove(Move move) {
-		try {
-			out.writeObject(move);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

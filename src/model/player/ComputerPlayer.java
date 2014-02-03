@@ -10,11 +10,19 @@ import model.Move;
 import core.MoveState;
 import core.Orientation;
 
+/**
+ * A class to represent the local Computer Player. If the game is not set to multiplayer, this is the AI that will be used.
+ *
+ */
 public class ComputerPlayer extends Player{
 
 	private ArrayList<Move> possibleMoves;
 	private static Random rand;
 	
+	/**
+	 * Creates a new ComputerPlayer.
+	 * @param game The game object that this player will be playing in.
+	 */
 	public ComputerPlayer(Game game) {
 		super(game, "Computer");
 		int width = game.getWidth();
@@ -28,6 +36,7 @@ public class ComputerPlayer extends Player{
 			}
 		}
 	}
+	
 	@Override
 	public boolean placeBoats(ArrayList<Boat> boats){
 		Boat boat;

@@ -8,16 +8,42 @@ import core.SquareState;
 
 public class Board {
 
+	/**
+	 * A list of boats placed on this Board.
+	 */
 	private ArrayList<Boat> boats;
-	private ArrayList<ArrayList<SquareState>> boardState;
-	int width,height;
 	
+	/**
+	 * The Board tiles represented as SquareStates
+	 */
+	private ArrayList<ArrayList<SquareState>> boardState;
+	
+	/**
+	 * The width of the board.
+	 */
+	int width;
+	
+	/**
+	 * The height of the board.
+	 */
+	int height;
+	
+	/**
+	 * Create an empty Board with the specified width and height.
+	 * @param width The width of the board.
+	 * @param height The height of the board.
+	 */
 	public Board(int width, int height){
 		this.width = width;
 		this.height = height;
 		boats = new ArrayList<Boat>();
 		reset();
 	}
+	
+	/**
+	 * Create a copy of a Board.
+	 * @param other The Board to be copied.
+	 */
 	public Board(Board other){
 		this.boats = other.boats;
 		this.boardState = other.boardState;
@@ -25,6 +51,11 @@ public class Board {
 		this.height = other.height;
 	}
 	
+	/**
+	 * Does a move on this Board and updates the Board accordingly.
+	 * @param move The Move to execute
+	 * @return Whether the move was a Hit or a Miss.
+	 */
 	public MoveState move(Move move){
 		SquareState state = boardState.get(move.x).get(move.y);
 		
@@ -83,6 +114,9 @@ public class Board {
 		return true;
 	}
 	
+	/**
+	 * Sets the whole board to empty.
+	 */
 	private void reset(){
 		boardState = new ArrayList<ArrayList<SquareState>>(width);
 		//Set whole boardState to empty
@@ -95,6 +129,13 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Determines the valid Orientations for a Boat being placed at the given (x,y) coordinates of the given size.
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param size The size of the Boat
+	 * @return A List<Orientation> of valid orientations for a Boat being placed at (x,y) of the given size.
+	 */
 	public ArrayList<Orientation> getValidOrientations(int x, int y, int size){
 		ArrayList<Orientation> orientations = new ArrayList<Orientation>(2);
 		Boat tempBoat = new Boat(x,y,Orientation.HORIZONTAL,size);
@@ -112,6 +153,11 @@ public class Board {
 		//return null
 	}
 	
+	/**
+	 * If possible, places the given Boat on the Board
+	 * @param boat The Boat to places
+	 * @return true if the Boat was successfully placed, false otherwise.
+	 */
 	public boolean addBoat(Boat boat) {
 		for(Move move:boat.getSquares()){
 			try{

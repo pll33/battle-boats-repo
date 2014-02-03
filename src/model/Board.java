@@ -6,6 +6,10 @@ import core.MoveState;
 import core.Orientation;
 import core.SquareState;
 
+/**
+ * A class representing the Board(s) of each Player.
+ *
+ */
 public class Board {
 
 	/**

@@ -16,7 +16,10 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import core.Orientation;
+
 import model.Board;
+import model.Boat;
 
 public class BoardUI extends JPanel {
 	
@@ -38,6 +41,7 @@ public class BoardUI extends JPanel {
 	//private ArrayList<Point> currentSelectedCells; 
 	private Point currentSelectedCell; // expand to list of points for multiple cell selection?
 	private Point prevSelectedCell; 
+	private Board placeBoard;
 	
 	public BoardUI() {
 		this(10, 10, false);
@@ -50,6 +54,7 @@ public class BoardUI extends JPanel {
 		isPlacement = placement;
 		placementMouseMode = 0;
 		currentSelectedCell = null;
+		placeBoard = new Board(rows, cols);
 		//currentSelectedCells = new ArrayList<Point>();
 		//isEditable affects whether mouseAdapter is added or not
 		
@@ -177,9 +182,10 @@ public class BoardUI extends JPanel {
     		return null;
     }
     
-    private boolean isValidPlacement(Point cell) {
+    private boolean isValidPlacement(Point cell, Orientation orientation, int size) {
     	// TODO
-    	return false;
+    	Boat boat = new Boat(cell.x, cell.y, orientation,size);
+    	return placeBoard.addBoat(boat);
     }
     
     private class MouseMoveAdapter extends MouseAdapter {
@@ -209,7 +215,7 @@ public class BoardUI extends JPanel {
 				} else if (placementMouseMode == 1) {
 //					if currentSelectedCell=validCell
 //							placeShip in orientation
-					if (isValidPlacement(currentSelectedCell)) {
+					if (isValidPlacement(currentSelectedCell,orientation,size)) {
 						// TODO place ship 
 					} else {
 						placementMouseMode = 0;

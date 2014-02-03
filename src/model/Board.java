@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 import core.MoveState;
+import core.Orientation;
 import core.SquareState;
 
 public class Board {
@@ -15,6 +16,12 @@ public class Board {
 		this.width = width;
 		this.height = height;
 		reset();
+	}
+	public Board(Board other){
+		this.boats = other.boats;
+		this.boardState = other.boardState;
+		this.width = other.width;
+		this.height = other.height;
 	}
 	
 	public MoveState move(Move move){
@@ -87,6 +94,23 @@ public class Board {
 		}
 	}
 
+	public ArrayList<Orientation> getValidOrientations(int x, int y, int size){
+		ArrayList<Orientation> orientations = new ArrayList<Orientation>(2);
+		Boat tempBoat = new Boat(x,y,Orientation.HORIZONTAL,size);
+		if(addBoat(tempBoat)){
+			orientations.add(Orientation.HORIZONTAL);
+		}
+		tempBoat = new Boat(x,y,Orientation.VERTICAL,size);
+		if(addBoat(tempBoat)){
+			orientations.add(Orientation.HORIZONTAL);
+		}
+		
+		return orientations;
+		//better to return null if empty?
+//		if(orientations.isEmpty())
+		//return null
+	}
+	
 	public boolean addBoat(Boat boat) {
 		for(Move move:boat.getSquares()){
 			if(boardState.get(move.x).get(move.y) != SquareState.EMPTY){

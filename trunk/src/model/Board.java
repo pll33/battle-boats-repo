@@ -15,6 +15,7 @@ public class Board {
 	public Board(int width, int height){
 		this.width = width;
 		this.height = height;
+		boats = new ArrayList<Boat>();
 		reset();
 	}
 	public Board(Board other){
@@ -88,7 +89,7 @@ public class Board {
 		for(int i=0; i<width; i++){
 			ArrayList<SquareState> temp = new ArrayList<SquareState>(height);
 			for(int j=0; j<height;j++){
-				temp.set(j,SquareState.EMPTY);
+				temp.add(SquareState.EMPTY);
 			}
 			boardState.add(temp);
 		}
@@ -113,7 +114,11 @@ public class Board {
 	
 	public boolean addBoat(Boat boat) {
 		for(Move move:boat.getSquares()){
-			if(boardState.get(move.x).get(move.y) != SquareState.EMPTY){
+			try{
+				if(boardState.get(move.x).get(move.y) != SquareState.EMPTY){
+					return false;
+				}
+			} catch (IndexOutOfBoundsException e){
 				return false;
 			}
 		}

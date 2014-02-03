@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -32,28 +33,31 @@ public class BoardUI extends JPanel {
 	private static final Color SELECTED_CELL_ORIENT = Color.GREEN;
 	private static final Color SELECTED_CELL_MOVE = Color.YELLOW;
 	private static final Color ORIENT_CELL = Color.PINK;
+	private static Random rand = new Random();
 	
 	private int numRows, numCols, placeShipSize, placementMouseMode;
 	private boolean isPlacement;
 	private List<Rectangle> boardCellsUI; // UI representation of board cells
 	//private ArrayList<Boat> boardCells; // in-game representation 
 	private ArrayList<Integer> orientLocationIndices;
+	private List<Integer> boatSizes;
 	//private ArrayList<Point> currentSelectedCells; 
 	private Point currentSelectedCell; // expand to list of points for multiple cell selection?
 	private Point prevSelectedCell; 
 	private Board placeBoard;
 	
-	public BoardUI() {
+	/*public BoardUI() {
 		this(10, 10, false);
-	}
+	}*/
 	
 	// TODO make subclasses of BoardUI (PlaceBoardUI, PlayBoardUI) 
-	public BoardUI(int rows, int cols, boolean placement) {
+	public BoardUI(int rows, int cols, List<Integer>boatSizes, boolean placement) {
 		numRows = rows;
 		numCols = cols;
 		isPlacement = placement;
 		placementMouseMode = 0;
 		currentSelectedCell = null;
+		this.boatSizes = boatSizes;
 		placeBoard = new Board(rows, cols);
 		//currentSelectedCells = new ArrayList<Point>();
 		//isEditable affects whether mouseAdapter is added or not
@@ -72,6 +76,26 @@ public class BoardUI extends JPanel {
 	public void setPlacementShipSize(int size) {
 		placeShipSize = size;
 	}
+	
+	/**
+	 * Very inefficient randomization function.
+	 */
+	public void randomize(){
+		for(int size : boatSizes){
+			boolean placedShip = false;
+			do{
+				Point p = new Point(rand.nextInt(this.numRows),rand.nextInt(this.numCols));
+				Orientation orientation;
+				if(rand.nextBoolean()){
+					orientation = Orientation.HORIZONTAL;
+				} else {
+					orientation = Orientation.VERTICAL;
+				}
+				placedShip = this.isValidPlacement(p, orientation, size);
+			} while(!placedShip);
+		}
+	}
+	
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
@@ -181,9 +205,14 @@ public class BoardUI extends JPanel {
     	else
     		return null;
     }
-    
+    /**
+     * THIS METHOD PLACES THE BOAT IF IT RETURNS TRUE< ELSE IT DOES NOT PLACE IT.
+     * @param cell
+     * @param orientation
+     * @param size
+     * @return
+     */
     private boolean isValidPlacement(Point cell, Orientation orientation, int size) {
-    	// TODO
     	Boat boat = new Boat(cell.x, cell.y, orientation,size);
     	return placeBoard.addBoat(boat);
     }
@@ -215,7 +244,7 @@ public class BoardUI extends JPanel {
 				} else if (placementMouseMode == 1) {
 //					if currentSelectedCell=validCell
 //							placeShip in orientation
-					if (isValidPlacement(currentSelectedCell,orientation,size)) {
+					if (false){//isValidPlacement(currentSelectedCell,orientation,size)) {
 						// TODO place ship 
 					} else {
 						placementMouseMode = 0;

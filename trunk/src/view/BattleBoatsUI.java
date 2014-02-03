@@ -182,7 +182,12 @@ public class BattleBoatsUI extends JFrame {
 						gsDialog.getNumberOfCols(),
 						gsDialog.getBoatSizes(), 
 						false);
-			PlacementUI placeUI = new PlacementUI();
+			PlacementUI placeUI = new PlacementUI(gsDialog.getPlayerOneName(), 
+					gsDialog.getPlayerTwoName(),
+					gsDialog.getNumberOfRows(),
+					gsDialog.getNumberOfCols(),
+					gsDialog.getBoatSizes());
+			
 			placeUI.pack();
 			placeUI.setLocationRelativeTo(null);
 			placeUI.setResizable(false);

@@ -4,15 +4,49 @@ import java.util.ArrayList;
 
 import core.Orientation;
 
+/**
+ * A class representing a Boat that gets placed on the Board.
+ *
+ */
 public class Boat {
 
+	/**
+	 * The size of the Boat, typically between 2 and 5 inclusive.
+	 */
 	private int size;
-	private int x, y;
+	
+	/**
+	 * The x coordinate of the Boat (the farthest left part of the Boat).
+	 */
+	private int x;
+	
+	/**
+	 * The y coordinate of the Boat (the top part of the Boat).
+	 */
+	private int y;
+	
+	/**
+	 * The orientation (Horizontal or Vertical) of the Boat.
+	 */
 	private Orientation orientation;
+	
+	/**
+	 * The number of times this Boat has been hit by an enemy attack.
+	 */
 	private int hitCount;
 	
+	/**
+	 * Whether this Boat has been placed on a Board yet or not.
+	 */
 	private boolean onBoard;
 	
+	/**
+	 * Create a Boat.
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param orientation The orientation of the boat
+	 * @param size the size of the boat.
+	 */
 	public Boat(int x, int y, Orientation orientation, int size){
 		onBoard = false;
 		this.x = x;
@@ -22,14 +56,26 @@ public class Boat {
 		this.hitCount = 0;
 	}
 	
+	/**
+	 * Whether this Boat has been sunk
+	 * @return true when <code>hitCount == size</code>.
+	 */
 	public boolean isSunk(){
 		return hitCount == size;
 	}
 	
+	/**
+	 * 
+	 * @return The size of the boat
+	 */
 	public int getSize(){
 		return size;
 	}
 	
+	/**
+	 * Gets all the squares (tiles) that this Boat is on.
+	 * @return A List<Move> of all the squares (tiles) that the Boat is on.
+	 */
 	public ArrayList<Move> getSquares(){
 		ArrayList<Move> squares = new ArrayList<Move>(size);
 		squares.add(new Move(x,y));

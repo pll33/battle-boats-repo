@@ -2,7 +2,10 @@ package model.player;
 
 import model.Game;
 
-
+/**
+ * A class representing a local human Player.
+ *
+ */
 public class HumanPlayer extends Player {
 
 	public HumanPlayer(Game game, String playerName) {

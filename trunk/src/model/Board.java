@@ -144,13 +144,10 @@ public class Board {
 		}
 		tempBoat = new Boat(x,y,Orientation.VERTICAL,size);
 		if(addBoat(tempBoat)){
-			orientations.add(Orientation.HORIZONTAL);
+			orientations.add(Orientation.VERTICAL);
 		}
 		
 		return orientations;
-		//better to return null if empty?
-//		if(orientations.isEmpty())
-		//return null
 	}
 	
 	/**

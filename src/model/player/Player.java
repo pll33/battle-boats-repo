@@ -131,7 +131,7 @@ public abstract class Player {
 			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**

@@ -21,19 +21,30 @@ public class PlacementUI extends JFrame {
 	
 	private final Container contentPane;
 	private BoardUI boardPane;
+	private List<Integer> boatSizes;
 	
 	public PlacementUI() {
+		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
+	}
+	
+	public PlacementUI(String playerOneName, String playerTwoName,
+			Integer numberOfRows, Integer numberOfCols,
+			ArrayList<Integer> boatSizes) {
+		
 		contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
+
+		this.boatSizes = boatSizes; 
+
+		boardPane = new BoardUI(numberOfRows,numberOfCols, boatSizes, true); 
 		
-		boardPane = new BoardUI(10,10,true); //TODO create based on game settings
 		contentPane.add(boardPane, BorderLayout.CENTER);
 		
 		createComponents();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change to show BattleBoatsUI on close
 	}
-	
+
 	private void createComponents() {
 		//JPanel shipList = new ShipListUI();
 		JPanel boatlistPane = new JPanel();
@@ -42,7 +53,6 @@ public class PlacementUI extends JFrame {
 		boatlistPane.setLayout(new SpringLayout());
 		
 		int numBoats = 5; // TODO set number ships based on game settings
-		List<Integer> boatSizes = Arrays.asList(2, 3, 3, 4, 5); //TODO allow player to customize boat sizes 
 		ButtonGroup group = new ButtonGroup();
 		
 		for (int boatNum = 0; boatNum < boatSizes.size(); boatNum++)
@@ -67,7 +77,7 @@ public class PlacementUI extends JFrame {
 		button = new JButton("Randomize");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				boardPane.randomize();
 				
 			}
 		});

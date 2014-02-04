@@ -203,4 +203,20 @@ public class Board {
 		return true;
 	}
 	
+	/**
+	 * Checks if board has boats added to it
+	 * @return true if the list of boats has one or more elements, false otherwise
+	 */
+	public boolean hasBoats() {
+		return boats.size() > 0;
+	}
+	
+	/**
+	 * Gets the list of boats
+	 * @return list of boats
+	 */
+	public ArrayList<Boat> getBoats() {
+		return boats;
+	}
+	
 }

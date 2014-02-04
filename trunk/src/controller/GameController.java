@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import model.Game;
 
+/**
+ * Class that controls the game itself. Handles starting/stopping etc.
+ *
+ */
 public class GameController {
 
 	/**

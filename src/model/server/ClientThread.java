@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import model.player.Player;
+
 /**
  * A Thread spawned by Server to handle communication between multiple clients.
  *
@@ -37,6 +39,11 @@ public class ClientThread extends Thread {
 	private boolean running;
 	
 	/**
+	 * A boolean indicating whether the Client this Thread handles is local to the server.
+	 */
+	private Boolean clientLocalToServer;
+	
+	/**
 	 * Construct a new ClientThread.
 	 * @param id The ID of the Thread
 	 * @param socket The socket created for this Thread.
@@ -47,6 +54,7 @@ public class ClientThread extends Thread {
 		this.running = true;
 		this.server = server;
 		this.id = id;
+		this.clientLocalToServer = null;
 		
 		try {
 			this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -56,6 +64,10 @@ public class ClientThread extends Thread {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public Boolean isClientLocalToServer(){
+		return clientLocalToServer;
 	}
 	
 	/**
@@ -70,7 +82,7 @@ public class ClientThread extends Thread {
 	 * Sends a message to this Client.
 	 * @param message The message to send.
 	 */
-	public void sendMessage(final String message){
+	public void sendMessage(final Object message){
 		try {
 			out.writeObject(message);
 		} catch (IOException e) {
@@ -92,12 +104,17 @@ public class ClientThread extends Thread {
 	 */
 	@Override	
 	public void run(){
-		String input; //what the client sends in		
+		Object input; //what the client sends in		
 		try {			
-			while(running == true && (input = in.readLine()) != null){
-				server.sendMessageToAll(id, input);
+			while(running == true && (input = in.readObject()) != null){
+				
+				if(input instanceof Player){
+					clientLocalToServer = ((Player)input).isPlayerLocalToServer();
+				}else{
+					server.sendMessageToAll(id, input);
+				}
 			}
-		} catch (IOException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

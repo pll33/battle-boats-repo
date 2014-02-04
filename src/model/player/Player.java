@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import model.Board;
 import model.Boat;
-import model.Game;
+import model.Game_Old;
 import model.Move;
 import core.MoveState;
 
@@ -31,7 +31,7 @@ public abstract class Player {
 	/**
 	 * The game in which this player is playing.
 	 */
-	protected Game game;
+	protected Game_Old game;
 	
 	/**
 	 * The socket used to communicated with the Server
@@ -61,7 +61,7 @@ public abstract class Player {
 	 * @param name
 	 *            The name of the player
 	 */
-	public Player(final Game game, final String name) {
+	public Player(final Game_Old game, final String name) {
 		this(game, name, true);
 	}
 
@@ -76,7 +76,7 @@ public abstract class Player {
 	 *            set to true, the player will attempt to connect to the Battle
 	 *            Boats server for the game.
 	 */
-	public Player(final Game game, final String name,
+	public Player(final Game_Old game, final String name,
 			final boolean connectToServer) {
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());

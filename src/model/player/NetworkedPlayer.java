@@ -1,6 +1,6 @@
 package model.player;
 
-import model.Game;
+import model.Game_Old;
 
 /**
  * A class to represent a second human player being played over the network. If the game is set to multiplayer, this class will be used.
@@ -8,7 +8,7 @@ import model.Game;
  */
 public class NetworkedPlayer extends Player {
 
-	public NetworkedPlayer(final Game game, final String name) {
+	public NetworkedPlayer(final Game_Old game, final String name) {
 		super(game, name, false);
 		this.playerLocalToServer = false;
 	}

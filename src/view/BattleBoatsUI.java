@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
 import controller.GameController;
+import core.GameSettings;
 
 public class BattleBoatsUI extends JFrame {
 
@@ -177,12 +178,12 @@ public class BattleBoatsUI extends JFrame {
 		if (gsDialog.changesMade) {
 			// TODO use game settings to create PlacementUI
 			
-			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
-						gsDialog.getPlayerTwoName(),
-						gsDialog.getNumberOfRows(),
-						gsDialog.getNumberOfCols(),
-						gsDialog.getBoatSizes(), 
-						false);
+			GameSettings settings = new GameSettings(gsDialog.getNumberOfRows(), gsDialog.getNumberOfCols(), gsDialog.getBoatSizes());
+			settings.setPlayer1Name(gsDialog.getPlayerOneName());
+			settings.setPlayer2Name(gsDialog.getPlayerTwoName());
+			
+			GameController gc = new GameController(true, settings);
+			
 			PlacementUI placeUI = new PlacementUI(gsDialog.getPlayerOneName(), 
 					gsDialog.getPlayerTwoName(),
 					gsDialog.getNumberOfRows(),

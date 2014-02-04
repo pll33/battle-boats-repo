@@ -39,11 +39,6 @@ public class ClientThread extends Thread {
 	private boolean running;
 	
 	/**
-	 * A boolean indicating whether the Client this Thread handles is local to the server.
-	 */
-	private Boolean clientLocalToServer;
-	
-	/**
 	 * Construct a new ClientThread.
 	 * @param id The ID of the Thread
 	 * @param socket The socket created for this Thread.
@@ -54,7 +49,6 @@ public class ClientThread extends Thread {
 		this.running = true;
 		this.server = server;
 		this.id = id;
-		this.clientLocalToServer = null;
 		
 		try {
 			this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -64,10 +58,6 @@ public class ClientThread extends Thread {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	public Boolean isClientLocalToServer(){
-		return clientLocalToServer;
 	}
 	
 	/**
@@ -107,12 +97,7 @@ public class ClientThread extends Thread {
 		Object input; //what the client sends in		
 		try {			
 			while(running == true && (input = in.readObject()) != null){
-				
-				if(input instanceof Player){
-					clientLocalToServer = ((Player)input).isPlayerLocalToServer();
-				}else{
-					//server.sendMessageToAll(id, input);
-				}
+					server.sendMessageToAll(id, input);
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();

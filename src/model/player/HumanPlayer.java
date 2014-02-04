@@ -1,6 +1,6 @@
 package model.player;
 
-import model.Game_Old;
+import core.PlayerType;
 
 /**
  * A class representing a local human Player.
@@ -8,11 +8,7 @@ import model.Game_Old;
  */
 public class HumanPlayer extends Player {
 
-	public HumanPlayer(Game_Old game, String playerName) {
-		super(game, playerName);
-	}
-	
-	public HumanPlayer(Game_Old game, String playerName, boolean multiplayer) {
-		super(game, playerName, multiplayer);
+	public HumanPlayer(String playerName) {
+		super(playerName, PlayerType.HUMAN);
 	}
 }

@@ -5,12 +5,11 @@ import java.util.Collections;
 import java.util.Random;
 
 import utils.RandomHelper;
-
 import model.Boat;
-import model.Game_Old;
 import model.Move;
 import core.MoveState;
 import core.Orientation;
+import core.PlayerType;
 
 /**
  * A class to represent the local Computer Player. If the game is not set to multiplayer, this is the AI that will be used.
@@ -25,21 +24,11 @@ public class ComputerPlayer extends Player{
 	 * Creates a new ComputerPlayer.
 	 * @param game The game object that this player will be playing in.
 	 */
-	public ComputerPlayer(Game_Old game) {
-		super(game, "Computer");
-		int width = game.getWidth();
-		int height = game.getHeight();
-		
-		possibleMoves = new ArrayList<Move>(width * height);
-		for(int i=0;i<width;i++){
-			for(int j=0;j<height;j++){
-				Move move = new Move(i,j);
-				possibleMoves.add(move);
-			}
-		}
+	public ComputerPlayer() {
+		super("Computer", PlayerType.COMPUTER);
 	}
 	
-	@Override
+
 	public boolean placeBoats(ArrayList<Boat> boats){
 		Boat boat;
 		for(Integer i : game.getBoatSizes()){
@@ -61,7 +50,7 @@ public class ComputerPlayer extends Player{
 		return move;
 	}
 	
-	@Override
+
 	public boolean makeMove(Move move) {
 		move = generateMove();
 		MoveState state = gameBoard.move(move);

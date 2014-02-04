@@ -23,6 +23,7 @@ import core.Orientation;
 
 import model.Board;
 import model.Boat;
+import model.Move;
 
 public class BoardUI extends JPanel {
 	
@@ -35,6 +36,9 @@ public class BoardUI extends JPanel {
 	private static final Color SELECTED_CELL_ORIENT = Color.GREEN;
 	private static final Color SELECTED_CELL_MOVE = Color.YELLOW;
 	private static final Color ORIENT_CELL = Color.PINK;
+	private static final Color PLACED_CELL = Color.RED;
+	private static final Color BOARD_OUTLINE = Color.GRAY;
+	private static final Color BOARD_HEADING = Color.DARK_GRAY;
 	private static Random rand = new Random();
 	
 	private int numRows, numCols, placeShipSize, placementMouseMode;
@@ -83,7 +87,14 @@ public class BoardUI extends JPanel {
 	 * Very inefficient randomization function.
 	 */
 	public void randomize(){
-		for(int size : boatSizes){
+		// clear and update if there are already placed boats
+		if (placeBoard.hasBoats()) {
+			placeBoard.clearBoats();
+			repaint();
+		}
+		
+		// randomly place ships
+		for (int size : boatSizes) {
 			boolean placedShip = false;
 			do{
 				Point p = new Point(rand.nextInt(this.numRows),rand.nextInt(this.numCols));
@@ -91,12 +102,14 @@ public class BoardUI extends JPanel {
 				placedShip = this.isValidPlacement(p, orientation, size);
 			} while(!placedShip);
 		}
+		repaint(); // force redraw
 	}
 	
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
+        // draw rectangles to make up board UI cells
         if (boardCellsUI.isEmpty()) 
         {
             for (int row = 0; row < numRows; row++) {            	
@@ -146,15 +159,29 @@ public class BoardUI extends JPanel {
         		g2d.fill(orientCell);
         	}
         }
+        
+        // draw placed ships (if any)
+        if (placeBoard.hasBoats())
+        {
+        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
+        	for (Boat boat : placedBoats) {
+        		ArrayList<Move> boatSquares = boat.getSquares();
+        		for (Move cell : boatSquares) {
+        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y))); //TODO place on (X,Y) location
+        			g2d.setColor(PLACED_CELL);
+        			g2d.fill(boatCell);
+        		}
+        	}
+        }
+        
         // draw board cells outlines
-        g2d.setColor(Color.GRAY);
+        g2d.setColor(BOARD_OUTLINE);
         for (Rectangle cell : boardCellsUI) {
             g2d.draw(cell);
         }
         
         // draw board headings
-        g2d.setColor(Color.DARK_GRAY);
-     
+        g2d.setColor(BOARD_HEADING);
     	int xHeadCol,
     		yHeadCol = BOARD_OFFSETY - (CELL_HEIGHT/3),
     		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5), // TODO fix arbitrary values
@@ -192,8 +219,8 @@ public class BoardUI extends JPanel {
             col = xLoc / CELL_WIDTH,
             row = yLoc / CELL_HEIGHT;
 
-    	//System.out.println("mouse: " + e.getX() + ", " + e.getY());
-    	//System.out.println("c, r: " + col + ", " + row);
+//    	System.out.println("mouse: " + eX + ", " + eY);
+//    	System.out.println("c, r: " + col + ", " + row);
     	
     	if ((xLoc >= 0 && yLoc >= 0) &&
     			(col >= 0 && col < numCols) && 

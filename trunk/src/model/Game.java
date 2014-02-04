@@ -27,6 +27,36 @@ public class Game {
 
 		this(player1name, player2name, width, height, boatSizes, false);
 	}
+	
+	public Game(String player1name, String player2name, int width, int height, ArrayList<Integer> boatSizes, boolean vsComputer, boolean hostGame){
+		
+		if(vsComputer || hostGame){
+			Semaphore mutex = new Semaphore(0); //lock to wait for server to start
+			int port = 8080;
+			this.server = new Server(port, mutex);
+			this.server.start(); // start the server for accepting connections
+			
+			try {
+				mutex.acquire(); //wait for server to start
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(vsComputer){
+			player1 = new HumanPlayer(this, player1name);
+			player2 = new ComputerPlayer(this);
+		}else{
+			if(hostGame){
+				player1 = new HumanPlayer(this, player1name);
+				//wait for second player to connect
+			}else{
+				//player1 = new NetworkedHumanPlayer();
+			}
+			player2 = new NetworkedPlayer(this, player2name);
+		}
+		
+	}
 
 	public Game(String player1name, String player2name, int width, int height,
 			ArrayList<Integer> boatSizes, boolean multiplayer) {

@@ -142,16 +142,43 @@ public class Board {
 	 */
 	public ArrayList<Orientation> getValidOrientations(int x, int y, int size){
 		ArrayList<Orientation> orientations = new ArrayList<Orientation>(2);
-		Boat tempBoat = new Boat(x,y,Orientation.HORIZONTAL,size);
+		Boat tempBoat = new Boat(x,y,Orientation.NORTH,size);
 		if(addBoat(tempBoat)){
-			orientations.add(Orientation.HORIZONTAL);
+			orientations.add(Orientation.NORTH);
+			removeBoat(tempBoat);
 		}
-		tempBoat = new Boat(x,y,Orientation.VERTICAL,size);
+		tempBoat = new Boat(x,y,Orientation.SOUTH,size);
 		if(addBoat(tempBoat)){
-			orientations.add(Orientation.VERTICAL);
+			orientations.add(Orientation.SOUTH);
+			removeBoat(tempBoat);
+		}
+		tempBoat = new Boat(x,y,Orientation.EAST,size);
+		if(addBoat(tempBoat)){
+			orientations.add(Orientation.EAST);
+			removeBoat(tempBoat);
+		}
+		tempBoat = new Boat(x,y,Orientation.WEST,size);
+		if(addBoat(tempBoat)){
+			orientations.add(Orientation.WEST);
+			removeBoat(tempBoat);
 		}
 		
 		return orientations;
+	}
+	
+	public boolean removeBoat(Boat boat){
+		for(Move move : boat.getSquares()){
+			try{
+				if(boardState.get(move.x).get(move.y) != SquareState.BOAT){
+					return false;
+				}
+			} catch (IndexOutOfBoundsException e){
+				return false;
+			}
+		} for(Move move : boat.getSquares()){
+			boardState.get(move.x).set(move.y, SquareState.EMPTY);
+		}
+		return true;
 	}
 	
 	/**

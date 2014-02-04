@@ -17,6 +17,8 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
+import utils.RandomHelper;
+
 import core.Orientation;
 
 import model.Board;
@@ -85,12 +87,7 @@ public class BoardUI extends JPanel {
 			boolean placedShip = false;
 			do{
 				Point p = new Point(rand.nextInt(this.numRows),rand.nextInt(this.numCols));
-				Orientation orientation;
-				if(rand.nextBoolean()){
-					orientation = Orientation.HORIZONTAL;
-				} else {
-					orientation = Orientation.VERTICAL;
-				}
+				Orientation orientation = RandomHelper.getRandomOrientation(rand);
 				placedShip = this.isValidPlacement(p, orientation, size);
 			} while(!placedShip);
 		}

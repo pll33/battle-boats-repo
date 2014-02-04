@@ -5,6 +5,5 @@ package core;
  *
  */
 public enum Orientation {
-	HORIZONTAL,
-	VERTICAL
+	NORTH,SOUTH,EAST,WEST
 }

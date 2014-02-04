@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import utils.RandomHelper;
+
 import model.Boat;
 import model.Game;
 import model.Move;
@@ -44,7 +46,8 @@ public class ComputerPlayer extends Player{
 			boolean placed = false;
 			while(!placed){
 				Move spot = pickSpot(i);
-				boat = new Boat(spot.x,spot.y,Orientation.HORIZONTAL,i);
+				Orientation orientation = RandomHelper.getRandomOrientation(rand);
+				boat = new Boat(spot.x,spot.y,orientation,i);
 				if(this.gameBoard.addBoat(boat)){
 					placed = true;
 				}
@@ -52,7 +55,7 @@ public class ComputerPlayer extends Player{
 		}
 		return true;
 	}
-	
+
 	private Move pickSpot(Integer i) {
 		Move move = new Move(rand.nextInt(game.getHeight()), rand.nextInt(game.getHeight()));		
 		return move;

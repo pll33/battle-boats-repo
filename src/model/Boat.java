@@ -79,14 +79,28 @@ public class Boat {
 	public ArrayList<Move> getSquares(){
 		ArrayList<Move> squares = new ArrayList<Move>(size);
 		squares.add(new Move(x,y));
-		if(orientation == Orientation.HORIZONTAL){
-			for(int i=1;i<size;i++){
-				squares.add(new Move(x+i,y));
+		try{
+			if(orientation == Orientation.NORTH){
+				for(int i=1;i<size;i++){
+					squares.add(new Move(x,y-i));
+				}
+			} else if(orientation == Orientation.SOUTH) {
+				for(int i=1;i<size;i++){
+					squares.add(new Move(x,y+i));
+				}
 			}
-		} else {
-			for(int i=1;i<size;i++){
-				squares.add(new Move(x,y+i));
+			else if(orientation == Orientation.EAST) {
+				for(int i=1;i<size;i++){
+					squares.add(new Move(x+i,y));
+				}
+			} else {
+				for(int i=1;i<size;i++){
+					squares.add(new Move(x-i,y));
+				}
 			}
+		} catch (IndexOutOfBoundsException e){
+			System.err.println("ERROR: Bad Orientation Given");
+			e.printStackTrace();
 		}
 		return squares;
 	}

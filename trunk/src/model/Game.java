@@ -14,6 +14,7 @@ public class Game {
 
 	private Player player1;
 	private Player player2;
+	private Player currentPlayer;
 
 	private int width, height;
 
@@ -41,17 +42,16 @@ public class Game {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Human Player");
 		player1 = new HumanPlayer(this, player1name);
 		
+		//if playing against another Human, create a NetworkedPlayer
 		if (multiplayer) {
-			System.out.println("Networked Player");
 			player2 = new NetworkedPlayer(this, player2name);
 		} else {
-			System.out.println("Computer Player");
 			player2 = new ComputerPlayer(this);
 		}
 
+		this.currentPlayer = player1;
 		this.boatSizes = boatSizes;
 		this.width = width;
 		this.height = height;
@@ -62,6 +62,22 @@ public class Game {
 			return player2.update(move);
 		}
 		return player1.update(move);
+	}
+	
+	/**
+	 * Switches which player's turn it is. This should be used after a Player is finished with their Move.
+	 * @return the new current Player
+	 */
+	public Player switchCurrentPlayer(){
+		Player p = null;
+		
+		if(currentPlayer.equals(player1)){
+			p = player2;
+		}else if(currentPlayer.equals(player2)){
+			p = player1;
+		}
+		
+		return p;
 	}
 
 	@Override

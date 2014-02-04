@@ -8,10 +8,21 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
- * A Thread used to recieve connections from Clients and spawn Threads to handle their requests.
+ * A Thread used to receive connections from Clients and spawn Threads to handle their requests.
  *
  */
 public class Server extends Thread {
+	
+	
+	/**
+	 * The number of players the Server should accept before it stops accepting connections.
+	 */
+	private final int LOCAL_PLAYERS_TO_ACCEPT = 2;
+	
+	/**
+	 * The maximum number of players to accept (a NetworkedPlayer has 2 connections).
+	 */
+	private final int MAX_PLAYERS_TO_ACCEPT = 4;
 
 	/**
 	 * Whether the Server is accepting new connections
@@ -73,7 +84,21 @@ public class Server extends Thread {
 				
 				logMessage("Number of clients connected: " + threads.size());
 				//two players have joined, so stop accepting connections
-				if(threads.size() == 2){
+				if(threads.size() == LOCAL_PLAYERS_TO_ACCEPT){
+					//if both local, stop accepting
+					boolean bothLocal = true;
+					for(ClientThread ct : threads){
+						while(ct.isClientLocalToServer() == null){
+							//busy wait
+						}
+						if(ct.isClientLocalToServer() == false){
+							bothLocal = false;
+						}
+					}
+					if(bothLocal){
+						accepting = false;
+					}
+				}else if(threads.size() == MAX_PLAYERS_TO_ACCEPT){
 					accepting = false;
 				}
 			}
@@ -104,7 +129,7 @@ public class Server extends Thread {
 	 * @param id The ID of the client that originated the message.
 	 * @param message The message to send
 	 */
-	public void sendMessageToAll(final int id, final String message){
+	public void sendMessageToAll(final int id, final Object message){
 		
 		for(final ClientThread client : threads){
 			if(id != client.getID()){

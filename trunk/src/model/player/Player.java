@@ -47,6 +47,8 @@ public abstract class Player {
 	 * Stream used for receiving messages (Objects) from the server.
 	 */
 	protected ObjectInputStream in;
+	
+	protected boolean playerLocalToServer;
 
 	private String playerName;
 
@@ -79,6 +81,7 @@ public abstract class Player {
 		movedBoard = new Board(game.getWidth(), game.getHeight());
 		gameBoard = new Board(game.getWidth(), game.getHeight());
 		playerName = name;
+		this.playerLocalToServer = true;
 
 		if (connectToServer == true) {
 			logMessage("attempting to connect to server");
@@ -106,6 +109,10 @@ public abstract class Player {
 		System.out.println(playerName + ": " + message);
 	}
 
+	public boolean isPlayerLocalToServer(){
+		return playerLocalToServer;
+	}
+	
 	/**
 	 * Places the list of boats on the game board
 	 * 

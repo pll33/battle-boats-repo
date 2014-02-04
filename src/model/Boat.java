@@ -40,6 +40,8 @@ public class Boat {
 	 */
 	private boolean onBoard;
 	
+	private ArrayList<Move> squares = null;
+	
 	/**
 	 * Create a Boat.
 	 * @param x The x coordinate
@@ -77,7 +79,11 @@ public class Boat {
 	 * @return A List<Move> of all the squares (tiles) that the Boat is on.
 	 */
 	public ArrayList<Move> getSquares(){
-		ArrayList<Move> squares = new ArrayList<Move>(size);
+		
+		if(squares != null){
+			return squares;
+		}
+		squares = new ArrayList<Move>(size);
 		squares.add(new Move(x,y));
 		try{
 			if(orientation == Orientation.NORTH){

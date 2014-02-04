@@ -7,7 +7,7 @@ import java.util.Random;
 import utils.RandomHelper;
 
 import model.Boat;
-import model.Game;
+import model.Game_Old;
 import model.Move;
 import core.MoveState;
 import core.Orientation;
@@ -25,7 +25,7 @@ public class ComputerPlayer extends Player{
 	 * Creates a new ComputerPlayer.
 	 * @param game The game object that this player will be playing in.
 	 */
-	public ComputerPlayer(Game game) {
+	public ComputerPlayer(Game_Old game) {
 		super(game, "Computer");
 		int width = game.getWidth();
 		int height = game.getHeight();

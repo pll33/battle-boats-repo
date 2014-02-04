@@ -111,7 +111,7 @@ public class ClientThread extends Thread {
 				if(input instanceof Player){
 					clientLocalToServer = ((Player)input).isPlayerLocalToServer();
 				}else{
-					server.sendMessageToAll(id, input);
+					//server.sendMessageToAll(id, input);
 				}
 			}
 		} catch (IOException | ClassNotFoundException e) {

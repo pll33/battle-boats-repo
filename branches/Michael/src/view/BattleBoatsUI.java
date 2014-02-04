@@ -176,6 +176,7 @@ public class BattleBoatsUI extends JFrame {
 		
 		if (gsDialog.changesMade) {
 			// TODO use game settings to create PlacementUI
+			
 			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
 						gsDialog.getPlayerTwoName(),
 						gsDialog.getNumberOfRows(),

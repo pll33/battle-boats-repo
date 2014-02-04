@@ -219,4 +219,11 @@ public class Board {
 		return boats;
 	}
 	
+	/**
+	 * Clears the board of all placed ships and resets board states to empty
+	 */
+	public void clearBoats() {
+		boats.clear();
+		reset();
+	}
 }

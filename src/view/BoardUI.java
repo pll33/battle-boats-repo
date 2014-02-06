@@ -36,8 +36,8 @@ public class BoardUI extends JPanel {
 	private static final Color SELECTED_CELL_ORIENT = Color.GREEN;
 	private static final Color SELECTED_CELL_MOVE = Color.YELLOW;
 	private static final Color ORIENT_CELL = Color.PINK;
-	private static final Color PLACED_CELL = Color.RED;
-	private static final Color BOARD_OUTLINE = Color.GRAY;
+	private static final Color PLACED_CELL = Color.GRAY;
+	private static final Color BOARD_OUTLINE = Color.DARK_GRAY;
 	private static final Color BOARD_HEADING = Color.DARK_GRAY;
 	private static Random rand = new Random();
 	
@@ -88,10 +88,7 @@ public class BoardUI extends JPanel {
 	 */
 	public void randomize(){
 		// clear and update if there are already placed boats
-		if (placeBoard.hasBoats()) {
-			placeBoard.clearBoats();
-			repaint();
-		}
+		this.clear();
 		
 		// randomly place ships
 		for (int size : boatSizes) {
@@ -103,6 +100,13 @@ public class BoardUI extends JPanel {
 			} while(!placedShip);
 		}
 		repaint(); // force redraw
+	}
+	
+	public void clear() {
+		if (placeBoard.hasBoats()) {
+			placeBoard.clearBoats();
+			repaint();
+		}
 	}
 	
     protected void paintComponent(Graphics g) {
@@ -287,16 +291,17 @@ public class BoardUI extends JPanel {
 		int endFromOrigin = placeShipSize-1; 
 		// check locations placeShipSize away from origin
 		// horizontal
-		if ((currentCellPoint.x + endFromOrigin < numCols) ||
-				(currentCellPoint.x - endFromOrigin >= 0)) { // horizontal check
-			// check locations if another ship isn't already placed
-			
+		if (currentCellPoint != null) {
+			if ((currentCellPoint.x + endFromOrigin < numCols) &&
+					(currentCellPoint.x - endFromOrigin >= 0)) { // horizontal check
+				// check locations if another ship isn't already placed
+				
+			}
+			else if ((currentCellPoint.y + endFromOrigin < numRows) &&
+						(currentCellPoint.y - endFromOrigin >= 0)) {
+				// check locations if another ship isn't placed
+			}
 		}
-		else if ((currentCellPoint.y + endFromOrigin < numRows) ||
-					(currentCellPoint.y - endFromOrigin >= 0)) {
-			// check locations if another ship isn't placed
-		}
-		
 	}
     
 }

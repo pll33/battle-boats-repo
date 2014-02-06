@@ -22,6 +22,8 @@ public class PlacementUI extends JFrame {
 	private final Container contentPane;
 	private BoardUI boardPane;
 	private List<Integer> boatSizes;
+	private JButton clearButton;
+	private JButton submitButton;
 	
 	public PlacementUI() {
 		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
@@ -40,6 +42,7 @@ public class PlacementUI extends JFrame {
 		
 		contentPane.add(boardPane, BorderLayout.CENTER);
 		
+		setTitle("BattleBoats Placement");
 		createComponents();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change to show BattleBoatsUI on close
@@ -78,23 +81,34 @@ public class PlacementUI extends JFrame {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boardPane.randomize();
-				
+				submitButton.setEnabled(true);
+				clearButton.setEnabled(true);
 			}
 		});
 		boatlistPane.add(button);
 		
-		button = new JButton("Submit");
-		button.addActionListener(new ActionListener() {
+		clearButton = new JButton("Clear");
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boardPane.clear();
+				submitButton.setEnabled(false);
+			}
+		});
+		clearButton.setEnabled(false);
+		boatlistPane.add(clearButton);
+		
+		submitButton = new JButton("Submit");
+		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO
 				
 			}
 		});
-		button.setEnabled(false);
-		boatlistPane.add(button);
+		submitButton.setEnabled(false);
+		boatlistPane.add(submitButton);
 		
 		SpringUtilities.makeCompactGrid(boatlistPane,
-                numBoats+2, 1, 	//rows, cols
+                numBoats+3, 1, 	//rows, cols
                 10, 10,			//initX, initY
                 6, 6);			//xPad, yPad
 		

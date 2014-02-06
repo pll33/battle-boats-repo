@@ -56,17 +56,18 @@ public class BattleBoatsUI extends JFrame {
 
 		JPanel buttonPane = new JPanel(new SpringLayout());
 		
-//		addButton(buttonPane, "Connect to Server", new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO show option dialog with username input
-//			}
-//		});
-		
 		addButton(buttonPane, "New Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "newgame");
 			}
 		}, true);
+		
+//		addButton(buttonPane, "Join Game", new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO show option dialog with username input
+//			}
+//		}, true);
+		
 		addButton(buttonPane, "Load Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "loadgame");

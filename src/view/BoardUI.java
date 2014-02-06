@@ -44,7 +44,6 @@ public class BoardUI extends JPanel {
 	private int numRows, numCols, placeShipSize, placementMouseMode;
 	private boolean isPlacement;
 	private List<Rectangle> boardCellsUI; // UI representation of board cells
-	//private ArrayList<Boat> boardCells; // in-game representation 
 	private ArrayList<Integer> orientLocationIndices;
 	private List<Integer> boatSizes;
 	//private ArrayList<Point> currentSelectedCells; 

@@ -66,7 +66,8 @@ public class PlacementUI extends JFrame {
 					JToggleButton selectedTB = (JToggleButton) e.getSource();
 					//System.out.println(selectedTB.isSelected());
 					//if (selectedTB.isSelected());
-					enterPlacementMode(Integer.parseInt(selectedTB.getText()));
+					int shipSize = Integer.parseInt(selectedTB.getText());
+					enterPlacementMode(shipSize);
 					//TODO
 					
 				}
@@ -92,6 +93,7 @@ public class PlacementUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				boardPane.clear();
 				submitButton.setEnabled(false);
+				clearButton.setEnabled(false);
 			}
 		});
 		clearButton.setEnabled(false);

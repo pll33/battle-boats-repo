@@ -15,10 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-import controller.GameController;
-
 public class BattleBoatsUI extends JFrame {
 
+	private static final long serialVersionUID = -6401300338414521874L;
 	private final Container contentPane;
 	private CardLayout contentPaneCL;
 	
@@ -177,12 +176,12 @@ public class BattleBoatsUI extends JFrame {
 		
 		if (gsDialog.changesMade) {
 			// TODO use game settings to create PlacementUI
-			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
-						gsDialog.getPlayerTwoName(),
-						gsDialog.getNumberOfRows(),
-						gsDialog.getNumberOfCols(),
-						gsDialog.getBoatSizes(), 
-						false);
+//			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
+//						gsDialog.getPlayerTwoName(),
+//						gsDialog.getNumberOfRows(),
+//						gsDialog.getNumberOfCols(),
+//						gsDialog.getBoatSizes(), 
+//						false);
 			PlacementUI placeUI = new PlacementUI(gsDialog.getPlayerOneName(), 
 					gsDialog.getPlayerTwoName(),
 					gsDialog.getNumberOfRows(),
@@ -195,10 +194,6 @@ public class BattleBoatsUI extends JFrame {
 			placeUI.setVisible(true);
 			setVisible(false);
 		}
-	}
-	
-	protected void launchPlacement() {
-		
 	}
 	
 	private class LoadGameListener implements ActionListener {

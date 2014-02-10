@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.Cursor;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -11,164 +11,181 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import model.Board;
 import model.Boat;
 import model.Move;
 
+import utils.OrientationHelper;
 import utils.RandomHelper;
 import core.Orientation;
+import core.SquareState;
 
 public class PlacementBoardUI extends BoardUI {
 
 	private static final long serialVersionUID = 3619946983002807972L;
-	private int placeShipSize, placementMouseMode;
-	private ArrayList<Integer> orientLocationIndices;
-	private List<Integer> boatSizes;
+	protected static final String BOAT_INDEX = "placementBoatIndex";
 	
+	private static final Color SELECTED_CELL_DEFAULT = Color.LIGHT_GRAY;
+	private static final Color SELECTED_CELL_ERROR = Color.YELLOW;
+	private static final Color ORIENT_CELL = Color.PINK;
+	private static final Color ORIENT_CELL_ORIGIN = new Color(255,100,100);
+	
+	private int placementBoatSize, placementBoatIndex, placementMouseMode;
+	private List<Integer> boatSizes;
+	private List<Boolean> boatPlacement;
+	
+	private Board placeBoard;
+	private ArrayList<Point> orientLocations;
 	private Point currentSelectedCell;
 	private Point prevSelectedCell; 
+	private Point originLocation;
+	
 	private static Random rand = new Random();
 
 	public PlacementBoardUI(int rows, int cols, List<Integer> boatSizes) {
 		super(rows, cols);
 		this.boatSizes = boatSizes;
-		this.orientLocationIndices = new ArrayList<Integer>();
-		this.placementMouseMode = 0;
-		this.placeShipSize = 0;
-		
-		addMouseMotionListener(new MouseMoveAdapter());		
-		addMouseListener(new MousePressAdapter());
+		this.orientLocations = new ArrayList<Point>();
+		this.originLocation = null;
+		this.placementMouseMode = 0; // change to enum TODO
+		this.placementBoatIndex = -1;
+		this.placementBoatSize = 0;
+		this.placeBoard = new Board(rows, cols);
+		this.boatPlacement = new ArrayList<Boolean>(boatSizes.size());
+		for (int i = 0; i < boatSizes.size(); i++) {
+			boatPlacement.add(i, false);
+		}
+		this.addMouseMotionListener(new MouseMoveAdapter());		
+		this.addMouseListener(new MousePressAdapter());
 	}
 	
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // draw rectangles to make up board UI cells
-        if (boardCellsUI.isEmpty()) 
-        {
-            for (int row = 0; row < numRows; row++) {            	
-                for (int col = 0; col < numCols; col++) {
-                    Rectangle cell = new Rectangle(
-                    		BOARD_OFFSETX + (col * CELL_WIDTH), 
-          					BOARD_OFFSETY + (row * CELL_HEIGHT),
-                            CELL_WIDTH,
-                            CELL_HEIGHT);
-                    boardCellsUI.add(cell);
-                }
-            }
-        }
-        
-        // draw and fill ship origin
+        // draw placed boats (if any)
+	    if (placeBoard.hasBoats())
+	    {
+	    	ArrayList<Boat> placedBoats = placeBoard.getBoats();
+	    	for (Boat boat : placedBoats) {
+	    		ArrayList<Move> boatSquares = boat.getSquares();
+	      		for (Move cell : boatSquares) {
+	      			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
+	      			g2d.setColor(BOAT_CELL);
+	      			g2d.fill(boatCell);
+	      		}
+	    	}
+	    }	
+	    
+        // draw and fill boat origin
         if (currentSelectedCell != null) {
         	int currentIndex = getCellIndex(currentSelectedCell);
         	//System.out.println("index: " + index);
 		    Rectangle currentCell = boardCellsUI.get(currentIndex);
 		    g2d.setColor(SELECTED_CELL_DEFAULT);
 		    g2d.fill(currentCell);
-		    
-		    if (placementMouseMode == 0) { // change to enum TODO
-		    	if (prevSelectedCell != null) {
-		    		int prevIndex = getCellIndex(prevSelectedCell);
-		    		Rectangle prevCell = boardCellsUI.get(prevIndex);
-		    		g2d.setColor(SELECTED_CELL_MOVE);
-		    		g2d.fill(prevCell);
-		    	}
-			} else if (placementMouseMode == 1) {
-				g2d.setColor(SELECTED_CELL_ORIENT);
-				g2d.fill(currentCell);
-			} else {
-				placementMouseMode = 0;
-			}
         }
 
-        // draw and fill ship orientation locations
-        if (!orientLocationIndices.isEmpty()) {
-        	for (Integer i : orientLocationIndices) {
-        		Rectangle orientCell = boardCellsUI.get(i);
+        if (prevSelectedCell != null && placementMouseMode == 0) {
+    		int prevIndex = getCellIndex(prevSelectedCell);
+    		Rectangle prevCell = boardCellsUI.get(prevIndex);
+    		g2d.setColor(SELECTED_CELL_ERROR);
+    		g2d.fill(prevCell);
+    	}
+        
+        // draw and fill boat orientation locations
+        if (!orientLocations.isEmpty()) {
+        	for (Point p : orientLocations) {
+        		Rectangle orientCell = boardCellsUI.get(getCellIndex(p));
         		g2d.setColor(ORIENT_CELL);
         		g2d.fill(orientCell);
         	}
-        }
-        
-        // draw placed ships (if any)
-        if (placeBoard.hasBoats())
-        {
-        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
-        	for (Boat boat : placedBoats) {
-        		ArrayList<Move> boatSquares = boat.getSquares();
-        		for (Move cell : boatSquares) {
-        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y))); //TODO place on (X,Y) location
-        			g2d.setColor(PLACED_CELL);
-        			g2d.fill(boatCell);
-        		}
+        	
+        	if (originLocation != null) {
+        		Rectangle origin = boardCellsUI.get(getCellIndex(originLocation));
+        		g2d.setColor(ORIENT_CELL_ORIGIN);
+        		g2d.fill(origin);
         	}
         }
+  
         
-        // draw board cells outlines
-        g2d.setColor(BOARD_OUTLINE);
-        for (Rectangle cell : boardCellsUI) {
-            g2d.draw(cell);
-        }
-        
-        // draw board headings
-        g2d.setColor(BOARD_HEADING);
-    	int xHeadCol,
-    		yHeadCol = BOARD_OFFSETY - (CELL_HEIGHT/3),
-    		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5), // TODO fix arbitrary values
-    		yHeadRow;
-    	
-    	// column heading: numbers
-    	for (int col = 1; col <= numCols; col++) {
-    		xHeadCol = BOARD_OFFSETX + ((col-1) * CELL_WIDTH);
-    		if (col >= 10) {
-    			xHeadCol += (CELL_WIDTH / 3);
-    		} else {
-    			xHeadCol += (CELL_WIDTH / 2);
-    		}
-    		g2d.drawString(String.valueOf(col), xHeadCol, yHeadCol);
-    	}
-    	
-    	// row headings: letters
-    	char rowHead = 'A';
-    	for (int row = 0; row < numRows; row++) {
-    		yHeadRow = BOARD_OFFSETY + (row * CELL_HEIGHT) + (CELL_HEIGHT / 2) + 5;
-    		g2d.drawString(String.valueOf(rowHead), xHeadRow, yHeadRow);
-        	rowHead++;
-    	}
-    	
+        paintBoardGrid(g2d);
         g2d.dispose();
     }
     
-	public void setPlacementShipSize(int size) {
-		placeShipSize = size;
+	public void setPlacementBoatIndex(int idx) {
+		if (idx >= 0 && idx < boatSizes.size()) {
+			placementBoatIndex = idx;
+			placementBoatSize = boatSizes.get(idx);
+			
+			// update locations if size changes
+			if (placementMouseMode == 1 && prevSelectedCell != null) {
+				getValidPlacementLocations(prevSelectedCell);
+				repaint();
+			}
+		}
 	}
 
+	public Board getPlacementBoats() {
+		return this.placeBoard;
+	}
 	/**
 	 * Very inefficient randomization function.
 	 */
-	public void randomize(){
-		// clear and update if there are already placed boats
-		this.clear();
-		
-		// randomly place ships
-		for (int size : boatSizes) {
-			boolean placedShip = false;
-			do{
-				Point p = new Point(rand.nextInt(this.numRows),rand.nextInt(this.numCols));
-				Orientation orientation = RandomHelper.getRandomOrientation(rand);
-				placedShip = this.isValidPlacement(p, orientation, size);
-			} while(!placedShip);
+	// TODO place boats from largest to smallest will probably increase efficiency 
+	// (especially with boats greater than half the length of a row/col)
+	protected void randomize(){
+		// clear and update if there are all boats have already been placed
+		if (placeBoard.getBoats().size() == boatSizes.size()) {
+			this.clearPlacementBoard();
+		} else { 
+			this.clearBoard();
 		}
-		repaint(); // force redraw
+		
+		// Randomly places boats based on number of boats already placed. If no boats are
+		//  placed. randomize all. If >0 boats are placed, randomize remaining boats.
+		for (int i = 0; i < boatSizes.size(); i++) {
+			if (boatPlacement.get(i) == false) {
+				boolean placedBoat = false;
+				do{
+					Point p = new Point(rand.nextInt(this.numCols),rand.nextInt(this.numRows));
+					Orientation orientation = RandomHelper.getRandomOrientation(rand);
+					placedBoat = this.isValidPlacement(p, orientation, boatSizes.get(i));
+				} while(!placedBoat);
+				boatPlacement.set(i, true);
+			}
+		}
+		
+		// force redraw
+		repaint(); 
 	}
 	
-	public void clear() {
+	protected void clearBoard() {
+		orientLocations.clear();
+		originLocation = null;
+		resetPlacementBoatIndex(-1);
+		placementMouseMode = 0;
+		prevSelectedCell = null;
+		repaint();
+	}
+	
+	protected void clearPlacementBoard() {	
+		clearBoard();
+		
+		for (int i = 0; i < boatPlacement.size(); i++) {
+			boatPlacement.set(i, false);
+		}
+		
 		if (placeBoard.hasBoats()) {
 			placeBoard.clearBoats();
 			repaint();
 		}
 	}
-	
+
+	protected boolean isBoatIndexPlaced (int idx) {
+		return boatPlacement.get(idx);
+	}
+
 	/**
      * THIS METHOD PLACES THE BOAT IF IT RETURNS TRUE< ELSE IT DOES NOT PLACE IT.
      * @param cell
@@ -181,20 +198,71 @@ public class PlacementBoardUI extends BoardUI {
     	return placeBoard.addBoat(boat);
     }
     
-	private void getValidOrientLocations(Point currentCellPoint) {
-		orientLocationIndices.clear();
-		int endFromOrigin = placeShipSize-1; 
-		// check locations placeShipSize away from origin
-		// horizontal
-		if (currentCellPoint != null) {
-			if ((currentCellPoint.x + endFromOrigin < numCols) &&
-					(currentCellPoint.x - endFromOrigin >= 0)) { // horizontal check
-				// check locations if another ship isn't already placed
-				
+	private void getValidPlacementLocations(Point currentCellPoint) {
+		orientLocations.clear();
+		originLocation = currentCellPoint;
+		ArrayList<Move> validLocations = placeBoard.getValidPlacementLocations(currentCellPoint.x, currentCellPoint.y, placementBoatSize);
+		
+		for (Move loc : validLocations) {
+			orientLocations.add(new Point(loc.x, loc.y));
+		}
+	}
+	
+	private void resetPlacementBoatIndex(int newIndex) {
+		int oldValue = this.placementBoatIndex,
+			newValue = newIndex;
+		this.placementBoatIndex = newValue;
+		
+		// notify placementUI that value has changed
+		firePropertyChange(BOAT_INDEX, oldValue, newValue);
+	}
+	
+	private void placeBoat() {
+		Orientation orient = OrientationHelper.getOrientationFromOrigin(originLocation, currentSelectedCell);
+//		System.out.print("Placing boat: " + originLocation.x + ", " + originLocation.y + 
+//				" facing " + orient.toString() + " ("+boatSizes.get(placementBoatIndex)+")\n" );
+		isValidPlacement(originLocation, orient, boatSizes.get(placementBoatIndex));
+		boatPlacement.set(placementBoatIndex, true);
+		orientLocations.clear();
+		originLocation = null;
+		prevSelectedCell = null;
+		resetPlacementBoatIndex(-1);
+//		placementBoatIndex = -1;
+	}
+	
+	// find boat based on boatLocation and remove
+	private void removeBoat(Point boatLocation) {
+		Boat boatToRemove = null;
+		ArrayList<Boat> boats = placeBoard.getBoats();
+		for (Boat b : boats) {
+			ArrayList<Move> boatSquares = b.getSquares();
+			for (Move m : boatSquares) {
+				Point sq = new Point(m.x, m.y);
+				if (sq.equals(boatLocation)) 
+				{
+					boatToRemove = b;
+					break;
+				}
 			}
-			else if ((currentCellPoint.y + endFromOrigin < numRows) &&
-						(currentCellPoint.y - endFromOrigin >= 0)) {
-				// check locations if another ship isn't placed
+		}
+		
+		if (boatToRemove != null) {
+			// remove boat
+			placeBoard.removeBoat(boatToRemove);
+			
+			// Kind of hacky solution: finds (almost) exact index of boat removed so the 
+			// 	corresponding boatButton in placementUI can be re-enabled
+			// For games with many occurrences of the same boat size (ex: 2,2,2,2,2), the first 
+			//  occurrence that is disabled will be re-enabled
+			int size = boatToRemove.getSize();
+			for (int i = 0; i < boatSizes.size(); i++) {
+				if (boatSizes.get(i) == size && boatPlacement.get(i) == true) {
+					// reset placement boolean
+					boatPlacement.set(i, false); 
+					placementBoatSize = boatSizes.get(i);
+					resetPlacementBoatIndex(i);
+					return;
+				}
 			}
 		}
 	}
@@ -202,37 +270,73 @@ public class PlacementBoardUI extends BoardUI {
     private class MouseMoveAdapter extends MouseAdapter {
     	@Override
     	public void mouseMoved(MouseEvent e) {
-			//currentSelectedCells.clear();
-			//currentSelectedCells.add(getCurrentCell(e.getX(), e.getY()));
-			currentSelectedCell = getCurrentCell(e.getX(), e.getY());
-    		setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-            repaint();
+    		if (placementBoatSize > 0) {
+				currentSelectedCell = getCurrentCell(e.getX(), e.getY());
+				if (currentSelectedCell != null) {
+					setCursor(CROSSHAIR_CURSOR);
+				} else {
+					setCursor(DEFAULT_CURSOR);
+				}
+    		} else {
+    			setCursor(DEFAULT_CURSOR);
+    		}
+    		repaint();
         }
     }
     
+    // TODO some cleanup needed
     private class MousePressAdapter extends MouseAdapter {
     	@Override
 		public void mousePressed(MouseEvent e) {
-			System.out.println("press: " + e.getX() + ", " + e.getY());
-			prevSelectedCell = currentSelectedCell;
-			currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
-			if (placementMouseMode == 0) {
-				// TODO get valid orientation locations for current cell
-				getValidOrientLocations(currentSelectedCell);
-				placementMouseMode = 1;
-				//currentSelectedCells.clear();
-				//currentSelectedCells.add(getCurrentCell(e.getX(), e.getY()));
-			} else if (placementMouseMode == 1) {
-//				if currentSelectedCell=validCell
-//						placeShip in orientation
-				if (false){//isValidPlacement(currentSelectedCell,orientation,size)) {
-					// TODO place ship 
-				} else {
-					placementMouseMode = 0;
+    		if (placementBoatSize > 0) {
+				//System.out.println("press: " + e.getX() + ", " + e.getY());
+				System.out.println("placeMode: " + placementMouseMode);
+				prevSelectedCell = currentSelectedCell;
+				currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
+				if (currentSelectedCell != null && placementBoatIndex > -1) {
+					System.out.println("pt: " + currentSelectedCell.x + ", " + currentSelectedCell.y);
+					if (placementMouseMode == 0) {
+						SquareState currentCellState = placeBoard.getSquareState(currentSelectedCell.x, currentSelectedCell.y);
+						if (currentCellState == SquareState.EMPTY) { // selected cell = cell state is empty
+					 		// get valid placement locations
+							getValidPlacementLocations(currentSelectedCell);
+						} else if (currentCellState == SquareState.BOAT) { // selected cell = cell state is boat
+							// remove boat, get valid placement locations
+							removeBoat(currentSelectedCell);
+							getValidPlacementLocations(currentSelectedCell);
+						}
+					} else if (placementMouseMode == 1) { // orientation selection mode
+						// currentSelectedCell=validCell (not including origin)
+						if (!(currentSelectedCell.equals(originLocation)) &&
+								(orientLocations.contains(currentSelectedCell))) {
+							// place boat, placementMouseMode = 0
+							placeBoat();
+						} else if (currentSelectedCell.equals(originLocation)) {
+							placementMouseMode = 1;
+							return;
+						} else if (currentSelectedCell != null) { // selected cell = origin or any other cell
+							SquareState currentCellState = placeBoard.getSquareState(currentSelectedCell.x, currentSelectedCell.y);
+							if (currentCellState == SquareState.BOAT) {
+								// remove boat
+								removeBoat(currentSelectedCell);
+							}
+							getValidPlacementLocations(currentSelectedCell);
+							repaint();
+							placementMouseMode = 1;
+							return;
+						}
+					} 
+					placementMouseMode = (placementMouseMode == 0) ? 1 : 0;
+					//System.out.println("\nmode after press: " + placementMouseMode);
+				} else if (currentSelectedCell != null && placementBoatIndex == -1) {
+					SquareState currentCellState = placeBoard.getSquareState(currentSelectedCell.x, currentSelectedCell.y);
+					if (currentCellState == SquareState.BOAT) {
+						removeBoat(currentSelectedCell);
+					}
 				}
-			} 
+			}
 			repaint();
-			System.out.println(placementMouseMode);
+			
 		}
     }
 }

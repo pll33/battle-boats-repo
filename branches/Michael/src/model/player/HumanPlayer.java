@@ -1,5 +1,6 @@
 package model.player;
 
+import model.Move;
 import core.PlayerType;
 
 /**
@@ -10,5 +11,10 @@ public class HumanPlayer extends Player {
 
 	public HumanPlayer(String playerName) {
 		super(playerName, PlayerType.HUMAN);
+	}
+
+	@Override
+	public Move getMove() {
+		return this.nextMove;
 	}
 }

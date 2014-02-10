@@ -17,6 +17,9 @@ public class Game {
 	private GameSettings settings;
 	private String IP;
 
+	/**
+	 * The board on which the players Boats are placed
+	 */
 	private Board gameBoard;
 
 	/**
@@ -76,6 +79,18 @@ public class Game {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Board getGameBoard(){
+		return this.gameBoard;
+	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public Move getPlayerMove(){
+		return player.getMove();
 	}
 
 }

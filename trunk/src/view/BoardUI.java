@@ -7,178 +7,85 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JPanel;
 
-import utils.RandomHelper;
-
-import core.Orientation;
-
-import model.Board;
-import model.Boat;
-import model.Move;
-
 public class BoardUI extends JPanel {
+
+	private static final long serialVersionUID = 3676567175579720127L;
 	
-	private static final int CELL_WIDTH = 25; //px
-	private static final int CELL_HEIGHT = 25; //px
-	private static final int BOARD_PADDING = 2;
-	private static final int BOARD_OFFSETX = CELL_WIDTH*2;
-	private static final int BOARD_OFFSETY = CELL_HEIGHT*2;
-	private static final Color SELECTED_CELL_DEFAULT = Color.LIGHT_GRAY;
-	private static final Color SELECTED_CELL_ORIENT = Color.GREEN;
-	private static final Color SELECTED_CELL_MOVE = Color.YELLOW;
-	private static final Color ORIENT_CELL = Color.PINK;
-	private static final Color PLACED_CELL = Color.GRAY;
-	private static final Color BOARD_OUTLINE = Color.DARK_GRAY;
-	private static final Color BOARD_HEADING = Color.DARK_GRAY;
-	private static Random rand = new Random();
+	protected static final int CELL_WIDTH = 25; //px
+	protected static final int CELL_HEIGHT = 25; //px
+	protected static final int BOARD_PADDING = 2;
+	protected static final int BOARD_OFFSETX = CELL_WIDTH*2;
+	protected static final int BOARD_OFFSETY = CELL_HEIGHT*2;
+
+	protected static final Color BOAT_CELL = Color.GRAY;
+	protected static final Color BG_CELL = new Color(0,191,255);
+	protected static final Color BOARD_OUTLINE = Color.DARK_GRAY;
+	protected static final Color BOARD_HEADING = Color.DARK_GRAY;
+	protected static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+	protected static final Cursor CROSSHAIR_CURSOR = new Cursor(Cursor.CROSSHAIR_CURSOR);
 	
-	private int numRows, numCols, placeShipSize, placementMouseMode;
-	private boolean isPlacement;
-	private List<Rectangle> boardCellsUI; // UI representation of board cells
-	//private ArrayList<Boat> boardCells; // in-game representation 
-	private ArrayList<Integer> orientLocationIndices;
-	private List<Integer> boatSizes;
-	//private ArrayList<Point> currentSelectedCells; 
-	private Point currentSelectedCell; // expand to list of points for multiple cell selection?
-	private Point prevSelectedCell; 
-	private Board placeBoard;
+	protected int numRows, numCols;
+	
+	
+	
+	protected List<Rectangle> boardCellsUI; // UI representation of board cells
 	
 	/*public BoardUI() {
-		this(10, 10, false);
+		this(10, 10);
 	}*/
 	
-	// TODO make subclasses of BoardUI (PlaceBoardUI, PlayBoardUI) 
-	public BoardUI(int rows, int cols, List<Integer>boatSizes, boolean placement) {
+	public BoardUI(int rows, int cols) {
 		numRows = rows;
 		numCols = cols;
-		isPlacement = placement;
-		placementMouseMode = 0;
-		currentSelectedCell = null;
-		this.boatSizes = boatSizes;
-		placeBoard = new Board(rows, cols);
-		//currentSelectedCells = new ArrayList<Point>();
-		//isEditable affects whether mouseAdapter is added or not
 		
-		orientLocationIndices = new ArrayList<Integer>();
 		boardCellsUI = new ArrayList<Rectangle>(numRows * numCols);
-
-		addMouseMotionListener(new MouseMoveAdapter());		
-		addMouseListener(new MousePressAdapter());
+		
+		initializeBoardCells();
 	}
 	
 	public Dimension getPreferredSize() {
         return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING+1)); // fix dimensions and offsets for row/col heads
     }
-
-	public void setPlacementShipSize(int size) {
-		placeShipSize = size;
-	}
-	
-	/**
-	 * Very inefficient randomization function.
-	 */
-	public void randomize(){
-		// clear and update if there are already placed boats
-		this.clear();
-		
-		// randomly place ships
-		for (int size : boatSizes) {
-			boolean placedShip = false;
-			do{
-				Point p = new Point(rand.nextInt(this.numRows),rand.nextInt(this.numCols));
-				Orientation orientation = RandomHelper.getRandomOrientation(rand);
-				placedShip = this.isValidPlacement(p, orientation, size);
-			} while(!placedShip);
-		}
-		repaint(); // force redraw
-	}
-	
-	public void clear() {
-		if (placeBoard.hasBoats()) {
-			placeBoard.clearBoats();
-			repaint();
-		}
-	}
 	
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
-
-        // draw rectangles to make up board UI cells
-        if (boardCellsUI.isEmpty()) 
-        {
-            for (int row = 0; row < numRows; row++) {            	
-                for (int col = 0; col < numCols; col++) {
-                    Rectangle cell = new Rectangle(
-                    		BOARD_OFFSETX + (col * CELL_WIDTH), 
-          					BOARD_OFFSETY + (row * CELL_HEIGHT),
-                            CELL_WIDTH,
-                            CELL_HEIGHT);
-                    boardCellsUI.add(cell);
-                }
-            }
-        }
-        
-        // draw and fill ship origin
-//      if (currentSelectedCells.size() > 0) {
-//        	for (Point currentSelectedCell : currentSelectedCells) {
-        		if (currentSelectedCell != null) {
-		            int currentIndex = getCellIndex(currentSelectedCell);
-		            //System.out.println("index: " + index);
-		            Rectangle currentCell = boardCellsUI.get(currentIndex);
-		            g2d.setColor(SELECTED_CELL_DEFAULT);
-		            g2d.fill(currentCell);
-		            
-		            if (placementMouseMode == 0) { // change to enum TODO
-		            	if (prevSelectedCell != null) {
-		            		int prevIndex = getCellIndex(prevSelectedCell);
-		            		Rectangle prevCell = boardCellsUI.get(prevIndex);
-		            		g2d.setColor(SELECTED_CELL_MOVE);
-		            		g2d.fill(prevCell);
-		            	}
-					} else if (placementMouseMode == 1) {
-						g2d.setColor(SELECTED_CELL_ORIENT);
-						g2d.fill(currentCell);
-					} else {
-						placementMouseMode = 0;
-					}
-        		}
+ 
+        // TODO option to hide boats on board (ex: player can't see opposing player boats)
+//        // draw placed boats (if any)
+//        if (placeBoard.hasBoats())
+//        {
+//        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
+//        	for (Boat boat : placedBoats) {
+//        		ArrayList<Move> boatSquares = boat.getSquares();
+//        		for (Move cell : boatSquares) {
+//        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
+//        			g2d.setColor(PLACED_CELL);
+//        			g2d.fill(boatCell);
+//        		}
 //        	}
 //        }
-
-        // draw and fill ship orientation locations
-        if (!orientLocationIndices.isEmpty()) {
-        	for (Integer i : orientLocationIndices) {
-        		Rectangle orientCell = boardCellsUI.get(i);
-        		g2d.setColor(ORIENT_CELL);
-        		g2d.fill(orientCell);
-        	}
-        }
+//    	
         
-        // draw placed ships (if any)
-        if (placeBoard.hasBoats())
-        {
-        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
-        	for (Boat boat : placedBoats) {
-        		ArrayList<Move> boatSquares = boat.getSquares();
-        		for (Move cell : boatSquares) {
-        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y))); //TODO place on (X,Y) location
-        			g2d.setColor(PLACED_CELL);
-        			g2d.fill(boatCell);
-        		}
-        	}
-        }
+    	// draw board cells background
+//      g2d.setColor(BG_CELL);
+//      for (Rectangle cell : boardCellsUI) {
+//          g2d.fill(cell);
+//      }
         
-        // draw board cells outlines
+        
+        g2d.dispose();
+    }
+    
+    protected void paintBoardGrid(Graphics g) {
+    	Graphics2D g2d = (Graphics2D) g.create();
+        
+    	// draw board cells outlines
         g2d.setColor(BOARD_OUTLINE);
         for (Rectangle cell : boardCellsUI) {
             g2d.draw(cell);
@@ -188,7 +95,7 @@ public class BoardUI extends JPanel {
         g2d.setColor(BOARD_HEADING);
     	int xHeadCol,
     		yHeadCol = BOARD_OFFSETY - (CELL_HEIGHT/3),
-    		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5), // TODO fix arbitrary values
+    		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5),
     		yHeadRow;
     	
     	// column heading: numbers
@@ -202,6 +109,7 @@ public class BoardUI extends JPanel {
     		g2d.drawString(String.valueOf(col), xHeadCol, yHeadCol);
     	}
     	
+    	//TODO row headings should be right or center-aligned
     	// row headings: letters
     	char rowHead = 'A';
     	for (int row = 0; row < numRows; row++) {
@@ -212,12 +120,11 @@ public class BoardUI extends JPanel {
     	
         g2d.dispose();
     }
-    
-    private int getCellIndex(Point cell) {
+    protected int getCellIndex(Point cell) {
     	return cell.x + (cell.y * numCols);
     }
     
-    private Point getCurrentCell(int eX, int eY) {
+    protected Point getCurrentCell(int eX, int eY) {
     	int xLoc = eX- BOARD_OFFSETX,
 			yLoc = eY - BOARD_OFFSETY,
             col = xLoc / CELL_WIDTH,
@@ -233,75 +140,20 @@ public class BoardUI extends JPanel {
     	else
     		return null;
     }
-    /**
-     * THIS METHOD PLACES THE BOAT IF IT RETURNS TRUE< ELSE IT DOES NOT PLACE IT.
-     * @param cell
-     * @param orientation
-     * @param size
-     * @return
-     */
-    private boolean isValidPlacement(Point cell, Orientation orientation, int size) {
-    	Boat boat = new Boat(cell.x, cell.y, orientation,size);
-    	return placeBoard.addBoat(boat);
-    }
     
-    private class MouseMoveAdapter extends MouseAdapter {
-    	@Override
-    	public void mouseMoved(MouseEvent e) {
-			//currentSelectedCells.clear();
-			//currentSelectedCells.add(getCurrentCell(e.getX(), e.getY()));
-			currentSelectedCell = getCurrentCell(e.getX(), e.getY());
-    		setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-            repaint();
+    private void initializeBoardCells() {
+    	 // draw rectangles to make up board UI cells
+        if (boardCellsUI.isEmpty()) {
+            for (int row = 0; row < numRows; row++) {            	
+                for (int col = 0; col < numCols; col++) {
+                    Rectangle cell = new Rectangle(
+                    		BOARD_OFFSETX + (col * CELL_WIDTH), 
+          					BOARD_OFFSETY + (row * CELL_HEIGHT),
+                            CELL_WIDTH,
+                            CELL_HEIGHT);
+                    boardCellsUI.add(cell);
+                }
+            }
         }
     }
-    
-    private class MousePressAdapter extends MouseAdapter {
-    	@Override
-		public void mousePressed(MouseEvent e) {
-			System.out.println("press: " + e.getX() + ", " + e.getY());
-			if (isPlacement) {
-				prevSelectedCell = currentSelectedCell;
-				currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
-				if (placementMouseMode == 0) {
-					// TODO get valid orientation locations for current cell
-					getValidOrientLocations(currentSelectedCell);
-					placementMouseMode = 1;
-					//currentSelectedCells.clear();
-					//currentSelectedCells.add(getCurrentCell(e.getX(), e.getY()));
-				} else if (placementMouseMode == 1) {
-//					if currentSelectedCell=validCell
-//							placeShip in orientation
-					if (false){//isValidPlacement(currentSelectedCell,orientation,size)) {
-						// TODO place ship 
-					} else {
-						placementMouseMode = 0;
-					}
-				} 
-				repaint();
-				System.out.println(placementMouseMode);
-			} else {
-				//TODO default behavior for all non-placement boardUIs
-			}
-		}
-    }
-
-	private void getValidOrientLocations(Point currentCellPoint) {
-		orientLocationIndices.clear();
-		int endFromOrigin = placeShipSize-1; 
-		// check locations placeShipSize away from origin
-		// horizontal
-		if (currentCellPoint != null) {
-			if ((currentCellPoint.x + endFromOrigin < numCols) &&
-					(currentCellPoint.x - endFromOrigin >= 0)) { // horizontal check
-				// check locations if another ship isn't already placed
-				
-			}
-			else if ((currentCellPoint.y + endFromOrigin < numRows) &&
-						(currentCellPoint.y - endFromOrigin >= 0)) {
-				// check locations if another ship isn't placed
-			}
-		}
-	}
-    
 }

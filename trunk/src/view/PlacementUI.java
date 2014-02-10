@@ -1,10 +1,13 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,68 +15,73 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SpringLayout;
 
 public class PlacementUI extends JFrame {
 	
+	private static final long serialVersionUID = -8341984086894414855L;
+	
 	private final Container contentPane;
-	private BoardUI boardPane;
-	private List<Integer> boatSizes;
+	private PlacementBoardUI boardPane;
+	private List<JToggleButton> boatButtons;
+	private ButtonGroup boatButtonGroup;
 	private JButton clearButton;
 	private JButton submitButton;
 	
-	public PlacementUI() {
-		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
-	}
+	private List<Integer> boatSizes;
+//	private int activePlacementIndex;
+	
+//	public PlacementUI() {
+//		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
+//	}
 	
 	public PlacementUI(String playerOneName, String playerTwoName,
 			Integer numberOfRows, Integer numberOfCols,
 			ArrayList<Integer> boatSizes) {
 		
+		boardPane = new PlacementBoardUI(numberOfRows,numberOfCols, boatSizes); 
+		
 		contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
-
-		this.boatSizes = boatSizes; 
-
-		boardPane = new BoardUI(numberOfRows,numberOfCols, boatSizes, true); 
-		
 		contentPane.add(boardPane, BorderLayout.CENTER);
+		boatButtons = new ArrayList<JToggleButton>();
+		
+		this.boatSizes = boatSizes; 
+//		this.activePlacementIndex = -1;
 		
 		setTitle("BattleBoats Placement");
 		createComponents();
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // change to show BattleBoatsUI on close
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // TODO change to show BattleBoatsUI on close
 	}
 
 	private void createComponents() {
-		//JPanel shipList = new ShipListUI();
+		//JPanel boatList = new BoatListUI();
 		JPanel boatlistPane = new JPanel();
 		JButton button;
 		JToggleButton tb;
 		boatlistPane.setLayout(new SpringLayout());
 		
-		int numBoats = 5; // TODO set number ships based on game settings
-		ButtonGroup group = new ButtonGroup();
-		
+		int numBoats = boatSizes.size();
+		boatButtonGroup = new ButtonGroup();
+
 		for (int boatNum = 0; boatNum < boatSizes.size(); boatNum++)
 		{
+			final int boatIndex = boatNum;
 			tb = new JToggleButton(boatSizes.get(boatNum).toString());
 			tb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JToggleButton selectedTB = (JToggleButton) e.getSource();
-					//System.out.println(selectedTB.isSelected());
-					//if (selectedTB.isSelected());
-					enterPlacementMode(Integer.parseInt(selectedTB.getText()));
-					//TODO
-					
+					boardPane.setPlacementBoatIndex(boatIndex);
+					System.out.println("set: " + boatIndex);
+//					activePlacementIndex = boatIndex;
 				}
 			});
-			group.add(tb);			
+			boatButtons.add(tb);
+			boatButtonGroup.add(tb);			
 			boatlistPane.add(tb);
-			//createBoat(boatSizes.get(boatNum)); //TODO draw/create boat based on size
+			//createBoat(boatSizes.get(boatNum)); //TODO draw/create boat button based on size
 			
 		}
 		
@@ -81,6 +89,8 @@ public class PlacementUI extends JFrame {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boardPane.randomize();
+				boatButtonGroup.clearSelection();
+				setEnabledAllBoatButtons(false);
 				submitButton.setEnabled(true);
 				clearButton.setEnabled(true);
 			}
@@ -90,8 +100,11 @@ public class PlacementUI extends JFrame {
 		clearButton = new JButton("Clear");
 		clearButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boardPane.clear();
+				boardPane.clearPlacementBoard();
+				boatButtonGroup.clearSelection();
+				setEnabledAllBoatButtons(true);
 				submitButton.setEnabled(false);
+				clearButton.setEnabled(false);
 			}
 		});
 		clearButton.setEnabled(false);
@@ -100,8 +113,10 @@ public class PlacementUI extends JFrame {
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO
 				
+				//TODO
+				// create game UI for player, send placed boats board to gameUI
+//				startGame(boardPane.getPlacementBoats());
 			}
 		});
 		submitButton.setEnabled(false);
@@ -113,17 +128,79 @@ public class PlacementUI extends JFrame {
                 6, 6);			//xPad, yPad
 		
 		contentPane.add(boatlistPane, BorderLayout.EAST);
-	}
-	
-	private void enterPlacementMode(int shipSize) {
-		boardPane.setPlacementShipSize(shipSize);
-	}
-	
-	private void placeShip() {
-		// if togglebutton is pressed, 
-		// if cell contains ship, pick up ship
 		
-		
+		boardPane.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// TODO change board pane to use this instead of MouseMotionListener 
+				// update when boardPane.placementBoatIndex value changes
+				// (less calls check placementBoardUI, more immediate update to UI)
+				if (evt.getPropertyName().equals(PlacementBoardUI.BOAT_INDEX)) {
+					int oldIndex = (int) evt.getOldValue(),
+						newIndex = (int) evt.getNewValue();
+					
+					if (newIndex == -1) {
+						setEnabledBoatButton(oldIndex, false);
+						clearButton.setEnabled(true);
+						boatButtonGroup.clearSelection();
+					} else if (newIndex >= 0) {
+						setEnabledBoatButton(newIndex, true);
+						boatButtonGroup.setSelected(boatButtons.get(newIndex).getModel(), true);
+					}
+				}	
+				
+				int enabledCount = 0;
+				for (int j = 0; j < boatButtons.size(); j++) {
+					if (boatButtons.get(j).isEnabled() == true) {
+						enabledCount++;
+					}
+				}
+				
+				if (enabledCount == 0) {
+					// activate submit button when all boat buttons are disabled
+					submitButton.setEnabled(true);
+				} else if (enabledCount == boatButtons.size()) {
+					// de-activate clear button when all boat buttons are enabled 
+					clearButton.setEnabled(false);
+				}
+			}
+			
+		});
+//		boardPane.addMouseMotionListener(new MouseAdapter() {
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				// check placementBoardUI if boat has been placed, then disable boat button
+////				System.out.println("active: " + activePlacementIndex);
+//				if (activePlacementIndex >= 0 && boardPane.isBoatIndexPlaced(activePlacementIndex))
+//				{
+//					// disable boat button
+//					setEnabledBoatButton(activePlacementIndex, false);
+//					boatButtonGroup.clearSelection();
+////					repaint();
+//					activePlacementIndex = -1;
+//				} else {
+//					// enable buttons based on placementBoardUI.boatPlacement
+//					for (int i = 0; i < boatSizes.size(); i++) {
+//						if (!boardPane.isBoatIndexPlaced(i)) {
+//							setEnabledBoatButton(i, true);
+//						}
+//					}
+//				}
+//			}
+//		});
 	}
 	
+	private void setEnabledBoatButton(int index, boolean enable) {
+		if (index >= 0 && index < boatButtons.size()) {
+			boatButtons.get(index).setEnabled(enable);
+		}
+	}
+	
+	private void setEnabledAllBoatButtons(boolean enable) {
+//		activePlacementIndex = -1;
+		for (JToggleButton b : boatButtons) {
+			b.setEnabled(enable);
+		}
+	}
 }

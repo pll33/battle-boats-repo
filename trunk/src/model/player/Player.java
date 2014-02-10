@@ -154,12 +154,19 @@ public abstract class Player {
 
 	/**
 	 * 
-	 * @return The players GameBoard
+	 * @return The player's GameBoard
 	 */
 	public Board getGameBoard() {
 		return gameBoard;
 	}
 
+	/**
+	 * 
+	 * @return player's name
+	 */
+	public String getName() {
+		return playerName;
+	}
 	/**
 	 * Attempts to update the GameBoard with the specified list of Moves
 	 * 

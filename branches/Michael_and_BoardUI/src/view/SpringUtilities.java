@@ -1,5 +1,3 @@
-package view;
-
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
  *
@@ -30,6 +28,8 @@ package view;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
+
+package view;
 
 import javax.swing.*;
 import javax.swing.SpringLayout;

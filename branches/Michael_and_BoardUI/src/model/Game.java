@@ -53,6 +53,10 @@ public class Game {
 			this.player = new ComputerPlayer();
 		}
 	}
+	
+	public GameSettings getGameSettings(){
+		return this.settings;
+	}
 
 	private GameSettings recieveGameSettings() {
 		Object tmp = null;

@@ -15,11 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-import controller.GameController;
-import core.GameSettings;
-
 public class BattleBoatsUI extends JFrame {
 
+	private static final long serialVersionUID = -6401300338414521874L;
 	private final Container contentPane;
 	private CardLayout contentPaneCL;
 	
@@ -57,17 +55,18 @@ public class BattleBoatsUI extends JFrame {
 
 		JPanel buttonPane = new JPanel(new SpringLayout());
 		
-//		addButton(buttonPane, "Connect to Server", new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO show option dialog with username input
-//			}
-//		});
-		
 		addButton(buttonPane, "New Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "newgame");
 			}
 		}, true);
+		
+//		addButton(buttonPane, "Join Game", new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO show option dialog with username input
+//			}
+//		}, true);
+		
 		addButton(buttonPane, "Load Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "loadgame");
@@ -177,13 +176,12 @@ public class BattleBoatsUI extends JFrame {
 		
 		if (gsDialog.changesMade) {
 			// TODO use game settings to create PlacementUI
-			
-			GameSettings settings = new GameSettings(gsDialog.getNumberOfRows(), gsDialog.getNumberOfCols(), gsDialog.getBoatSizes());
-			settings.setPlayer1Name(gsDialog.getPlayerOneName());
-			settings.setPlayer2Name(gsDialog.getPlayerTwoName());
-			
-			GameController gc = new GameController(true, settings);
-			
+//			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
+//						gsDialog.getPlayerTwoName(),
+//						gsDialog.getNumberOfRows(),
+//						gsDialog.getNumberOfCols(),
+//						gsDialog.getBoatSizes(), 
+//						false);
 			PlacementUI placeUI = new PlacementUI(gsDialog.getPlayerOneName(), 
 					gsDialog.getPlayerTwoName(),
 					gsDialog.getNumberOfRows(),
@@ -196,10 +194,6 @@ public class BattleBoatsUI extends JFrame {
 			placeUI.setVisible(true);
 			setVisible(false);
 		}
-	}
-	
-	protected void launchPlacement() {
-		
 	}
 	
 	private class LoadGameListener implements ActionListener {

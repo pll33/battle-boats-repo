@@ -7,57 +7,45 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JPanel;
 
-import utils.RandomHelper;
-
-import core.Orientation;
-
-import model.Board;
-import model.Boat;
-import model.Move;
-
 public class BoardUI extends JPanel {
+
+	private static final long serialVersionUID = 3676567175579720127L;
 	
 	protected static final int CELL_WIDTH = 25; //px
 	protected static final int CELL_HEIGHT = 25; //px
 	protected static final int BOARD_PADDING = 2;
 	protected static final int BOARD_OFFSETX = CELL_WIDTH*2;
 	protected static final int BOARD_OFFSETY = CELL_HEIGHT*2;
-	protected static final Color SELECTED_CELL_DEFAULT = Color.LIGHT_GRAY;
-	protected static final Color SELECTED_CELL_ORIENT = Color.GREEN;
-	protected static final Color SELECTED_CELL_MOVE = Color.YELLOW;
-	protected static final Color ORIENT_CELL = Color.PINK;
-	protected static final Color PLACED_CELL = Color.GRAY;
+
+	protected static final Color BOAT_CELL = Color.GRAY;
+	protected static final Color BG_CELL = new Color(0,191,255);
 	protected static final Color BOARD_OUTLINE = Color.DARK_GRAY;
 	protected static final Color BOARD_HEADING = Color.DARK_GRAY;
-	
+	protected static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+	protected static final Cursor CROSSHAIR_CURSOR = new Cursor(Cursor.CROSSHAIR_CURSOR);
 	
 	protected int numRows, numCols;
-	protected Board placeBoard;
+	
+	
 	
 	protected List<Rectangle> boardCellsUI; // UI representation of board cells
 	
 	/*public BoardUI() {
-		this(10, 10, false);
+		this(10, 10);
 	}*/
 	
 	public BoardUI(int rows, int cols) {
 		numRows = rows;
 		numCols = cols;
-		placeBoard = new Board(rows, cols);
-		//currentSelectedCells = new ArrayList<Point>();
-		//isEditable affects whether mouseAdapter is added or not
 		
 		boardCellsUI = new ArrayList<Rectangle>(numRows * numCols);
+		
+		initializeBoardCells();
 	}
 	
 	public Dimension getPreferredSize() {
@@ -67,37 +55,37 @@ public class BoardUI extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
-
-        // draw rectangles to make up board UI cells
-        if (boardCellsUI.isEmpty()) 
-        {
-            for (int row = 0; row < numRows; row++) {            	
-                for (int col = 0; col < numCols; col++) {
-                    Rectangle cell = new Rectangle(
-                    		BOARD_OFFSETX + (col * CELL_WIDTH), 
-          					BOARD_OFFSETY + (row * CELL_HEIGHT),
-                            CELL_WIDTH,
-                            CELL_HEIGHT);
-                    boardCellsUI.add(cell);
-                }
-            }
-        }
+ 
+        // TODO option to hide boats on board (ex: player can't see opposing player boats)
+//        // draw placed boats (if any)
+//        if (placeBoard.hasBoats())
+//        {
+//        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
+//        	for (Boat boat : placedBoats) {
+//        		ArrayList<Move> boatSquares = boat.getSquares();
+//        		for (Move cell : boatSquares) {
+//        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
+//        			g2d.setColor(PLACED_CELL);
+//        			g2d.fill(boatCell);
+//        		}
+//        	}
+//        }
+//    	
         
-        // draw placed ships (if any)
-        if (placeBoard.hasBoats())
-        {
-        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
-        	for (Boat boat : placedBoats) {
-        		ArrayList<Move> boatSquares = boat.getSquares();
-        		for (Move cell : boatSquares) {
-        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y))); //TODO place on (X,Y) location
-        			g2d.setColor(PLACED_CELL);
-        			g2d.fill(boatCell);
-        		}
-        	}
-        }
+    	// draw board cells background
+//      g2d.setColor(BG_CELL);
+//      for (Rectangle cell : boardCellsUI) {
+//          g2d.fill(cell);
+//      }
         
-        // draw board cells outlines
+        
+        g2d.dispose();
+    }
+    
+    protected void paintBoardGrid(Graphics g) {
+    	Graphics2D g2d = (Graphics2D) g.create();
+        
+    	// draw board cells outlines
         g2d.setColor(BOARD_OUTLINE);
         for (Rectangle cell : boardCellsUI) {
             g2d.draw(cell);
@@ -107,7 +95,7 @@ public class BoardUI extends JPanel {
         g2d.setColor(BOARD_HEADING);
     	int xHeadCol,
     		yHeadCol = BOARD_OFFSETY - (CELL_HEIGHT/3),
-    		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5), // TODO fix arbitrary values
+    		xHeadRow = BOARD_OFFSETX - 3*(CELL_WIDTH/5),
     		yHeadRow;
     	
     	// column heading: numbers
@@ -121,6 +109,7 @@ public class BoardUI extends JPanel {
     		g2d.drawString(String.valueOf(col), xHeadCol, yHeadCol);
     	}
     	
+    	//TODO row headings should be right or center-aligned
     	// row headings: letters
     	char rowHead = 'A';
     	for (int row = 0; row < numRows; row++) {
@@ -131,7 +120,6 @@ public class BoardUI extends JPanel {
     	
         g2d.dispose();
     }
-    
     protected int getCellIndex(Point cell) {
     	return cell.x + (cell.y * numCols);
     }
@@ -153,4 +141,19 @@ public class BoardUI extends JPanel {
     		return null;
     }
     
+    private void initializeBoardCells() {
+    	 // draw rectangles to make up board UI cells
+        if (boardCellsUI.isEmpty()) {
+            for (int row = 0; row < numRows; row++) {            	
+                for (int col = 0; col < numCols; col++) {
+                    Rectangle cell = new Rectangle(
+                    		BOARD_OFFSETX + (col * CELL_WIDTH), 
+          					BOARD_OFFSETY + (row * CELL_HEIGHT),
+                            CELL_WIDTH,
+                            CELL_HEIGHT);
+                    boardCellsUI.add(cell);
+                }
+            }
+        }
+    }
 }

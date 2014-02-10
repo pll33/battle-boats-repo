@@ -2,6 +2,7 @@ package model.player;
 
 import core.PlayerType;
 import model.Board;
+import model.Move;
 
 /**
  * An abstract class to represent a Player.
@@ -18,8 +19,11 @@ public abstract class Player {
 	
 	protected PlayerType playerType;
 	
+	protected Move nextMove;
+	
 	public Player(final String playerName, final PlayerType playerType){
 		this.playerName = playerName;
+		this.nextMove = null;
 	}
 
 	/**
@@ -31,5 +35,11 @@ public abstract class Player {
 	protected void logMessage(final String message) {
 		System.out.println(playerName + ": " + message);
 	}
+	
+	public void setNextMove(final Move m){
+		this.nextMove = m;
+	}
+	
+	public abstract Move getMove();
 
 }

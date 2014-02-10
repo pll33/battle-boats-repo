@@ -61,13 +61,13 @@ public class Board {
 	 * @return Whether the move was a Hit or a Miss.
 	 */
 	public MoveState move(Move move){
-		SquareState state = boardState.get(move.x).get(move.y);
+		SquareState state = boardState.get(move.y).get(move.x);
 		
 		if(state == SquareState.HIT){
-			boardState.get(move.x).set(move.y, SquareState.HIT);
+			boardState.get(move.y).set(move.x, SquareState.HIT);
 			return MoveState.HIT;
 		}else if(state == SquareState.MISS){
-			boardState.get(move.x).set(move.y, SquareState.MISS);
+			boardState.get(move.y).set(move.x, SquareState.MISS);
 			return MoveState.MISS;
 		}else{
 			return MoveState.MISS;
@@ -134,50 +134,50 @@ public class Board {
 	}
 
 	/**
-	 * Determines the valid Orientations for a Boat being placed at the given (x,y) coordinates of the given size.
+	 * Determines the valid board locations for a Boat being placed at the 
+	 * given (x,y) coordinates of the given size based on orientation.
 	 * @param x The x coordinate
 	 * @param y The y coordinate
 	 * @param size The size of the Boat
-	 * @return A List<Orientation> of valid orientations for a Boat being placed at (x,y) of the given size.
+	 * @return A List<Point> of valid orientations for a Boat being placed at (x,y) of the given size.
 	 */
-	public ArrayList<Orientation> getValidOrientations(int x, int y, int size){
-		ArrayList<Orientation> orientations = new ArrayList<Orientation>(2);
-		Boat tempBoat = new Boat(x,y,Orientation.NORTH,size);
-		if(addBoat(tempBoat)){
-			orientations.add(Orientation.NORTH);
-			removeBoat(tempBoat);
-		}
-		tempBoat = new Boat(x,y,Orientation.SOUTH,size);
-		if(addBoat(tempBoat)){
-			orientations.add(Orientation.SOUTH);
-			removeBoat(tempBoat);
-		}
-		tempBoat = new Boat(x,y,Orientation.EAST,size);
-		if(addBoat(tempBoat)){
-			orientations.add(Orientation.EAST);
-			removeBoat(tempBoat);
-		}
-		tempBoat = new Boat(x,y,Orientation.WEST,size);
-		if(addBoat(tempBoat)){
-			orientations.add(Orientation.WEST);
-			removeBoat(tempBoat);
+	public ArrayList<Move> getValidPlacementLocations(int x, int y, int size){
+		ArrayList<Move> validLocations = new ArrayList<Move>();
+		ArrayList<Move> validSquares = new ArrayList<Move>();
+		Move origin = new Move(x, y);
+		
+		for (Orientation orient : Orientation.values()) {
+			Boat tempBoat = new Boat(x,y,orient,size);
+			if (addBoat(tempBoat)) {
+				validSquares.addAll(tempBoat.getSquares());
+				removeBoat(tempBoat);
+			}
 		}
 		
-		return orientations;
+		// add all non-origin squares to validLocations
+		for (Move sq : validSquares) {
+			if (!(sq.x == origin.x && sq.y == origin.y)) {
+				validLocations.add(sq);
+			}
+		}
+		
+		//validLocations.add(origin); // disabled for now to show origin separately in UI
+		return validLocations;
 	}
 	
 	public boolean removeBoat(Boat boat){
 		for(Move move : boat.getSquares()){
 			try{
-				if(boardState.get(move.x).get(move.y) != SquareState.BOAT){
+				if(boardState.get(move.y).get(move.x) != SquareState.BOAT){
 					return false;
 				}
 			} catch (IndexOutOfBoundsException e){
 				return false;
 			}
 		} for(Move move : boat.getSquares()){
-			boardState.get(move.x).set(move.y, SquareState.EMPTY);
+			boardState.get(move.y).set(move.x, SquareState.EMPTY);
 		}
+		this.boats.remove(boat);
 		return true;
 	}
 	
@@ -187,17 +187,17 @@ public class Board {
 	 * @return true if the Boat was successfully placed, false otherwise.
 	 */
 	public boolean addBoat(Boat boat) {
-		for(Move move:boat.getSquares()){
+		for(Move move : boat.getSquares()){
 			try{
-				if(boardState.get(move.x).get(move.y) != SquareState.EMPTY){
+				if(boardState.get(move.y).get(move.x) != SquareState.EMPTY){
 					return false;
 				}
 			} catch (IndexOutOfBoundsException e){
 				return false;
 			}
 		}
-		for(Move move:boat.getSquares()){
-			boardState.get(move.x).set(move.y, SquareState.BOAT);
+		for(Move move : boat.getSquares()){
+			boardState.get(move.y).set(move.x, SquareState.BOAT);
 		}
 		this.boats.add(boat);
 		return true;
@@ -226,4 +226,17 @@ public class Board {
 		boats.clear();
 		reset();
 	}
+	
+	public SquareState getSquareState(int row, int col) {
+		return boardState.get(col).get(row);
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 }

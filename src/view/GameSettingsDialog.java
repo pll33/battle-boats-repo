@@ -22,9 +22,7 @@ public class GameSettingsDialog extends JDialog {
 
 	protected boolean changesMade;
 	
-	private static final long serialVersionUID = 8467864338848501456L;
 	private static final int TXTBOX_LENGTH = 6;
-	
 	private Container content;
 	private JTextField player1Name;
 	private JTextField player2Name;
@@ -32,7 +30,6 @@ public class GameSettingsDialog extends JDialog {
 	private JComboBox<Integer> numCols;
 	private JComboBox<Integer> numBoats;
 	private JTextField boatSizes;
-	
 	private int numPlayers;
 	
 	public GameSettingsDialog(JFrame frame, int numPlayers) {
@@ -85,7 +82,7 @@ public class GameSettingsDialog extends JDialog {
 		// 	-# of boats [default: 5]
 		// 	-board size [default: 10x10]
 		Integer[] cbNumBoats = { 5 }; // TODO expand?
-		Integer[] cbBoardSize = { 5, 10, 15, 20, 25 }; 
+		Integer[] cbBoardSize = { 10 };  // TODO expand?
 		
 		label = new JLabel("Players"); 
 		label.setFont(label.getFont().deriveFont(14.0f));
@@ -117,7 +114,8 @@ public class GameSettingsDialog extends JDialog {
 			player2Name.setText("Computer");
 			player2Name.setEnabled(false);
 			player2Name.setDisabledTextColor(Color.DARK_GRAY);
-		} else {
+		}
+		else {
 			player2Name.setText("Player 2");
 			player2Name.setToolTipText("Player 2");
 			player2Name.addFocusListener(new TextFieldFocusListener());
@@ -135,9 +133,7 @@ public class GameSettingsDialog extends JDialog {
 		JPanel boardSizePanel = new JPanel();
 		boardSizePanel.setLayout(new BoxLayout(boardSizePanel, BoxLayout.X_AXIS));
 		numRows = new JComboBox<Integer>(cbBoardSize);
-		numRows.setSelectedItem(10);
 		numCols = new JComboBox<Integer>(cbBoardSize);
-		numCols.setSelectedItem(10);
 		label.setLabelFor(numRows);
 		boardSizePanel.add(numRows);
 		boardSizePanel.add(new JLabel(" x "));
@@ -155,7 +151,6 @@ public class GameSettingsDialog extends JDialog {
 		boatSizes = new JTextField();
 		boatSizes.setText("2, 3, 3, 4, 5"); // TODO placeholder
 		// expand to allow user input of boat sizes
-		// validation needed so user does not input a size greater than the length of a row/col
 		boatSizes.setEnabled(false);
 		boatSizes.setDisabledTextColor(Color.DARK_GRAY);
 		label.setLabelFor(boatSizes);
@@ -189,18 +184,22 @@ public class GameSettingsDialog extends JDialog {
 	
 	private class TextFieldFocusListener implements FocusListener {
 		public void focusGained(FocusEvent e) {
-			if (e.getComponent() != null) {
+			if (e.getComponent() != null)
+			{
 				JTextField txtField = (JTextField) e.getComponent();
-				if (txtField.getText().equals(txtField.getToolTipText())) {
+				if (txtField.getText().equals(txtField.getToolTipText()))
+				{
 					txtField.setText("");
 				}
 			}
 		}
 			
 		public void focusLost(FocusEvent e) {
-			if (e.getComponent() != null) {
+			if (e.getComponent() != null)
+			{
 				JTextField txtField = (JTextField) e.getComponent();
-				if (txtField.getText().equals("")) {
+				if (txtField.getText().equals(""))
+				{
 					txtField.setText(txtField.getToolTipText());
 				}
 			}

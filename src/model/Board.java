@@ -230,4 +230,13 @@ public class Board {
 	public SquareState getSquareState(int row, int col) {
 		return boardState.get(col).get(row);
 	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 }

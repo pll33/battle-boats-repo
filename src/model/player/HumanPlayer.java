@@ -1,6 +1,7 @@
 package model.player;
 
-import model.Game;
+import model.Move;
+import core.PlayerType;
 
 /**
  * A class representing a local human Player.
@@ -8,11 +9,12 @@ import model.Game;
  */
 public class HumanPlayer extends Player {
 
-	public HumanPlayer(Game game, String playerName) {
-		super(game, playerName);
+	public HumanPlayer(String playerName) {
+		super(playerName, PlayerType.HUMAN);
 	}
-	
-	public HumanPlayer(Game game, String playerName, boolean multiplayer) {
-		super(game, playerName, multiplayer);
+
+	@Override
+	public Move getMove() {
+		return this.nextMove;
 	}
 }

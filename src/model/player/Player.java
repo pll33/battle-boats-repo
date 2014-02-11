@@ -36,9 +36,7 @@ public abstract class Player {
 		System.out.println(playerName + ": " + message);
 	}
 	
-	public void setNextMove(final Move m){
-		this.nextMove = m;
-	}
+	public abstract void setNextMove(final Move m);
 	
 	public abstract Move getMove();
 

@@ -28,14 +28,11 @@ public class GameController {
 	public GameController(final boolean hostGame, final GameSettings settings, final PlayerType playerType){
 		if (hostGame) {
 			this.server = createServer(settings);
+			if(settings.isVsComputer() && playerType == PlayerType.HUMAN){
+				new ComputerController(settings).start();
+			}
 		} else {
 			this.server = null;
-		}
-		
-		System.out.println(playerType);
-
-		if(settings.isVsComputer() && playerType == PlayerType.HUMAN){
-			new ComputerController(settings).start();
 		}
 		
 		//change IP to not be hard coded

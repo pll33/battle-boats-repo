@@ -17,4 +17,9 @@ public class HumanPlayer extends Player {
 	public Move getMove() {
 		return this.nextMove;
 	}
+
+	@Override
+	public void setNextMove(final Move m) {
+		this.nextMove = m;
+	}
 }

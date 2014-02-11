@@ -28,4 +28,9 @@ public class ComputerPlayer extends Player {
 		return RandomHelper.getRandomValidMove(new Random(), movedBoard);
 	}
 
+	@Override
+	public void setNextMove(final Move m) {
+		
+	}
+
 }

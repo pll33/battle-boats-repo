@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import core.ReadyIndicator;
 import model.player.Player;
 
 /**
@@ -97,11 +98,27 @@ public class ClientThread extends Thread {
 		Object input; //what the client sends in		
 		try {			
 			while(running == true && (input = in.readObject()) != null){
-					server.sendMessageToAll(id, input);
+					handleMessage(input);
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void handleMessage(final Object message){
+		if(message instanceof ReadyIndicator){
+			logMessage("Message: ReadyIndicator");
+			if(server.setReadyStatus(id) == true){
+				server.sendMessageToAll(new ReadyIndicator());
+			}
+		}else{
+			server.sendMessageToAll(id, message);
+		}
+		
+	}
+	
+	private void logMessage(final String message){
+		System.out.println("Client Thread " + id + ": " + message);
 	}
 
 }

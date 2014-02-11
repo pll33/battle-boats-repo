@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import core.Constants;
 import core.GameSettings;
+import core.ReadyIndicator;
 
 public class Server extends Thread {
 
@@ -25,6 +27,8 @@ public class Server extends Thread {
 	private Semaphore mutex;
 
 	private GameSettings settings;
+	
+	private Boolean[] readyStatus;
 
 	public Server(final Semaphore mutex, final GameSettings settings) {
 		this(Constants.PORT, mutex, settings);
@@ -32,6 +36,8 @@ public class Server extends Thread {
 
 	public Server(final int port, final Semaphore mutex,
 			final GameSettings settings) {
+		this.readyStatus = new Boolean[2];
+		Arrays.fill(readyStatus, Boolean.FALSE);
 		this.port = port;
 		this.accepting = true;
 		this.count = 0;
@@ -55,9 +61,10 @@ public class Server extends Thread {
 			while (accepting) {
 				Socket clientSocket = serverSocket.accept();
 				logMessage("Client Connected");
-				count++;
-				threads.add(new ClientThread(count, clientSocket, this));
+				
+				threads.add(new ClientThread(threads.size(), clientSocket, this));
 				threads.get(threads.size() - 1).start();
+				count++;
 
 				logMessage("Number of clients connected: " + threads.size());
 
@@ -87,6 +94,18 @@ public class Server extends Thread {
 				ct.sendMessage(message);
 			}
 		}
+	}
+	
+	public boolean setReadyStatus(int id){
+		this.readyStatus[id] = true;
+		
+		boolean allReady = true;
+		for(Boolean b : readyStatus){
+			if(b == false){
+				allReady = false;
+			}
+		}
+		return allReady;
 	}
 
 	/**

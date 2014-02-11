@@ -1,5 +1,6 @@
 package model;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import core.MoveState;
@@ -8,7 +9,7 @@ import core.SquareState;
 
 /**
  * A class representing the Board(s) of each Player.
- *
+ * 
  */
 public class Board {
 
@@ -16,65 +17,72 @@ public class Board {
 	 * A list of boats placed on this Board.
 	 */
 	private ArrayList<Boat> boats;
-	
+
 	/**
 	 * The Board tiles represented as SquareStates
 	 */
 	private ArrayList<ArrayList<SquareState>> boardState;
-	
+
 	/**
 	 * The width of the board.
 	 */
 	int width;
-	
+
 	/**
 	 * The height of the board.
 	 */
 	int height;
-	
+
 	/**
 	 * Create an empty Board with the specified width and height.
-	 * @param width The width of the board.
-	 * @param height The height of the board.
+	 * 
+	 * @param width
+	 *            The width of the board.
+	 * @param height
+	 *            The height of the board.
 	 */
-	public Board(int width, int height){
+	public Board(int width, int height) {
 		this.width = width;
 		this.height = height;
 		boats = new ArrayList<Boat>();
 		reset();
 	}
-	
+
 	/**
 	 * Create a copy of a Board.
-	 * @param other The Board to be copied.
+	 * 
+	 * @param other
+	 *            The Board to be copied.
 	 */
-	public Board(Board other){
+	public Board(Board other) {
 		this.boats = other.boats;
 		this.boardState = other.boardState;
 		this.width = other.width;
 		this.height = other.height;
 	}
-	
+
 	/**
 	 * Does a move on this Board and updates the Board accordingly.
-	 * @param move The Move to execute
+	 * 
+	 * @param move
+	 *            The Move to execute
 	 * @return Whether the move was a Hit or a Miss.
 	 */
-	public MoveState move(Move move){
+	public MoveState move(Move move) {
 		SquareState state = boardState.get(move.y).get(move.x);
-		
-		if(state == SquareState.HIT){
+
+		if (state == SquareState.HIT) {
 			boardState.get(move.y).set(move.x, SquareState.HIT);
 			return MoveState.HIT;
-		}else if(state == SquareState.MISS){
+		} else if (state == SquareState.MISS) {
 			boardState.get(move.y).set(move.x, SquareState.MISS);
 			return MoveState.MISS;
-		}else{
+		} else {
 			return MoveState.MISS;
 		}
-		
+
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,118 +115,152 @@ public class Board {
 		return true;
 	}
 
-	public boolean addBoats(ArrayList<Boat> boats){
-		for(Boat boat:boats){
-			//Sets every space occupied by boat to boat
-			if(!addBoat(boat)){
+	public boolean addBoats(ArrayList<Boat> boats) {
+		for (Boat boat : boats) {
+			// Sets every space occupied by boat to boat
+			if (!addBoat(boat)) {
 				reset();
 				return false;
 			}
-		} 
+		}
 		return true;
 	}
-	
+
 	/**
 	 * Sets the whole board to empty.
 	 */
-	private void reset(){
+	private void reset() {
 		boardState = new ArrayList<ArrayList<SquareState>>(width);
-		//Set whole boardState to empty
-		for(int i=0; i<width; i++){
+		// Set whole boardState to empty
+		for (int i = 0; i < width; i++) {
 			ArrayList<SquareState> temp = new ArrayList<SquareState>(height);
-			for(int j=0; j<height;j++){
+			for (int j = 0; j < height; j++) {
 				temp.add(SquareState.EMPTY);
 			}
 			boardState.add(temp);
 		}
 	}
 
+	public List<Boat> getValidPlacementsForBoat(final int size) {
+		ArrayList<Boat> validMoves = new ArrayList<Boat>();
+
+		for (int i = 0; i < width; i++) {
+			for (int n = 0; n < height; n++) {
+
+				for (final Orientation orient : Orientation.values()) {
+
+					Boat temp = new Boat(i, n, orient, size);
+					if (addBoat(temp)) {
+						validMoves.add(temp);
+						removeBoat(temp);
+					}
+
+				}
+
+			}
+		}
+
+		return validMoves;
+	}
+
 	/**
-	 * Determines the valid board locations for a Boat being placed at the 
-	 * given (x,y) coordinates of the given size based on orientation.
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param size The size of the Boat
-	 * @return A List<Point> of valid orientations for a Boat being placed at (x,y) of the given size.
+	 * Determines the valid board locations for a Boat being placed at the given
+	 * (x,y) coordinates of the given size based on orientation.
+	 * 
+	 * @param x
+	 *            The x coordinate
+	 * @param y
+	 *            The y coordinate
+	 * @param size
+	 *            The size of the Boat
+	 * @return A List<Point> of valid orientations for a Boat being placed at
+	 *         (x,y) of the given size.
 	 */
-	public ArrayList<Move> getValidPlacementLocations(int x, int y, int size){
+	public ArrayList<Move> getValidPlacementLocations(int x, int y, int size) {
 		ArrayList<Move> validLocations = new ArrayList<Move>();
 		ArrayList<Move> validSquares = new ArrayList<Move>();
 		Move origin = new Move(x, y);
-		
+
 		for (Orientation orient : Orientation.values()) {
-			Boat tempBoat = new Boat(x,y,orient,size);
+			Boat tempBoat = new Boat(x, y, orient, size);
 			if (addBoat(tempBoat)) {
 				validSquares.addAll(tempBoat.getSquares());
 				removeBoat(tempBoat);
 			}
 		}
-		
+
 		// add all non-origin squares to validLocations
 		for (Move sq : validSquares) {
 			if (!(sq.x == origin.x && sq.y == origin.y)) {
 				validLocations.add(sq);
 			}
 		}
-		
-		//validLocations.add(origin); // disabled for now to show origin separately in UI
+
+		// validLocations.add(origin); // disabled for now to show origin
+		// separately in UI
 		return validLocations;
 	}
-	
-	public boolean removeBoat(Boat boat){
-		for(Move move : boat.getSquares()){
-			try{
-				if(boardState.get(move.y).get(move.x) != SquareState.BOAT){
+
+	public boolean removeBoat(Boat boat) {
+		for (Move move : boat.getSquares()) {
+			try {
+				if (boardState.get(move.y).get(move.x) != SquareState.BOAT) {
 					return false;
 				}
-			} catch (IndexOutOfBoundsException e){
+			} catch (IndexOutOfBoundsException e) {
 				return false;
 			}
-		} for(Move move : boat.getSquares()){
+		}
+		for (Move move : boat.getSquares()) {
 			boardState.get(move.y).set(move.x, SquareState.EMPTY);
 		}
 		this.boats.remove(boat);
 		return true;
 	}
-	
+
 	/**
 	 * If possible, places the given Boat on the Board
-	 * @param boat The Boat to places
+	 * 
+	 * @param boat
+	 *            The Boat to places
 	 * @return true if the Boat was successfully placed, false otherwise.
 	 */
 	public boolean addBoat(Boat boat) {
-		for(Move move : boat.getSquares()){
-			try{
-				if(boardState.get(move.y).get(move.x) != SquareState.EMPTY){
+		for (Move move : boat.getSquares()) {
+			try {
+				if (boardState.get(move.y).get(move.x) != SquareState.EMPTY) {
 					return false;
 				}
-			} catch (IndexOutOfBoundsException e){
+			} catch (IndexOutOfBoundsException e) {
 				return false;
 			}
 		}
-		for(Move move : boat.getSquares()){
+		for (Move move : boat.getSquares()) {
 			boardState.get(move.y).set(move.x, SquareState.BOAT);
 		}
 		this.boats.add(boat);
 		return true;
 	}
-	
+
 	/**
 	 * Checks if board has boats added to it
-	 * @return true if the list of boats has one or more elements, false otherwise
+	 * 
+	 * @return true if the list of boats has one or more elements, false
+	 *         otherwise
 	 */
 	public boolean hasBoats() {
 		return boats.size() > 0;
 	}
-	
+
 	/**
 	 * Gets the list of boats
+	 * 
 	 * @return list of boats
 	 */
 	public ArrayList<Boat> getBoats() {
 		return boats;
 	}
-	
+
 	/**
 	 * Clears the board of all placed ships and resets board states to empty
 	 */
@@ -226,7 +268,7 @@ public class Board {
 		boats.clear();
 		reset();
 	}
-	
+
 	public SquareState getSquareState(int row, int col) {
 		return boardState.get(col).get(row);
 	}

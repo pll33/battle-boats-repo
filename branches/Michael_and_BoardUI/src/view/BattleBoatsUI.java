@@ -15,6 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import controller.GameController;
+import core.GameSettings;
+
 public class BattleBoatsUI extends JFrame {
 
 	private static final long serialVersionUID = -6401300338414521874L;
@@ -61,11 +64,11 @@ public class BattleBoatsUI extends JFrame {
 			}
 		}, true);
 		
-//		addButton(buttonPane, "Join Game", new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO show option dialog with username input
-//			}
-//		}, true);
+		addButton(buttonPane, "Join Game", new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				contentPaneCL.show(contentPane, "joingame");
+			}
+		}, true);
 		
 		addButton(buttonPane, "Load Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -175,18 +178,28 @@ public class BattleBoatsUI extends JFrame {
 		gsDialog.setVisible(true);
 		
 		if (gsDialog.changesMade) {
-			// TODO use game settings to create PlacementUI
-//			GameController gc = new GameController(gsDialog.getPlayerOneName(), 
-//						gsDialog.getPlayerTwoName(),
-//						gsDialog.getNumberOfRows(),
-//						gsDialog.getNumberOfCols(),
-//						gsDialog.getBoatSizes(), 
-//						false);
-			PlacementUI placeUI = new PlacementUI(gsDialog.getPlayerOneName(), 
-					gsDialog.getPlayerTwoName(),
-					gsDialog.getNumberOfRows(),
-					gsDialog.getNumberOfCols(),
-					gsDialog.getBoatSizes());
+
+			GameSettings settings;			
+			GameController gc;
+			
+			//this flag will get set to true if Join Game is clicked (however this should be accomplished)
+			boolean joiningGame = false;
+			if(joiningGame){
+				gc = new GameController(false, null);
+				settings = gc.getGame().getGameSettings();
+			}else{
+				settings = new GameSettings(gsDialog.getNumberOfRows(), gsDialog.getNumberOfCols(), gsDialog.getBoatSizes());
+				settings.setPlayer1Name(gsDialog.getPlayerOneName());
+				settings.setPlayer2Name(gsDialog.getPlayerTwoName());
+				gc = new GameController(true, settings);				
+			}			
+			
+			PlacementUI placeUI = new PlacementUI(settings.getPlayer1Name(), 
+					settings.getPlayer2Name(),
+					settings.getWidth(),
+					settings.getHeight(),
+					settings.getBoatSizes(),
+					gc);
 			
 			placeUI.pack();
 			placeUI.setLocationRelativeTo(null);

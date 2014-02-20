@@ -1,12 +1,16 @@
 package controller;
 
-import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
+import core.Constants;
+import core.GameSettings;
+import core.PlayerType;
 import model.Game;
+import model.server.Server;
 
 /**
  * Class that controls the game itself. Handles starting/stopping etc.
- *
+ * 
  */
 public class GameController {
 
@@ -15,31 +19,41 @@ public class GameController {
 	 */
 	private Game game;
 
-	/**
-	 * GameController constructor that creates a Game with default settings.
-	 */
-	public GameController() {
-		ArrayList<Integer> sizes = new ArrayList<Integer>();
-		sizes.add(2);
-		sizes.add(3);
-		sizes.add(3);
-		sizes.add(4);
-		sizes.add(5);
-		game = new Game("Player 1", "Player2", 10, 10, sizes, false);
+	private Server server;
+
+	public GameController(final boolean hostGame, final GameSettings settings) {
+		this(hostGame, settings, PlayerType.HUMAN);		
+	}
+	
+	public GameController(final boolean hostGame, final GameSettings settings, final PlayerType playerType){
+		if (hostGame) {
+			this.server = createServer(settings);
+			if(settings.isVsComputer() && playerType == PlayerType.HUMAN){
+				new ComputerController(settings).start();
+			}
+		} else {
+			this.server = null;
+		}
+		
+		//change IP to not be hard coded
+		this.game = new Game(Constants.LOCAL_IP, playerType);
 	}
 
-	/**
-	 * GameController constructor that creates a Game with supplied settings.
-	 * @param player1 Player 1's name
-	 * @param player2 Player 2' name
-	 * @param width The width of the game board
-	 * @param height The height of the game board
-	 * @param boatSizes A List<Integer> indicating how many boats and their respective sizes.
-	 * @param multiplayer Whether this game is two humans players (true) or against computer (false)
-	 */
-	public GameController(String player1, String player2, int width,
-			int height, ArrayList<Integer> boatSizes, boolean multiplayer) {
-		game = new Game(player1, player2, width, height, boatSizes, multiplayer);
+	private Server createServer(final GameSettings settings) {
+		//create a locked mutex
+		Semaphore mutex = new Semaphore(0);
+		
+		Server server = new Server(mutex, settings);
+		server.start();
+		
+		//being able to acquire the mutex means the Server is accepting connections
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		return server;
 	}
 
 	/**
@@ -50,5 +64,9 @@ public class GameController {
 		while (gameOn) {
 
 		}
+	}
+	
+	public Game getGame(){
+		return this.game;
 	}
 }

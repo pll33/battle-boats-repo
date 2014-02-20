@@ -70,7 +70,7 @@ public class GameUI extends JFrame {
 	private void createPlayerScreen(int playerNumber) {
 		JPanel playerScreen = new JPanel();
 //		createTimer();
-		createBoards(game.getP1().getName(), game.getP2().getName());
+		createBoards(game.getGameSettings().getPlayer1Name(), game.getGameSettings().getPlayer2Name());
 		createButtons();
 		
 		contentPane.add(playerScreen, "player"+playerNumber);

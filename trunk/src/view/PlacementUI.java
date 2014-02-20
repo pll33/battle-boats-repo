@@ -19,6 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SpringLayout;
 
+import controller.GameController;
+import core.GameSettings;
+
 public class PlacementUI extends JFrame {
 	
 	private static final long serialVersionUID = -8341984086894414855L;
@@ -31,6 +34,7 @@ public class PlacementUI extends JFrame {
 	private JButton submitButton;
 	
 	private List<Integer> boatSizes;
+	private GameController gc;
 //	private int activePlacementIndex;
 	
 //	public PlacementUI() {
@@ -39,7 +43,7 @@ public class PlacementUI extends JFrame {
 	
 	public PlacementUI(String playerOneName, String playerTwoName,
 			Integer numberOfRows, Integer numberOfCols,
-			ArrayList<Integer> boatSizes) {
+			List<Integer> boatSizes, GameController gc) {
 		
 		boardPane = new PlacementBoardUI(numberOfRows,numberOfCols, boatSizes); 
 		
@@ -49,6 +53,7 @@ public class PlacementUI extends JFrame {
 		boatButtons = new ArrayList<JToggleButton>();
 		
 		this.boatSizes = boatSizes; 
+		this.gc = gc;
 //		this.activePlacementIndex = -1;
 		
 		setTitle("BattleBoats Placement");
@@ -117,6 +122,10 @@ public class PlacementUI extends JFrame {
 				//TODO
 				// create game UI for player, send placed boats board to gameUI
 //				startGame(boardPane.getPlacementBoats());
+				
+				System.out.println("Submit");
+				gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
+				gc.getGame().setReady();
 			}
 		});
 		submitButton.setEnabled(false);

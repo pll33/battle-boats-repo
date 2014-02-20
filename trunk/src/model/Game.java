@@ -144,7 +144,9 @@ public class Game {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		waitForAllReady();
+		
+		//waitForAllReady should get called when the "waiting for other play" screen comes up
+		//waitForAllReady();
 		// this.ready = true;
 	}
 }

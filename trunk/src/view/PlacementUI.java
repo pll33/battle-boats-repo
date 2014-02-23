@@ -34,6 +34,7 @@ public class PlacementUI extends JFrame {
 	private JButton submitButton;
 	
 	private List<Integer> boatSizes;
+	private GameSettings settings;
 	private GameController gc;
 //	private int activePlacementIndex;
 	
@@ -41,18 +42,15 @@ public class PlacementUI extends JFrame {
 //		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
 //	}
 	
-	public PlacementUI(String playerOneName, String playerTwoName,
-			Integer numberOfRows, Integer numberOfCols,
-			List<Integer> boatSizes, GameController gc) {
-		
-		boardPane = new PlacementBoardUI(numberOfRows,numberOfCols, boatSizes); 
+	public PlacementUI(GameSettings settings, GameController gc) {
+		boatSizes = settings.getBoatSizes();
+		boardPane = new PlacementBoardUI(settings.getHeight(), settings.getWidth(), boatSizes); 
 		
 		contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(boardPane, BorderLayout.CENTER);
 		boatButtons = new ArrayList<JToggleButton>();
 		
-		this.boatSizes = boatSizes; 
 		this.gc = gc;
 //		this.activePlacementIndex = -1;
 		
@@ -115,7 +113,13 @@ public class PlacementUI extends JFrame {
 		clearButton.setEnabled(false);
 		boatlistPane.add(clearButton);
 		
-		submitButton = new JButton("Submit");
+		String submitText;
+		if (settings.getPlayer2Name() == "Computer") {
+			submitText = "Start Game";
+		} else {
+			submitText = "Submit";
+		}
+		submitButton = new JButton(submitText);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				

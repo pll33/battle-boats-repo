@@ -83,7 +83,7 @@ public class BattleBoatsUI extends JFrame {
 				if (opt == 0) System.exit(0);
 			}
 		}, true);
-		setSpringLayout(buttonPane, 3, 1);
+		setSpringLayout(buttonPane, 4, 1);
 		
 		titlePane.add(buttonPane);
 		contentPane.add(titlePane, "title");
@@ -107,6 +107,7 @@ public class BattleBoatsUI extends JFrame {
 				showGameSettingsDialog(2);
 			}
 		}, true);
+//		buttonPane.add(new JLabel("\n"));
 		//addButton(newGamePane, "vs. Player (online)", new PvPNetListener()); // move this to "connect server" option
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -133,14 +134,14 @@ public class BattleBoatsUI extends JFrame {
 		// else, generate list of 3 <empty> games
 		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
 		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
-		//addButton(loadGamePane, "<Empty>", new LoadGameListener(), false);
+		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "title");
 			}
 		}, true);
 
-		setSpringLayout(buttonPane, 3, 1);
+		setSpringLayout(buttonPane, 4, 1);
 		loadGamePane.add(buttonPane);
 		
 		contentPane.add(loadGamePane, "loadgame");
@@ -188,18 +189,13 @@ public class BattleBoatsUI extends JFrame {
 				gc = new GameController(false, null);
 				settings = gc.getGame().getGameSettings();
 			}else{
-				settings = new GameSettings(gsDialog.getNumberOfRows(), gsDialog.getNumberOfCols(), gsDialog.getBoatSizes());
+				settings = new GameSettings(gsDialog.getNumberOfCols(), gsDialog.getNumberOfRows(), gsDialog.getBoatSizes());
 				settings.setPlayer1Name(gsDialog.getPlayerOneName());
 				settings.setPlayer2Name(gsDialog.getPlayerTwoName());
 				gc = new GameController(true, settings);				
 			}			
 			
-			PlacementUI placeUI = new PlacementUI(settings.getPlayer1Name(), 
-					settings.getPlayer2Name(),
-					settings.getWidth(),
-					settings.getHeight(),
-					settings.getBoatSizes(),
-					gc);
+			PlacementUI placeUI = new PlacementUI(settings, gc);
 			
 			placeUI.pack();
 			placeUI.setLocationRelativeTo(null);

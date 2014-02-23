@@ -118,8 +118,11 @@ public class GameSettingsDialog extends JDialog {
 			player2Name.setEnabled(false);
 			player2Name.setDisabledTextColor(Color.DARK_GRAY);
 		} else {
+			// TODO if PvP, let player 2 set their name when they connect to server
 			player2Name.setText("Player 2");
 			player2Name.setToolTipText("Player 2");
+//			player2Name.setEnabled(false);
+//			player2Name.setDisabledTextColor(Color.DARK_GRAY);
 			player2Name.addFocusListener(new TextFieldFocusListener());
 		}
 		label.setLabelFor(player2Name);
@@ -170,7 +173,7 @@ public class GameSettingsDialog extends JDialog {
 		});
 		pane.add(button);
 		
-		button = new JButton("Start Game");
+		button = new JButton("Proceed");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				changesMade = true;

@@ -43,6 +43,7 @@ public class PlacementUI extends JFrame {
 //	}
 	
 	public PlacementUI(GameSettings settings, GameController gc) {
+		
 		boatSizes = settings.getBoatSizes();
 		boardPane = new PlacementBoardUI(settings.getHeight(), settings.getWidth(), boatSizes); 
 		
@@ -51,8 +52,8 @@ public class PlacementUI extends JFrame {
 		contentPane.add(boardPane, BorderLayout.CENTER);
 		boatButtons = new ArrayList<JToggleButton>();
 		
+		this.settings = settings;
 		this.gc = gc;
-//		this.activePlacementIndex = -1;
 		
 		setTitle("BattleBoats Placement");
 		createComponents();
@@ -114,7 +115,7 @@ public class PlacementUI extends JFrame {
 		boatlistPane.add(clearButton);
 		
 		String submitText;
-		if (settings.getPlayer2Name() == "Computer") {
+		if (settings.getPlayer2Name().equals("Computer")) {
 			submitText = "Start Game";
 		} else {
 			submitText = "Submit";

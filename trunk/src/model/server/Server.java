@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import utils.Logger;
 import core.Constants;
 import core.GameSettings;
 import core.ReadyIndicator;
@@ -27,7 +28,7 @@ public class Server extends Thread {
 	private Semaphore mutex;
 
 	private GameSettings settings;
-	
+
 	private Boolean[] readyStatus;
 
 	public Server(final Semaphore mutex, final GameSettings settings) {
@@ -48,25 +49,25 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-		logMessage("Server Started");
+		Logger.log("Server Started", this);
 		waitForConnections();
 	}
 
 	private void waitForConnections() {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-			logMessage("Accepting Connections");
+			Logger.log("Accepting Connections", this);
 			mutex.release(); // server has started
 
 			while (accepting) {
 				Socket clientSocket = serverSocket.accept();
-				logMessage("Client Connected");
-				
+				Logger.log("Client Connected", this);
+
 				threads.add(new ClientThread(threads.size(), clientSocket, this));
 				threads.get(threads.size() - 1).start();
 				count++;
 
-				logMessage("Number of clients connected: " + threads.size());
+				Logger.log("Number of clients connected: " + threads.size(), this);
 
 				if (threads.size() == MAX_CONNECTIONS) {
 					accepting = false;
@@ -95,27 +96,17 @@ public class Server extends Thread {
 			}
 		}
 	}
-	
-	public boolean setReadyStatus(int id){
+
+	public boolean setReadyStatus(int id) {
 		this.readyStatus[id] = true;
-		
+
 		boolean allReady = true;
-		for(Boolean b : readyStatus){
-			if(b == false){
+		for (Boolean b : readyStatus) {
+			if (b == false) {
 				allReady = false;
 			}
 		}
 		return allReady;
-	}
-
-	/**
-	 * A utility function to log messages from the Server.
-	 * 
-	 * @param message
-	 *            The message to log.
-	 */
-	private void logMessage(final String message) {
-		System.out.println("Server: " + message);
 	}
 
 }

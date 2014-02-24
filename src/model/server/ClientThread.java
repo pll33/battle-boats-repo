@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import utils.Logger;
 import core.ReadyIndicator;
 import model.player.Player;
 
@@ -77,7 +78,6 @@ public class ClientThread extends Thread {
 		try {
 			out.writeObject(message);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -107,19 +107,15 @@ public class ClientThread extends Thread {
 	
 	public void handleMessage(final Object message){
 		if(message instanceof ReadyIndicator){
-			logMessage("Message: ReadyIndicator");
+			Logger.log("Message: ReadyIndicator", this);
 			if(server.setReadyStatus(id) == true){
-				System.out.println("Client: Initiating all ready message");
+				Logger.log("Client: Initiating all ready message", this);
 				server.sendMessageToAll(new ReadyIndicator());
 			}
 		}else{
 			server.sendMessageToAll(id, message);
 		}
 		
-	}
-	
-	private void logMessage(final String message){
-		System.out.println("Client Thread " + id + ": " + message);
 	}
 
 }

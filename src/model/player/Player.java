@@ -25,16 +25,6 @@ public abstract class Player {
 		this.playerName = playerName;
 		this.nextMove = null;
 	}
-
-	/**
-	 * Utility function for logging from Player class
-	 * 
-	 * @param message
-	 *            The message to be logged
-	 */
-	protected void logMessage(final String message) {
-		System.out.println(playerName + ": " + message);
-	}
 	
 	public abstract void setNextMove(final Move m);
 	

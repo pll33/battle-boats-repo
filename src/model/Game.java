@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
+import utils.Logger;
 import model.player.ComputerPlayer;
 import model.player.HumanPlayer;
 import model.player.Player;
@@ -51,7 +52,7 @@ public class Game {
 		this.ready = false;
 		connectToServer();
 		this.settings = recieveGameSettings();
-		logMessage("Recieved Settings");
+		Logger.log("Recieved Settings", this);
 
 		gameBoard = new Board(settings.getWidth(), settings.getHeight());
 
@@ -62,14 +63,10 @@ public class Game {
 		}
 
 	}
-	
-	private void logMessage(final String message){
-		System.out.println("Game: " + message);
-	}
 
 	private void waitForAllReady() {
 
-		logMessage("Waiting for ready");
+		Logger.log("Waiting for ready", this);
 		Object tmp = null;
 		do {
 			
@@ -82,7 +79,7 @@ public class Game {
 		} while (!(tmp instanceof ReadyIndicator));
 
 		this.ready = true;
-		logMessage("All Games Ready");
+		Logger.log("All Games Ready", this);
 	}
 
 	public GameSettings getGameSettings() {
@@ -100,7 +97,7 @@ public class Game {
 	private GameSettings recieveGameSettings() {
 		Object tmp = null;
 
-		logMessage("Waiting for settings");
+		Logger.log("Waiting for settings", this);
 
 		do {
 			try {
@@ -116,7 +113,7 @@ public class Game {
 
 	private void connectToServer() {
 		try {
-			logMessage("Attempting to connect to Server");
+			Logger.log("Attempting to connect to Server", this);
 			this.socket = new Socket(IP, Constants.PORT);
 			this.out = new ObjectOutputStream(socket.getOutputStream());
 			this.in = new ObjectInputStream(socket.getInputStream());
@@ -138,7 +135,7 @@ public class Game {
 	}
 
 	public void setReady() {
-		logMessage("Setting ready for player");
+		Logger.log("Setting ready for player", this);
 		try {
 			out.writeObject(new ReadyIndicator());
 		} catch (IOException e) {

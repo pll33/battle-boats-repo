@@ -22,11 +22,11 @@ public class GameController {
 
 	private Server server;
 
-	public GameController(final boolean hostGame, final GameSettings settings) {
-		this(hostGame, settings, PlayerType.HUMAN);		
+	public GameController(final boolean hostGame, final GameSettings settings, final String IP) {
+		this(hostGame, settings, IP, PlayerType.HUMAN);		
 	}
 	
-	public GameController(final boolean hostGame, final GameSettings settings, final PlayerType playerType){
+	public GameController(final boolean hostGame, final GameSettings settings, final String IP, final PlayerType playerType){
 		if (hostGame) {
 			this.server = createServer(settings);
 			if(settings.isVsComputer() && playerType == PlayerType.HUMAN){
@@ -38,7 +38,7 @@ public class GameController {
 		}
 		
 		//change IP to not be hard coded
-		this.game = new Game(Constants.LOCAL_IP, playerType);
+		this.game = new Game(IP, playerType);
 	}
 
 	private Server createServer(final GameSettings settings) {

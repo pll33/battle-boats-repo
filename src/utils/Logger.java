@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import controller.GameController;
 import model.Game;
 import model.player.Player;
 import model.server.ClientThread;
@@ -54,6 +55,8 @@ public class Logger {
 			editedMessage = "Game: " + message;
 		}else if(logger instanceof Logger){
 			editedMessage = "Logger: " + message;
+		}else if(logger instanceof GameController){
+			editedMessage = "GameController: " + message;
 		} else {
 			editedMessage = message;
 		}

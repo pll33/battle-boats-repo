@@ -2,6 +2,7 @@ package controller;
 
 import java.util.concurrent.Semaphore;
 
+import utils.Logger;
 import core.Constants;
 import core.GameSettings;
 import core.PlayerType;
@@ -29,6 +30,7 @@ public class GameController {
 		if (hostGame) {
 			this.server = createServer(settings);
 			if(settings.isVsComputer() && playerType == PlayerType.HUMAN){
+				Logger.log("Creating computer controller", this);
 				new ComputerController(settings).start();
 			}
 		} else {

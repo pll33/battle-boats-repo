@@ -13,6 +13,8 @@ import model.server.ClientThread;
 import model.server.Server;
 
 public class Logger {
+	
+	private Logger(){}
 
 	public static final String logLocation = System.getenv("APPDATA") + "\\BattleBoats\\log.txt";
 	private static StringBuilder sb = null;
@@ -29,6 +31,17 @@ public class Logger {
 			count = 0;
 		}
 
+		String editedMessage = formatMessage(message, logger);
+
+		sb.append(editedMessage);
+		sb.append(System.getProperty("line.separator"));
+
+		System.out.println(editedMessage);
+		count++;
+
+	}
+	
+	private static String formatMessage(final String message, final Object logger){
 		String editedMessage;
 
 		if (logger instanceof Server) {
@@ -39,17 +52,15 @@ public class Logger {
 			editedMessage = "Client: " + message;
 		}else if(logger instanceof Game){
 			editedMessage = "Game: " + message;
+		}else if(logger instanceof Logger){
+			editedMessage = "Logger: " + message;
 		} else {
 			editedMessage = message;
 		}
 		
 		editedMessage = getCurrentTime() + " - " + editedMessage;
-
-		sb.append(editedMessage);
-
-		System.out.println(editedMessage);
-		count++;
-
+		
+		return editedMessage;
 	}
 	
 	private static String getCurrentTime(){
@@ -61,10 +72,13 @@ public class Logger {
 	
 	public static void writeToFile(){
 		
-		try(BufferedWriter wrt = new BufferedWriter(new FileWriter(new File(logLocation), true))){
+		final File file = new File(logLocation);
+		file.getParentFile().mkdirs();
+		try(final BufferedWriter wrt = new BufferedWriter(new FileWriter(file, true))){
 			wrt.write(sb.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			String message = "Encountered a critical error:" + e.toString();
+			System.out.println(formatMessage(message, new Logger()));
 		}
 
 	}

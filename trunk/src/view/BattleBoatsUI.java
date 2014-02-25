@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
 import controller.GameController;
+import core.Constants;
 import core.GameSettings;
 
 public class BattleBoatsUI extends JFrame {
@@ -192,7 +193,7 @@ public class BattleBoatsUI extends JFrame {
 			settings.setVsComputer(vsComputer);
 			settings.setPlayer1Name(gsDialog.getPlayerOneName());
 			settings.setPlayer2Name(gsDialog.getPlayerTwoName());
-			gc = new GameController(true, settings);						
+			gc = new GameController(true, settings, Constants.LOCAL_IP);						
 			
 			PlacementUI placeUI = new PlacementUI(settings, gc);
 			

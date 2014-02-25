@@ -16,7 +16,7 @@ public class Logger {
 	
 	private Logger(){}
 
-	public static final String logLocation = System.getenv("APPDATA") + "\\BattleBoats\\log.txt";
+	private static final String logLocation = System.getenv("APPDATA") + "\\BattleBoats\\log.txt";
 	private static StringBuilder sb = null;
 	private static int count = 0;
 
@@ -81,6 +81,10 @@ public class Logger {
 			System.out.println(formatMessage(message, new Logger()));
 		}
 
+	}
+	
+	public static String getLogLocation(){
+		return Logger.logLocation;
 	}
 
 }

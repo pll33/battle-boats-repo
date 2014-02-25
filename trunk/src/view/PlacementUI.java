@@ -4,12 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -36,14 +33,8 @@ public class PlacementUI extends JFrame {
 	private List<Integer> boatSizes;
 	private GameSettings settings;
 	private GameController gc;
-//	private int activePlacementIndex;
-	
-//	public PlacementUI() {
-//		this("","",10,10,(ArrayList<Integer>) Arrays.asList(2, 3, 3, 4, 5));
-//	}
 	
 	public PlacementUI(GameSettings settings, GameController gc) {
-		
 		boatSizes = settings.getBoatSizes();
 		boardPane = new PlacementBoardUI(settings.getHeight(), settings.getWidth(), boatSizes); 
 		
@@ -62,7 +53,6 @@ public class PlacementUI extends JFrame {
 	}
 
 	private void createComponents() {
-		//JPanel boatList = new BoatListUI();
 		JPanel boatlistPane = new JPanel();
 		JButton button;
 		JToggleButton tb;
@@ -79,7 +69,6 @@ public class PlacementUI extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					boardPane.setPlacementBoatIndex(boatIndex);
 					System.out.println("set: " + boatIndex);
-//					activePlacementIndex = boatIndex;
 				}
 			});
 			boatButtons.add(tb);
@@ -126,9 +115,10 @@ public class PlacementUI extends JFrame {
 				
 				//TODO
 				// create game UI for player, send placed boats board to gameUI
-//				startGame(boardPane.getPlacementBoats());
+				//GameUI gameUI = new GameUI();
+				//startGame(boardPane.getPlacementBoats());
 				
-				System.out.println("Submit");
+				System.out.println("Placement Submit pressed");
 				gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
 				gc.getGame().setReady();
 			}
@@ -147,9 +137,6 @@ public class PlacementUI extends JFrame {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				// TODO change board pane to use this instead of MouseMotionListener 
-				// update when boardPane.placementBoatIndex value changes
-				// (less calls check placementBoardUI, more immediate update to UI)
 				if (evt.getPropertyName().equals(PlacementBoardUI.BOAT_INDEX)) {
 					int oldIndex = (int) evt.getOldValue(),
 						newIndex = (int) evt.getNewValue();
@@ -181,28 +168,6 @@ public class PlacementUI extends JFrame {
 			}
 			
 		});
-//		boardPane.addMouseMotionListener(new MouseAdapter() {
-//			@Override
-//			public void mouseMoved(MouseEvent e) {
-//				// check placementBoardUI if boat has been placed, then disable boat button
-////				System.out.println("active: " + activePlacementIndex);
-//				if (activePlacementIndex >= 0 && boardPane.isBoatIndexPlaced(activePlacementIndex))
-//				{
-//					// disable boat button
-//					setEnabledBoatButton(activePlacementIndex, false);
-//					boatButtonGroup.clearSelection();
-////					repaint();
-//					activePlacementIndex = -1;
-//				} else {
-//					// enable buttons based on placementBoardUI.boatPlacement
-//					for (int i = 0; i < boatSizes.size(); i++) {
-//						if (!boardPane.isBoatIndexPlaced(i)) {
-//							setEnabledBoatButton(i, true);
-//						}
-//					}
-//				}
-//			}
-//		});
 	}
 	
 	private void setEnabledBoatButton(int index, boolean enable) {
@@ -212,7 +177,6 @@ public class PlacementUI extends JFrame {
 	}
 	
 	private void setEnabledAllBoatButtons(boolean enable) {
-//		activePlacementIndex = -1;
 		for (JToggleButton b : boatButtons) {
 			b.setEnabled(enable);
 		}

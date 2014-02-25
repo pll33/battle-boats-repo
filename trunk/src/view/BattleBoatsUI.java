@@ -66,7 +66,7 @@ public class BattleBoatsUI extends JFrame {
 		
 		addButton(buttonPane, "Join Game", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				contentPaneCL.show(contentPane, "joingame");
+				showJoinGameDialog();
 			}
 		}, true);
 		
@@ -108,7 +108,6 @@ public class BattleBoatsUI extends JFrame {
 			}
 		}, true);
 //		buttonPane.add(new JLabel("\n"));
-		//addButton(newGamePane, "vs. Player (online)", new PvPNetListener()); // move this to "connect server" option
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "title");
@@ -170,13 +169,18 @@ public class BattleBoatsUI extends JFrame {
                 PANE_XPAD, PANE_YPAD); 	//xPad, yPad
 	}
 
+	protected void showJoinGameDialog() {
+		ServerJoinDialog joinDialog = new ServerJoinDialog(this);
+		joinDialog.init();
+		
+//		if (joinDialog.changesMade) {
+//			
+//		}
+	}
+	
 	protected void showGameSettingsDialog(int numPlayers) {
 		GameSettingsDialog gsDialog = new GameSettingsDialog(this, numPlayers);
-		gsDialog.pack();
-		gsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
-		gsDialog.setLocationRelativeTo(null);
-		gsDialog.setResizable(false);
-		gsDialog.setVisible(true);
+		gsDialog.init();
 		
 		if (gsDialog.changesMade) {
 

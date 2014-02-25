@@ -5,6 +5,7 @@ import java.util.Random;
 
 import model.Board;
 import model.Boat;
+import core.Constants;
 import core.GameSettings;
 import core.PlayerType;
 
@@ -19,7 +20,7 @@ public class ComputerController extends Thread {
 
 	@Override
 	public void run() {
-		this.gc = new GameController(false, settings, PlayerType.COMPUTER);
+		this.gc = new GameController(false, settings, Constants.LOCAL_IP, PlayerType.COMPUTER);
 		setBoats();
 		
 		gc.getGame().setReady();

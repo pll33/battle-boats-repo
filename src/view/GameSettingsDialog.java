@@ -2,6 +2,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -41,8 +42,16 @@ public class GameSettingsDialog extends JDialog {
 		this.numPlayers = numPlayers;
 		this.changesMade = false;
 		
-		setTitle("BattleBoats Settings");
 		createComponents();
+	}
+	
+	public void init() {
+		pack();
+		setTitle("BattleBoats Settings");
+		setModalityType(ModalityType.APPLICATION_MODAL);
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setVisible(true);
 	}
 	
 	public String getPlayerOneName() {
@@ -50,6 +59,8 @@ public class GameSettingsDialog extends JDialog {
 	}
 	
 	public String getPlayerTwoName() {
+		// return "Computer" if numPlayers=1, else return ""
+		//return (numPlayers == 1) ? "Computer" : ""; 
 		return player2Name.getText(); // default: "Player 2" for PvP if not set, 
 									  //		  "Computer" for PvC
 	}
@@ -121,9 +132,9 @@ public class GameSettingsDialog extends JDialog {
 			// TODO if PvP, let player 2 set their name when they connect to server
 			player2Name.setText("Player 2");
 			player2Name.setToolTipText("Player 2");
-//			player2Name.setEnabled(false);
-//			player2Name.setDisabledTextColor(Color.DARK_GRAY);
-			player2Name.addFocusListener(new TextFieldFocusListener());
+			player2Name.setEnabled(false);
+			player2Name.setDisabledTextColor(Color.DARK_GRAY);
+//			player2Name.addFocusListener(new TextFieldFocusListener());
 		}
 		label.setLabelFor(player2Name);
 		pane.add(player2Name);

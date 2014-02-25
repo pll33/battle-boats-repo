@@ -19,11 +19,14 @@ public class ServerJoinDialog extends JDialog {
 	// Join/Connect to Hosted Game
 		// Server IP: <input textbox>
 			
-	// Connect to Server button (connects to server when textbox.text is valid IP address, show placementUI)
+	// Connect to Server button (connects to server when textbox.text is valid IP address, 
+	//		show serverConnectDialog)
 	// Cancel button (returns to main menu)
 	
 	private static final long serialVersionUID = -5892146762277902504L;
 	private static final int TXTBOX_LENGTH = 10;
+	
+	private JFrame mainMenu;
 	private Container content;
 	private JTextField serverIP;
 	
@@ -31,6 +34,7 @@ public class ServerJoinDialog extends JDialog {
 	
 	public ServerJoinDialog(JFrame frame) {
 		super(frame, true);
+		frame = mainMenu;
 		content = getContentPane();
 		changesMade = false;
 		
@@ -88,6 +92,7 @@ public class ServerJoinDialog extends JDialog {
 				//TODO
 				// validate serverIP textfield
 				//attempt connection with server in IP address
+				// show serverConnectDialog
 				
 //				changesMade = true;
 //				setVisible(false);

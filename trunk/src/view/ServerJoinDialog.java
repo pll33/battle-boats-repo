@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import core.Constants;
 import core.GameSettings;
 
 public class ServerJoinDialog extends JDialog {
@@ -134,7 +135,7 @@ public class ServerJoinDialog extends JDialog {
 	public void addDisabledTextField(JPanel pane, String text, JLabel associatedLabel) {
 		JTextField textBox = new JTextField(TXTBOX_LENGTH);
 		textBox.setText(text);
-		textBox.setDisabledTextColor(Color.DARK_GRAY);
+		textBox.setDisabledTextColor(Constants.TEXTFIELD_DISABLED);
 		textBox.setEnabled(false);
 		if (associatedLabel != null) {
 			associatedLabel.setLabelFor(textBox);

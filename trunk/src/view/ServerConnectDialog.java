@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import core.Constants;
+
 public class ServerConnectDialog extends JDialog {
 
 	// Join/Connect to Hosted Game
@@ -74,7 +76,7 @@ public class ServerConnectDialog extends JDialog {
 		pane.add(label);
 		serverIP = new JTextField(TXTBOX_LENGTH);
 		serverIP.setText("");
-		serverIP.setDisabledTextColor(Color.DARK_GRAY);
+		serverIP.setDisabledTextColor(Constants.TEXTFIELD_DISABLED);
 		label.setLabelFor(serverIP);
 		pane.add(serverIP);
 		
@@ -91,9 +93,16 @@ public class ServerConnectDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				//TODO
 				// validate serverIP textfield
-				//attempt connection with server in IP address
-				// show serverConnectDialog
-				//ServerJoinDialog joinDialog = new ServerJoinDialog();
+				if (serverIP.getText().matches(Constants.IPV4_REGEX)) {
+					serverIP.setBackground(Constants.TEXTFIELD_DEFAULT);
+					
+					// attempt connection with server 
+					
+					// show serverJoinDialog if successful
+//					ServerJoinDialog joinDialog = new ServerJoinDialog();
+				} else {
+					serverIP.setBackground(Constants.TEXTFIELD_ERROR);
+				}
 				
 //				changesMade = true;
 //				setVisible(false);

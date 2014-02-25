@@ -171,10 +171,10 @@ public class BattleBoatsUI extends JFrame {
 	}
 
 	protected void showJoinGameDialog() {
-		ServerJoinDialog joinDialog = new ServerJoinDialog(this);
-		joinDialog.init();
+		ServerConnectDialog connectDialog = new ServerConnectDialog(this);
+		connectDialog.init();
 		
-//		if (joinDialog.changesMade) {
+//		if (connectDialog.changesMade) {
 //			
 //		}
 	}

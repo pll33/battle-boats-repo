@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,9 @@ public class Constants {
 	public static final int DEFAULT_HEIGHT = 10;
 	
 	public static final String IPV4_REGEX = "\\A(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
-	
+
+	public static final Color TEXTFIELD_ERROR = Color.PINK;
+	public static final Color TEXTFIELD_DEFAULT = Color.WHITE;
+	public static final Color TEXTFIELD_DISABLED = Color.DARK_GRAY;
 }
 

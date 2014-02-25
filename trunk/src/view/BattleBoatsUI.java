@@ -189,11 +189,13 @@ public class BattleBoatsUI extends JFrame {
 			
 			//this flag will get set to true if Join Game is clicked (however this should be accomplished)
 			boolean joiningGame = false;
+			boolean vsComputer = true;
 			if(joiningGame){
 				gc = new GameController(false, null);
 				settings = gc.getGame().getGameSettings();
 			}else{
 				settings = new GameSettings(gsDialog.getNumberOfCols(), gsDialog.getNumberOfRows(), gsDialog.getBoatSizes());
+				settings.setVsComputer(vsComputer);
 				settings.setPlayer1Name(gsDialog.getPlayerOneName());
 				settings.setPlayer2Name(gsDialog.getPlayerTwoName());
 				gc = new GameController(true, settings);				

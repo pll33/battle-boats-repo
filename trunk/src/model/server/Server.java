@@ -60,6 +60,7 @@ public class Server extends Thread {
 			mutex.release(); // server has started
 
 			while (accepting) {
+				Logger.log("Waiting for client to connect", this);
 				Socket clientSocket = serverSocket.accept();
 				Logger.log("Client Connected", this);
 

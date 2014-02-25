@@ -12,6 +12,7 @@ import model.player.HumanPlayer;
 import model.player.Player;
 import core.Constants;
 import core.GameSettings;
+import core.PlayerName;
 import core.PlayerType;
 import core.ReadyIndicator;
 
@@ -45,23 +46,39 @@ public class Game {
 	private Semaphore settingsMutex;
 
 	private boolean ready;
+	
+	private boolean joiningPlayer;
 
-	public Game(final String IP, final PlayerType playerType) {
+	public Game(final String IP, final PlayerType playerType, final boolean joiningPlayer) {
 		this.IP = IP;
 		this.settingsMutex = new Semaphore(0);
 		this.ready = false;
+		this.joiningPlayer = joiningPlayer;
 		connectToServer();
+		
+		//broadcast player name
+		
+		
 		this.settings = recieveGameSettings();
 		Logger.log("Recieved Settings", this);
+		Logger.log("Player 1 name: " + settings.getPlayer1Name() + " Player 2 name: " + settings.getPlayer2Name(), this);
 
 		gameBoard = new Board(settings.getWidth(), settings.getHeight());
 
 		if (playerType == PlayerType.HUMAN) {
-			this.player = new HumanPlayer("Human");
+			this.player = new HumanPlayer(joiningPlayer == false ? settings.getPlayer1Name() : settings.getPlayer2Name());
 		} else {
 			this.player = new ComputerPlayer();
 		}
 
+	}
+	
+	public void sendPlayerName(final String name){
+		try {
+			out.writeObject(new PlayerName(name));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void waitForAllReady() {
@@ -133,7 +150,7 @@ public class Game {
 	public Move getPlayerMove() {
 		return player.getMove();
 	}
-
+	
 	public void setReady() {
 		Logger.log("Setting ready for player", this);
 		try {

@@ -36,7 +36,7 @@ public class GameController {
 		}
 		
 		//change IP to not be hard coded
-		this.game = new Game(Constants.LOCAL_IP, playerType);
+		this.game = new Game(Constants.LOCAL_IP, playerType, !hostGame);
 	}
 
 	private Server createServer(final GameSettings settings) {

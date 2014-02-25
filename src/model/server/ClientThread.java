@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 import utils.Logger;
+import core.PlayerName;
 import core.ReadyIndicator;
 import model.player.Player;
 
@@ -35,6 +37,8 @@ public class ClientThread extends Thread {
 	 */
 	private ObjectInputStream in;
 	
+	private final int maxIdNumber;
+	
 	/**
 	 * A boolean indicating if this Thread is running.
 	 */
@@ -46,11 +50,12 @@ public class ClientThread extends Thread {
 	 * @param socket The socket created for this Thread.
 	 * @param server The Server instance.
 	 */
-	public ClientThread(final int id, final Socket socket, final Server server){
+	public ClientThread(final int id, final Socket socket, final Server server, final int maxIdNumber){
 		
 		this.running = true;
 		this.server = server;
 		this.id = id;
+		this.maxIdNumber = maxIdNumber;
 		
 		try {
 			this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -111,6 +116,12 @@ public class ClientThread extends Thread {
 			if(server.setReadyStatus(id) == true){
 				Logger.log("Client: Initiating all ready message", this);
 				server.sendMessageToAll(new ReadyIndicator());
+			}
+		}else if(message instanceof PlayerName){
+			Logger.log("Message: Player submitted name", this);
+			server.setPlayerName("", id);
+			if(id == maxIdNumber){
+				server.getSettingsMutex().release();
 			}
 		}else{
 			server.sendMessageToAll(id, message);

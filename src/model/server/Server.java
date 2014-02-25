@@ -25,7 +25,8 @@ public class Server extends Thread {
 
 	private List<ClientThread> threads;
 
-	private Semaphore mutex;
+	private Semaphore startMutex;
+	private Semaphore settingsMutex;
 
 	private GameSettings settings;
 
@@ -35,7 +36,7 @@ public class Server extends Thread {
 		this(Constants.PORT, mutex, settings);
 	}
 
-	public Server(final int port, final Semaphore mutex,
+	public Server(final int port, final Semaphore startMutex,
 			final GameSettings settings) {
 		this.readyStatus = new Boolean[2];
 		Arrays.fill(readyStatus, Boolean.FALSE);
@@ -43,7 +44,8 @@ public class Server extends Thread {
 		this.accepting = true;
 		this.count = 0;
 		this.threads = new ArrayList<ClientThread>();
-		this.mutex = mutex;
+		this.startMutex = startMutex;
+		this.settingsMutex = new Semaphore(0);
 		this.settings = settings;
 	}
 
@@ -57,13 +59,13 @@ public class Server extends Thread {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 
 			Logger.log("Accepting Connections", this);
-			mutex.release(); // server has started
+			startMutex.release(); // server has started
 
 			while (accepting) {
 				Socket clientSocket = serverSocket.accept();
 				Logger.log("Client Connected", this);
 
-				threads.add(new ClientThread(threads.size(), clientSocket, this));
+				threads.add(new ClientThread(threads.size() + 1, clientSocket, this, MAX_CONNECTIONS));
 				threads.get(threads.size() - 1).start();
 				count++;
 
@@ -71,17 +73,20 @@ public class Server extends Thread {
 
 				if (threads.size() == MAX_CONNECTIONS) {
 					accepting = false;
+					//acquire mutex to ensure gamesettings has been set with both players names
+					settingsMutex.acquire();
 					broadcastSettings();
 				}
 
 			}
 
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void broadcastSettings() {
+		Logger.log("Broadcasting settings", this);
 		sendMessageToAll(settings);
 	}
 
@@ -107,6 +112,19 @@ public class Server extends Thread {
 			}
 		}
 		return allReady;
+	}
+	
+	public Semaphore getSettingsMutex(){
+		return this.settingsMutex;
+	}
+	
+	public void setPlayerName(final String name, final int ID){
+		//ids are only given to 2 players starting at 1
+		if(ID == 1){
+			settings.setPlayer1Name(name);
+		}else if(ID == 2){
+			settings.setPlayer2Name(name);
+		}
 	}
 
 }

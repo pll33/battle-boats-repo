@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import utils.Logger;
 import controller.GameController;
 import core.GameSettings;
 
@@ -186,13 +187,19 @@ public class BattleBoatsUI extends JFrame {
 			//this flag will get set to true if Join Game is clicked (however this should be accomplished)
 			boolean joiningGame = false;
 			if(joiningGame){
+				//player2
 				gc = new GameController(false, null);
+				//gc.getGame().sendPlayerName(gsDialog.getPlayerTwoName());
 				settings = gc.getGame().getGameSettings();
 			}else{
+				//player 1
 				settings = new GameSettings(gsDialog.getNumberOfCols(), gsDialog.getNumberOfRows(), gsDialog.getBoatSizes());
-				settings.setPlayer1Name(gsDialog.getPlayerOneName());
-				settings.setPlayer2Name(gsDialog.getPlayerTwoName());
-				gc = new GameController(true, settings);				
+				//settings.setPlayer1Name(gsDialog.getPlayerOneName());
+				//settings.setPlayer2Name(gsDialog.getPlayerTwoName());
+				gc = new GameController(true, settings);	
+				Logger.log("here", this);
+				gc.getGame().sendPlayerName(gsDialog.getPlayerOneName());
+				
 			}			
 			
 			PlacementUI placeUI = new PlacementUI(settings, gc);

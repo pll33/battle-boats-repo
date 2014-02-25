@@ -6,9 +6,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,32 +14,36 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import core.GameSettings;
-
 public class ServerConnectDialog extends JDialog {
 
-	// player 2 is connected to server (status: connected)
+	// Join/Connect to Hosted Game
+		// Server IP: <input textbox>
+			
+	// Connect to Server button (connects to server when textbox.text is valid IP address, 
+	//		show serverConnectDialog)
+	// Cancel button (returns to main menu)
 	
-	// server IP: Jtextbox (disabled)
-	// display game information/settings (disabled)
-	// cancel or proceed jbuttons
+	private static final long serialVersionUID = -5892146762277902504L;
+	private static final int TXTBOX_LENGTH = 10;
 	
-	private static final long serialVersionUID = -1049485771759327657L;
-	private static final int TXTBOX_LENGTH = 6;
+	private JFrame mainMenu;
 	private Container content;
-	private GameSettings settings;
+	private JTextField serverIP;
 	
-	public ServerConnectDialog(JFrame frame, GameSettings gs) {
+	protected boolean changesMade;
+	
+	public ServerConnectDialog(JFrame frame) {
 		super(frame, true);
-		
+		frame = mainMenu;
 		content = getContentPane();
-		settings = gs;
+		changesMade = false;
+		
 		createComponents();
 	}
 	
 	public void init() {
 		pack();
-		setTitle("BattleBoats - Connected to Server");
+		setTitle("BattleBoats - Join Game");
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -50,95 +52,60 @@ public class ServerConnectDialog extends JDialog {
 	
 	private void createComponents() {
 		JLabel label;
-		JTextField textBox;
 		JButton button;
 		
 		JPanel pane = new JPanel(new SpringLayout());
 		
-		label = new JLabel("Player Details"); 
+		label = new JLabel("Join Game"); 
 		label.setFont(label.getFont().deriveFont(14.0f));
 		pane.add(label);
 		pane.add(new JLabel(""));
 		
-		label = new JLabel("Player 1 Name: ", JLabel.TRAILING);
-		pane.add(label);
-		addDisabledTextField(pane, settings.getPlayer1Name(), label);
-		
-		label = new JLabel("Player 2 Name: ", JLabel.TRAILING);
-		pane.add(label);
-		JTextField player2Name = new JTextField(TXTBOX_LENGTH);
-		//player2Name.setText(""); //TODO
-		//player2Name.addFocusListener(new TextFieldFocusListener());
-		label.setLabelFor(player2Name);
-		pane.add(player2Name);
-		
-		label = new JLabel("Game Details"); 
-		label.setFont(label.getFont().deriveFont(14.0f));
-		pane.add(label);
-		pane.add(new JLabel(""));
+//		label = new JLabel("Player name: ", JLabel.TRAILING);
+//		pane.add(label);
+//		JTextField playerName = new JTextField(TXTBOX_LENGTH);
+//		playerName.setToolTipText("Player Name");
+//		playerName.setText("Player");
+//		//player1Name.addFocusListener(new TextFieldFocusListener());
+//		label.setLabelFor(playerName);
+//		pane.add(playerName);
 		
 		label = new JLabel("Server IP Address: ", JLabel.TRAILING);
 		pane.add(label);
-		//addDisabledTextBox(pane, serverIP, label); //TODO get serverIP from setting or previous menu
-		textBox = new JTextField(TXTBOX_LENGTH);
-		textBox.setDisabledTextColor(Color.DARK_GRAY);
-		textBox.setEnabled(false);
-		//player1Name.addFocusListener(new TextFieldFocusListener());
-		label.setLabelFor(textBox);
-		pane.add(textBox);
-		
-		label = new JLabel("Board size: ", JLabel.TRAILING);
-		pane.add(label);
-		JPanel boardSizePanel = new JPanel();
-		boardSizePanel.setLayout(new BoxLayout(boardSizePanel, BoxLayout.X_AXIS));
-		textBox = new JTextField();
-		addDisabledTextField(boardSizePanel, String.valueOf(settings.getHeight()), label);	
-		boardSizePanel.add(new JLabel(" x "));
-		addDisabledTextField(boardSizePanel, String.valueOf(settings.getWidth()), null);
-		pane.add(boardSizePanel);
-		
-		label = new JLabel("Number of boats: ", JLabel.TRAILING);
-		pane.add(label);
-		addDisabledTextField(pane, String.valueOf(settings.getBoatSizes().size()), label);
-		
-		label = new JLabel("Boat sizes: ", JLabel.TRAILING);
-		pane.add(label);
-		addDisabledTextField(pane, settings.getBoatSizes().toString(), label);
+		serverIP = new JTextField(TXTBOX_LENGTH);
+		serverIP.setText("");
+		serverIP.setDisabledTextColor(Color.DARK_GRAY);
+		label.setLabelFor(serverIP);
+		pane.add(serverIP);
 		
 		button = new JButton("Cancel");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//changesMade = false;
 				dispose();
 			}	
 		});
 		pane.add(button);
 		
-		button = new JButton("Proceed");
+		button = new JButton("Connect");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//changesMade = true;
-				//setVisible(false);
+				//TODO
+				// validate serverIP textfield
+				//attempt connection with server in IP address
+				// show serverConnectDialog
+				//ServerJoinDialog joinDialog = new ServerJoinDialog();
+				
+//				changesMade = true;
+//				setVisible(false);
 			}	
 		});
 		pane.add(button);
 		
 		SpringUtilities.makeCompactGrid(pane,
-                9, 2, 	//rows, cols
+                3, 2, 	//rows, cols
                 10, 10,	//initX, initY
                 6, 6);	//xPad, yPad
 		
 		content.add(pane);
-	}
-	
-	public void addDisabledTextField(JPanel pane, String text, JLabel associatedLabel) {
-		JTextField textBox = new JTextField(TXTBOX_LENGTH);
-		textBox.setText(text);
-		textBox.setDisabledTextColor(Color.DARK_GRAY);
-		textBox.setEnabled(false);
-		if (associatedLabel != null) {
-			associatedLabel.setLabelFor(textBox);
-		}
-		pane.add(textBox);
 	}
 }

@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SpringLayout;
 
+import model.Board;
+
 import controller.GameController;
 import core.GameSettings;
 
@@ -80,7 +82,7 @@ public class PlacementUI extends JFrame {
 			tb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					boardPane.setPlacementBoatIndex(boatIndex);
-					System.out.println("set: " + boatIndex);
+//					System.out.println("set: " + boatIndex);
 				}
 			});
 			boatButtons.add(tb);
@@ -132,6 +134,8 @@ public class PlacementUI extends JFrame {
 					GameUI gameUI = new GameUI(gc, boardPane.getPlacementBoats());
 					gameUI.init();
 					close();
+					
+					//gc.getGame().setGameBoard(new Board(boardPane.getPlacementBoats()));
 				}
 				//TODO
 				// create game UI for player, send placed boats board to gameUI

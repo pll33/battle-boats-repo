@@ -185,22 +185,12 @@ public class BattleBoatsUI extends JFrame {
 		
 		if (gsDialog.changesMade) {
 
-			GameSettings settings;			
-			GameController gc;
-			
-			boolean vsComputer = numPlayers == 1;
-			settings = new GameSettings(gsDialog.getNumberOfCols(), gsDialog.getNumberOfRows(), gsDialog.getBoatSizes());
-			settings.setVsComputer(vsComputer);
-			settings.setPlayer1Name(gsDialog.getPlayerOneName());
-			settings.setPlayer2Name(gsDialog.getPlayerTwoName());
-			gc = new GameController(true, settings, Constants.LOCAL_IP);						
+			GameSettings settings = gsDialog.getSettings();			
+			GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
 			
 			PlacementUI placeUI = new PlacementUI(settings, gc);
+			placeUI.init();
 			
-			placeUI.pack();
-			placeUI.setLocationRelativeTo(null);
-			placeUI.setResizable(false);
-			placeUI.setVisible(true);
 			setVisible(false);
 		}
 	}

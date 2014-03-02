@@ -2,7 +2,6 @@ package view;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -19,6 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import core.GameSettings;
+
 public class GameSettingsDialog extends JDialog {
 
 	protected boolean changesMade;
@@ -29,10 +30,10 @@ public class GameSettingsDialog extends JDialog {
 	private Container content;
 	private JTextField player1Name;
 	private JTextField player2Name;
-	private JComboBox<Integer> numRows;
-	private JComboBox<Integer> numCols;
-	private JComboBox<Integer> numBoats;
-	private JTextField boatSizes;
+	private JComboBox<Integer> cbNumRows;
+	private JComboBox<Integer> cbNumCols;
+	private JComboBox<Integer> cbNumBoats;
+	private JTextField tfBoatSizes;
 	
 	private int numPlayers;
 	
@@ -54,36 +55,37 @@ public class GameSettingsDialog extends JDialog {
 		setVisible(true);
 	}
 	
-	public String getPlayerOneName() {
-		return player1Name.getText(); // default: "Player 1" if not set
-	}
-	
-	public String getPlayerTwoName() {
-		// return "Computer" if numPlayers=1, else return ""
-		//return (numPlayers == 1) ? "Computer" : ""; 
-		return player2Name.getText(); // default: "Player 2" for PvP if not set, 
-									  //		  "Computer" for PvC
+	public GameSettings getSettings() {
+		GameSettings settings = new GameSettings(getNumberOfCols(), getNumberOfRows(),  getBoatSizes());
+		settings.setVsComputer(numPlayers == 1);
+		
+		// default: "Player 1" if not set
+		settings.setPlayer1Name(player1Name.getText()); 
+		
+		// default: "Player 2" for PvP if not set, 
+		//		  	"Computer" for PvC
+		//String player2name = (numPlayers == 1) ? "Computer" : "";
+		//settings.setPlayer2Name(player2name);
+		settings.setPlayer2Name(player2Name.getText());
+		
+		return settings;
 	}
 
-	public Integer getNumberOfRows() {
-		return (Integer) numRows.getSelectedItem();
+	private Integer getNumberOfRows() {
+		return (Integer) cbNumRows.getSelectedItem();
 	}
 	
-	public Integer getNumberOfCols() {
-		return (Integer) numCols.getSelectedItem();
+	private Integer getNumberOfCols() {
+		return (Integer) cbNumCols.getSelectedItem();
 	}
 	
-	public Integer getNumberOfBoats() {
-		return (Integer) numBoats.getSelectedItem();
-	}
-	
-	public ArrayList<Integer> getBoatSizes() {
-		ArrayList<Integer> boatSizesArr = new ArrayList<Integer>(); 
-		String[] boatSizeStr = boatSizes.getText().split(",");
+	private ArrayList<Integer> getBoatSizes() {
+		ArrayList<Integer> tfBoatSizesArr = new ArrayList<Integer>(); 
+		String[] boatSizeStr = tfBoatSizes.getText().split(",");
 		for (int i = 0; i < boatSizeStr.length; i++) {
-			boatSizesArr.add(Integer.parseInt(boatSizeStr[i].trim()));
+			tfBoatSizesArr.add(Integer.parseInt(boatSizeStr[i].trim()));
 		}
-		return boatSizesArr;
+		return tfBoatSizesArr;
 	}
 	
 	private void createComponents() {
@@ -95,8 +97,8 @@ public class GameSettingsDialog extends JDialog {
 		// custom settings:
 		// 	-# of boats [default: 5]
 		// 	-board size [default: 10x10]
-		Integer[] cbNumBoats = { 5 }; // TODO expand?
-		Integer[] cbBoardSize = { 5, 10, 15, 20, 25 }; 
+		Integer[] arrNumBoats = { 5 }; // TODO expand?
+		Integer[] arrBoardSize = { 5, 10, 15, 20, 25 }; 
 		
 		label = new JLabel("Players"); 
 		label.setFont(label.getFont().deriveFont(14.0f));
@@ -148,32 +150,32 @@ public class GameSettingsDialog extends JDialog {
 		pane.add(label);
 		JPanel boardSizePanel = new JPanel();
 		boardSizePanel.setLayout(new BoxLayout(boardSizePanel, BoxLayout.X_AXIS));
-		numRows = new JComboBox<Integer>(cbBoardSize);
-		numRows.setSelectedItem(10);
-		numCols = new JComboBox<Integer>(cbBoardSize);
-		numCols.setSelectedItem(10);
-		label.setLabelFor(numRows);
-		boardSizePanel.add(numRows);
+		cbNumRows = new JComboBox<Integer>(arrBoardSize);
+		cbNumRows.setSelectedItem(10);
+		cbNumCols = new JComboBox<Integer>(arrBoardSize);
+		cbNumCols.setSelectedItem(10);
+		label.setLabelFor(cbNumRows);
+		boardSizePanel.add(cbNumRows);
 		boardSizePanel.add(new JLabel(" x "));
-		boardSizePanel.add(numCols);
+		boardSizePanel.add(cbNumCols);
 		pane.add(boardSizePanel);
 		
 		label = new JLabel("Number of boats: ", JLabel.TRAILING);
 		pane.add(label);
-		numBoats = new JComboBox<Integer>(cbNumBoats);
-		label.setLabelFor(numBoats);
-		pane.add(numBoats);
+		cbNumBoats = new JComboBox<Integer>(arrNumBoats);
+		label.setLabelFor(cbNumBoats);
+		pane.add(cbNumBoats);
 		
 		label = new JLabel("Boat sizes: ", JLabel.TRAILING);
 		pane.add(label);
-		boatSizes = new JTextField();
-		boatSizes.setText("2, 3, 3, 4, 5"); // TODO placeholder
+		tfBoatSizes = new JTextField();
+		tfBoatSizes.setText("2, 3, 3, 4, 5"); // TODO placeholder
 		// expand to allow user input of boat sizes
 		// validation needed so user does not input a size greater than the length of a row/col
-		boatSizes.setEnabled(false);
-		boatSizes.setDisabledTextColor(Color.DARK_GRAY);
-		label.setLabelFor(boatSizes);
-		pane.add(boatSizes);
+		tfBoatSizes.setEnabled(false);
+		tfBoatSizes.setDisabledTextColor(Color.DARK_GRAY);
+		label.setLabelFor(tfBoatSizes);
+		pane.add(tfBoatSizes);
 		
 		button = new JButton("Cancel");
 		button.addActionListener(new ActionListener() {

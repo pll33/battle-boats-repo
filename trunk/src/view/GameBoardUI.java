@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -36,6 +36,22 @@ public class GameBoardUI extends BoardUI {
 		}
 	}
 	
+	public GameBoardUI(int rows, int cols) {
+		super(rows, cols);
+		
+		this.boatBoard = new Board(cols, rows);
+		this.isActive = true;
+		this.addMouseMotionListener(new MouseMoveAdapter());		
+		
+		if (isActive) {
+			this.addMouseListener(new MousePressAdapter());
+		}
+	}
+	
+	public Dimension getPreferredSize() {
+		return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING)); // fix dimensions and offsets for row/col heads
+    }
+	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g.create();
@@ -65,7 +81,17 @@ public class GameBoardUI extends BoardUI {
     	@Override
     	public void mouseMoved(MouseEvent e) {
 			currentSelectedCell = getCurrentCell(e.getX(), e.getY());
-    		setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+			if (currentSelectedCell != null) {
+				setCursor(CROSSHAIR_CURSOR);
+				if (!isActive) {
+					String squareState = boatBoard.getSquareState(currentSelectedCell.x, 
+							currentSelectedCell.y).toString();
+					setToolTipText(squareState);
+				}
+			} else {
+				setCursor(DEFAULT_CURSOR);
+				setToolTipText(null);
+			}
     		
     		// show squareState as mouse tooltip if !isActive
     		// TODO
@@ -79,7 +105,11 @@ public class GameBoardUI extends BoardUI {
 			//System.out.println("press: " + e.getX() + ", " + e.getY());
 			prevSelectedCell = currentSelectedCell;
 			currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
-			// set currentSelectedCell as target
+			if (isActive) {
+				// set currentSelectedCell as target
+				firePropertyChange(TARGET_ACQUIRED, prevSelectedCell, currentSelectedCell);
+			}
+			
 			//TODO
 			// if prevSelectedCell == currentSelectedCell, do nothing
 			

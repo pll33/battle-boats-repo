@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -33,12 +34,14 @@ public class PlacementBoardUI extends BoardUI {
 	private int placementBoatSize, placementBoatIndex, placementMouseMode;
 	private List<Integer> boatSizes;
 	private List<Boolean> boatPlacement;
+	private boolean allowPickup;
 	
 	private Board placeBoard;
 	private ArrayList<Point> orientLocations;
 	private Point currentSelectedCell;
 	private Point prevSelectedCell; 
 	private Point originLocation;
+	
 	
 	private static Random rand = new Random();
 
@@ -50,6 +53,7 @@ public class PlacementBoardUI extends BoardUI {
 		this.placementMouseMode = 0; // change to enum TODO
 		this.placementBoatIndex = -1;
 		this.placementBoatSize = 0;
+		this.allowPickup = false;
 		this.placeBoard = new Board(rows, cols);
 		this.boatPlacement = new ArrayList<Boolean>(boatSizes.size());
 		for (int i = 0; i < boatSizes.size(); i++) {
@@ -129,6 +133,11 @@ public class PlacementBoardUI extends BoardUI {
 	public Board getPlacementBoats() {
 		return this.placeBoard;
 	}
+	
+	public Dimension getPreferredSize() {
+		return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING), CELL_HEIGHT*(numRows+BOARD_PADDING)); // fix dimensions and offsets for row/col heads
+    }
+	
 	/**
 	 * Very inefficient randomization function.
 	 */
@@ -156,6 +165,8 @@ public class PlacementBoardUI extends BoardUI {
 			}
 		}
 		
+		allowPickup = true;
+		
 		// force redraw
 		repaint(); 
 	}
@@ -165,6 +176,8 @@ public class PlacementBoardUI extends BoardUI {
 		originLocation = null;
 		resetPlacementBoatIndex(-1);
 		placementMouseMode = 0;
+		placementBoatSize = 0;
+		allowPickup = false;
 		prevSelectedCell = null;
 		repaint();
 	}
@@ -227,7 +240,6 @@ public class PlacementBoardUI extends BoardUI {
 		originLocation = null;
 		prevSelectedCell = null;
 		resetPlacementBoatIndex(-1);
-//		placementBoatIndex = -1;
 	}
 	
 	// find boat based on boatLocation and remove
@@ -270,7 +282,7 @@ public class PlacementBoardUI extends BoardUI {
     private class MouseMoveAdapter extends MouseAdapter {
     	@Override
     	public void mouseMoved(MouseEvent e) {
-    		if (placementBoatSize > 0) {
+    		if (placementBoatSize > 0 || allowPickup) {
 				currentSelectedCell = getCurrentCell(e.getX(), e.getY());
 				if (currentSelectedCell != null) {
 					setCursor(CROSSHAIR_CURSOR);
@@ -288,7 +300,8 @@ public class PlacementBoardUI extends BoardUI {
     private class MousePressAdapter extends MouseAdapter {
     	@Override
 		public void mousePressed(MouseEvent e) {
-    		if (placementBoatSize > 0) {
+    		System.out.println(placementBoatSize);
+    		if (placementBoatSize > 0 || allowPickup) {
 				//System.out.println("press: " + e.getX() + ", " + e.getY());
 				System.out.println("placeMode: " + placementMouseMode);
 				prevSelectedCell = currentSelectedCell;

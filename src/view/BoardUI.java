@@ -19,8 +19,8 @@ public class BoardUI extends JPanel {
 	protected static final int CELL_WIDTH = 25; //px
 	protected static final int CELL_HEIGHT = 25; //px
 	protected static final int BOARD_PADDING = 2;
-	protected static final int BOARD_OFFSETX = CELL_WIDTH*2;
-	protected static final int BOARD_OFFSETY = CELL_HEIGHT*2;
+	protected static final int BOARD_OFFSETX = CELL_WIDTH+15;//*2;
+	protected static final int BOARD_OFFSETY = CELL_HEIGHT+15;//*2;
 
 	protected static final Color BOAT_CELL = Color.GRAY;
 	protected static final Color BG_CELL = new Color(0,191,255);
@@ -44,12 +44,11 @@ public class BoardUI extends JPanel {
 		numCols = cols;
 		
 		boardCellsUI = new ArrayList<Rectangle>(numRows * numCols);
-		
 		initializeBoardCells();
 	}
 	
 	public Dimension getPreferredSize() {
-        return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING+1)); // fix dimensions and offsets for row/col heads
+		return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING+1)); // fix dimensions and offsets for row/col heads
     }
 	
     protected void paintComponent(Graphics g) {

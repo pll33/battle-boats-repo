@@ -22,22 +22,23 @@ public class BoardUI extends JPanel {
 	protected static final int BOARD_OFFSETX = CELL_WIDTH+15;//*2;
 	protected static final int BOARD_OFFSETY = CELL_HEIGHT+15;//*2;
 
-	protected static final Color BOAT_CELL = Color.GRAY;
+	protected static final Color BOAT_CELL = Color.GRAY; //128, 128, 128
 	protected static final Color BG_CELL = new Color(0,191,255);
+	protected static final Color HIGHLIGHTED_CELL = Color.LIGHT_GRAY; //192,192,192
+	protected static final Color SELECTED_CELL_ORIGIN = new Color(255,100,100);
+	protected static final Color SELECTED_CELL_ERROR = Color.YELLOW;
+	protected static final Color ORIENT_CELL = Color.PINK;
 	protected static final Color BOARD_OUTLINE = Color.DARK_GRAY;
 	protected static final Color BOARD_HEADING = Color.DARK_GRAY;
 	protected static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 	protected static final Cursor CROSSHAIR_CURSOR = new Cursor(Cursor.CROSSHAIR_CURSOR);
 	
 	protected int numRows, numCols;
-	
-	
+	protected Point currentSelectedCell;
+	protected Point prevSelectedCell; 
+	protected Point originLocation;
 	
 	protected List<Rectangle> boardCellsUI; // UI representation of board cells
-	
-	/*public BoardUI() {
-		this(10, 10);
-	}*/
 	
 	public BoardUI(int rows, int cols) {
 		numRows = rows;
@@ -54,22 +55,6 @@ public class BoardUI extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
- 
-        // TODO option to hide boats on board (ex: player can't see opposing player boats)
-//        // draw placed boats (if any)
-//        if (placeBoard.hasBoats())
-//        {
-//        	ArrayList<Boat> placedBoats = placeBoard.getBoats();
-//        	for (Boat boat : placedBoats) {
-//        		ArrayList<Move> boatSquares = boat.getSquares();
-//        		for (Move cell : boatSquares) {
-//        			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
-//        			g2d.setColor(PLACED_CELL);
-//        			g2d.fill(boatCell);
-//        		}
-//        	}
-//        }
-//    	
         
     	// draw board cells background
 //      g2d.setColor(BG_CELL);

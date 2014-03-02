@@ -26,11 +26,6 @@ public class PlacementBoardUI extends BoardUI {
 	private static final long serialVersionUID = 3619946983002807972L;
 	protected static final String BOAT_INDEX = "placementBoatIndex";
 	
-	private static final Color SELECTED_CELL_DEFAULT = Color.LIGHT_GRAY;
-	private static final Color SELECTED_CELL_ERROR = Color.YELLOW;
-	private static final Color ORIENT_CELL = Color.PINK;
-	private static final Color ORIENT_CELL_ORIGIN = new Color(255,100,100);
-	
 	private int placementBoatSize, placementBoatIndex, placementMouseMode;
 	private List<Integer> boatSizes;
 	private List<Boolean> boatPlacement;
@@ -38,10 +33,6 @@ public class PlacementBoardUI extends BoardUI {
 	
 	private Board placeBoard;
 	private ArrayList<Point> orientLocations;
-	private Point currentSelectedCell;
-	private Point prevSelectedCell; 
-	private Point originLocation;
-	
 	
 	private static Random rand = new Random();
 
@@ -84,11 +75,11 @@ public class PlacementBoardUI extends BoardUI {
         // draw and fill boat origin
         if (currentSelectedCell != null) {
         	int currentIndex = getCellIndex(currentSelectedCell);
-        	//System.out.println("index: " + index);
 		    Rectangle currentCell = boardCellsUI.get(currentIndex);
-		    g2d.setColor(SELECTED_CELL_DEFAULT);
+		    g2d.setColor(HIGHLIGHTED_CELL);
 		    g2d.fill(currentCell);
         }
+
 
         if (prevSelectedCell != null && placementMouseMode == 0) {
     		int prevIndex = getCellIndex(prevSelectedCell);
@@ -107,11 +98,10 @@ public class PlacementBoardUI extends BoardUI {
         	
         	if (originLocation != null) {
         		Rectangle origin = boardCellsUI.get(getCellIndex(originLocation));
-        		g2d.setColor(ORIENT_CELL_ORIGIN);
+        		g2d.setColor(SELECTED_CELL_ORIGIN);
         		g2d.fill(origin);
         	}
         }
-  
         
         paintBoardGrid(g2d);
         g2d.dispose();
@@ -303,7 +293,7 @@ public class PlacementBoardUI extends BoardUI {
     		System.out.println(placementBoatSize);
     		if (placementBoatSize > 0 || allowPickup) {
 				//System.out.println("press: " + e.getX() + ", " + e.getY());
-				System.out.println("placeMode: " + placementMouseMode);
+				//System.out.println("placeMode: " + placementMouseMode);
 				prevSelectedCell = currentSelectedCell;
 				currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
 				if (currentSelectedCell != null && placementBoatIndex > -1) {

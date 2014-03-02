@@ -1,8 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +33,10 @@ public class GameUI extends JFrame {
 
 	private static final long serialVersionUID = 5892131800795551733L;
 	private final Container contentPane;
-	//private CardLayout contentPaneCL;
+	private JPanel gamePane;
+
+	private JLabel turnStatus;
+	private JButton endTurnButton;
 	private JTextField timerLabel;
 	private Timer timer;
 	
@@ -64,7 +67,8 @@ public class GameUI extends JFrame {
 		String matchTitle = playerName + " vs. " + opponentName;
 		setTitle("BattleBoats - " + matchTitle);
 		contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
+		gamePane = new JPanel(new BorderLayout());
+		contentPane.add(gamePane);
 		
 		int rows = playerBoard.getHeight(),
 			cols = playerBoard.getWidth();
@@ -98,16 +102,14 @@ public class GameUI extends JFrame {
 		//createPlayerScreen();
 		
 		//createSurrenderScreen();
+		
+		gamePane.setBorder(new EmptyBorder(10,0,10,0));
 	}
 	
 	private void createPlayerScreen(int playerNumber) {
-//		JPanel playerScreen = new JPanel();
 //		createTimer();
 		createPanels();
 		createButtons();
-		
-//		contentPane.add(playerScreen, "player"+playerNumber);
-//		contentPane.add(playerScreen);
 	}
 	
 	private void createTimer() {
@@ -123,7 +125,7 @@ public class GameUI extends JFrame {
 //		timer = new Timer(1000, new TimerListener());
 //		timerPane.add(timer);
 		
-		contentPane.add(timerPane, BorderLayout.NORTH);
+		gamePane.add(timerPane, BorderLayout.NORTH);
 	}
 	
 	private void createPanels() {
@@ -131,8 +133,9 @@ public class GameUI extends JFrame {
 			   playerBoardPane = new JPanel(),
 			   opposingBoardPane = new JPanel();
 		JLabel label = new JLabel();
-		boardsPane.setLayout(new SpringLayout());
 		
+		boardsPane.setLayout(new BoxLayout(boardsPane, BoxLayout.X_AXIS));
+		boardsPane.add(Box.createHorizontalGlue());
 //		Border borderStyle = BorderFactory.createLineBorder(Color.BLACK);
 		Border borderStyle = BorderFactory.createEmptyBorder();
 		TitledBorder title = BorderFactory.createTitledBorder(
@@ -142,14 +145,13 @@ public class GameUI extends JFrame {
 		playerBoardUI.setBorder(title);
 		playerBoardPane.add(playerBoardUI);
 		boardsPane.add(playerBoardPane);
-		
+		boardsPane.add(Box.createHorizontalStrut(25));
 		title = BorderFactory.createTitledBorder(
 				borderStyle, opponentName);
 		title.setTitleFont(label.getFont().deriveFont(14.0f));
 		title.setTitleJustification(TitledBorder.CENTER);
 		opposingBoardUI.setBorder(title);
 		opposingBoardUI.addPropertyChangeListener(new PropertyChangeListener() {
-
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				// TODO Auto-generated method stub
@@ -160,17 +162,31 @@ public class GameUI extends JFrame {
 		opposingBoardPane.add(opposingBoardUI);
 		//opposingBoardPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		boardsPane.add(opposingBoardPane);
+		boardsPane.add(Box.createHorizontalGlue());
 		
-		SpringUtilities.makeCompactGrid(boardsPane,
-                1, 2, 	//rows, cols
-                10, 10,	//initX, initY
-                6, 6);	//xPad, yPad
-		contentPane.add(boardsPane, BorderLayout.CENTER);
+		title = BorderFactory.createTitledBorder(
+				borderStyle, "YOUR TURN");
+		title.setTitleFont(label.getFont().deriveFont(16.0f));
+		title.setTitleJustification(TitledBorder.CENTER);
+		boardsPane.setBorder(title);
+
+		gamePane.add(boardsPane, BorderLayout.CENTER);
 	}
 
 	private void createButtons() {
+		JPanel bottomPane = new JPanel();
+		bottomPane.setLayout(new BoxLayout(bottomPane, BoxLayout.Y_AXIS));
+		
+//		JPanel statusPane = new JPanel();
+//		statusPane.setBorder(new EmptyBorder(0,0,10,0));
+//		statusPane.setLayout(new BoxLayout(statusPane, BoxLayout.Y_AXIS));
+//		turnStatus = new JLabel("");
+//		turnStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+//		turnStatus.setFont(turnStatus.getFont().deriveFont(16.0f));
+//		statusPane.add(turnStatus);
+//		bottomPane.add(statusPane);
+		
 		JPanel buttonPane = new JPanel();
-		buttonPane.setBorder(new EmptyBorder(0, 0, 10, 0));
 		JButton button;
 		
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
@@ -187,12 +203,14 @@ public class GameUI extends JFrame {
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(10));
 		
-		button = new JButton("End Turn");
-		button.addActionListener(new NextTurnListener());
-		buttonPane.add(button);
+		endTurnButton = new JButton("End Turn");
+		endTurnButton.addActionListener(new NextTurnListener());
+		endTurnButton.setEnabled(false);
+		buttonPane.add(endTurnButton);
 		buttonPane.add(Box.createHorizontalGlue());
 		
-		contentPane.add(buttonPane, BorderLayout.SOUTH);
+		bottomPane.add(buttonPane);
+		gamePane.add(bottomPane, BorderLayout.SOUTH);
 		
 	}
 	

@@ -113,7 +113,7 @@ public class Game {
 
 	private void connectToServer() {
 		try {
-			Logger.log("Attempting to connect to Server", this);
+			Logger.log("Attempting to connect to Server at IP " + IP, this);
 			this.socket = new Socket(IP, Constants.PORT);
 			this.out = new ObjectOutputStream(socket.getOutputStream());
 			this.in = new ObjectInputStream(socket.getInputStream());

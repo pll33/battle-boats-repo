@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import controller.GameController;
 import core.Constants;
 
 public class ServerConnectDialog extends JDialog {
@@ -97,9 +98,11 @@ public class ServerConnectDialog extends JDialog {
 					serverIP.setBackground(Constants.TEXTFIELD_DEFAULT);
 					
 					// attempt connection with server 
+					GameController gc = new GameController(false, null, serverIP.getText());
 					
 					// show serverJoinDialog if successful
-//					ServerJoinDialog joinDialog = new ServerJoinDialog();
+					ServerJoinDialog joinDialog = new ServerJoinDialog(mainMenu, gc.getGame().getGameSettings());
+					joinDialog.setVisible(true);
 				} else {
 					serverIP.setBackground(Constants.TEXTFIELD_ERROR);
 				}

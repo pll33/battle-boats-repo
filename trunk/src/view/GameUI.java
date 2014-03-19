@@ -2,8 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -36,7 +35,7 @@ public class GameUI extends JFrame {
 	private final Container contentPane;
 	private JPanel gamePane;
 
-	private JLabel turnStatus;
+//	private JLabel turnStatus;
 	private JButton endTurnButton;
 	private JTextField timerLabel;
 	private Timer timer;
@@ -92,27 +91,12 @@ public class GameUI extends JFrame {
 		gc.start();
 	}
 	private void createComponents() {
-		createPlayerScreen(1);
-		
-		// 1-player
-		//createPlayerScreen(); // creates timer, boards, buttons
-		
-		// online 2-player scenario
-		//createPlayerScreen(); // creates timer, boards, buttons
-		//createNextTurnScreen(); 
-		
-		// 2-player scenario
-		//createNextTurnScreen(); // creates overlay between turns
-		//createPlayerScreen(); // creates timer, boards, buttons
-		//createNextTurnScreen(); 
-		//createPlayerScreen();
-		
-		//createSurrenderScreen();
+		createPlayerScreen();
 		
 		gamePane.setBorder(new EmptyBorder(10,0,10,0));
 	}
 	
-	private void createPlayerScreen(int playerNumber) {
+	private void createPlayerScreen() {
 //		createTimer();
 		createPanels();
 		createButtons();
@@ -157,14 +141,7 @@ public class GameUI extends JFrame {
 		title.setTitleFont(label.getFont().deriveFont(14.0f));
 		title.setTitleJustification(TitledBorder.CENTER);
 		opposingBoardUI.setBorder(title);
-		opposingBoardUI.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
+		opposingBoardUI.addPropertyChangeListener(new TargetSelectedListener());
 		opposingBoardPane.add(opposingBoardUI);
 		//opposingBoardPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		boardsPane.add(opposingBoardPane);
@@ -204,10 +181,12 @@ public class GameUI extends JFrame {
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(10));
 		
-		button = new JButton("Save Game");
-		button.addActionListener(new SaveGameListener());
-		buttonPane.add(button);
-		buttonPane.add(Box.createHorizontalStrut(10));
+		if (game.getGameSettings().isVsComputer()) {
+			button = new JButton("Save Game");
+			button.addActionListener(new SaveGameListener());
+			buttonPane.add(button);
+			buttonPane.add(Box.createHorizontalStrut(10));
+		}
 		
 		endTurnButton = new JButton("End Turn");
 		endTurnButton.addActionListener(new NextTurnListener());
@@ -238,6 +217,20 @@ public class GameUI extends JFrame {
 	        }
 	    }
 
+	}
+	
+	private class TargetSelectedListener implements PropertyChangeListener {
+		public void propertyChange(PropertyChangeEvent evt) {
+			// TODO Auto-generated method stub
+			if (evt.getPropertyName().equals(GameBoardUI.TARGET_ACQUIRED)) {
+				Point currentSelected = (Point) evt.getNewValue();
+				System.out.println(currentSelected);
+				if (currentSelected != null) {
+					System.out.println("enabled");
+					endTurnButton.setEnabled(true);
+				}
+			}	
+		}
 	}
 	
 	private class ForfeitGameListener implements ActionListener {

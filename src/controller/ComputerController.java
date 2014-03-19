@@ -24,9 +24,7 @@ public class ComputerController extends Thread {
 		setBoats();
 		
 		gc.getGame().setReady();
-		while (true) {
-
-		}
+		gc.start();
 	}
 
 	private void setBoats() {

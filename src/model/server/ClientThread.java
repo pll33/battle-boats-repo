@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import utils.Logger;
 import core.ReadyIndicator;
+import model.Move;
 import model.player.Player;
 
 /**
@@ -112,7 +113,11 @@ public class ClientThread extends Thread {
 				Logger.log("Client: Initiating all ready message", this);
 				server.sendMessageToAll(new ReadyIndicator());
 			}
-		}else{
+		} else if(message instanceof Move){
+			Logger.log("poopstains ", this);
+			server.sendMessageToAll(id, message);
+		}
+		else{
 			server.sendMessageToAll(id, message);
 		}
 		

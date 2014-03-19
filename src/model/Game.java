@@ -12,8 +12,10 @@ import model.player.HumanPlayer;
 import model.player.Player;
 import core.Constants;
 import core.GameSettings;
+import core.MoveState;
 import core.PlayerType;
 import core.ReadyIndicator;
+import core.SquareState;
 
 public class Game {
 
@@ -57,9 +59,9 @@ public class Game {
 		gameBoard = new Board(settings.getWidth(), settings.getHeight());
 
 		if (playerType == PlayerType.HUMAN) {
-			this.player = new HumanPlayer("Human");
+			this.player = new HumanPlayer("Human", gameBoard);
 		} else {
-			this.player = new ComputerPlayer();
+			this.player = new ComputerPlayer(gameBoard);
 		}
 
 	}
@@ -133,6 +135,20 @@ public class Game {
 	public Move getPlayerMove() {
 		return player.getMove();
 	}
+	
+	public Move getOtherPlayerMove(){
+		System.out.println("Waiting for movee");
+		Object tmp = null;
+		do {
+			try {
+				tmp = in.readObject();
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
+		} while (!(tmp instanceof Move));
+		System.out.println("Computer player got move");
+		return (Move)tmp;
+	}
 
 	public void setReady() {
 		Logger.log("Setting ready for player", this);
@@ -145,5 +161,32 @@ public class Game {
 		//waitForAllReady should get called when the "waiting for other play" screen comes up
 		//waitForAllReady();
 		// this.ready = true;
+	}
+
+	public SquareState sendMove(Move move) {
+		System.out.println("SendingMove");
+		try {
+			out.writeObject(move);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Object tmp = null;
+		do {
+			try {
+				tmp = in.readObject();
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
+		} while (!(tmp instanceof SquareState));
+		System.out.println("got Response");
+		return (SquareState) tmp;
+	}
+
+	public void sendState(SquareState state) {
+		try {
+			out.writeObject(state);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

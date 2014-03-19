@@ -107,7 +107,6 @@ public class GameBoardUI extends BoardUI {
 			default:
 				return BG_CELL;
 		}
-
 	}
 	
     private class MouseMoveAdapter extends MouseAdapter {
@@ -138,17 +137,12 @@ public class GameBoardUI extends BoardUI {
 			//System.out.println("press: " + e.getX() + ", " + e.getY());
 			prevSelectedCell = currentSelectedCell;
 			currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
+			
 			if (isActive) {
 				// set currentSelectedCell as target
 				originLocation = currentSelectedCell;
-				firePropertyChange(TARGET_ACQUIRED, prevSelectedCell, currentSelectedCell);
-				
+				firePropertyChange(TARGET_ACQUIRED, null, currentSelectedCell);
 			}
-			
-			//TODO
-			// if prevSelectedCell == currentSelectedCell, do nothing
-			
-			
 			repaint();
 		}
     }

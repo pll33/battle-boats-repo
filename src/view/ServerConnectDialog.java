@@ -5,6 +5,8 @@ import java.awt.Container;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,11 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import controller.GameController;
+
 import core.Constants;
 
 public class ServerConnectDialog extends JDialog {
 
-	// Join/Connect to Hosted Game
+	// Connect to Hosted Game
 		// Server IP: <input textbox>
 			
 	// Connect to Server button (connects to server when textbox.text is valid IP address, 
@@ -58,7 +62,7 @@ public class ServerConnectDialog extends JDialog {
 		
 		JPanel pane = new JPanel(new SpringLayout());
 		
-		label = new JLabel("Join Game"); 
+		label = new JLabel("Connect to Game"); 
 		label.setFont(label.getFont().deriveFont(14.0f));
 		pane.add(label);
 		pane.add(new JLabel(""));
@@ -94,7 +98,23 @@ public class ServerConnectDialog extends JDialog {
 				//TODO
 				// validate serverIP textfield
 				if (serverIP.getText().matches(Constants.IPV4_REGEX)) {
-					serverIP.setBackground(Constants.TEXTFIELD_DEFAULT);
+					//serverIP.setBackground(Constants.TEXTFIELD_DEFAULT);
+					String IPstr = serverIP.getText();
+					
+					try {
+						GameController gc = new GameController(false, null, IPstr);
+						
+						PlacementUI placeUI = new PlacementUI(gc.getGame().getGameSettings(), gc);
+						placeUI.init();
+						
+						setVisible(false);
+					} catch (IOException ex) {
+						// dialog with "Error: Could not connect to server."
+					}
+					// does not check IP for connection (TODO, surround with try/catch)
+					
+					// create placementUI
+					
 					
 					// attempt connection with server 
 					

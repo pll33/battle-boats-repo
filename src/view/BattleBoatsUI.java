@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -184,14 +185,17 @@ public class BattleBoatsUI extends JFrame {
 		gsDialog.init();
 		
 		if (gsDialog.changesMade) {
-
-			GameSettings settings = gsDialog.getSettings();			
-			GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
-			
-			PlacementUI placeUI = new PlacementUI(settings, gc);
-			placeUI.init();
-			
-			setVisible(false);
+			try {
+				GameSettings settings = gsDialog.getSettings();			
+				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
+				
+				PlacementUI placeUI = new PlacementUI(settings, gc);
+				placeUI.init();
+				
+				setVisible(false);
+			} catch (IOException ex) {
+				//TODO show dialog
+			}
 		}
 	}
 	

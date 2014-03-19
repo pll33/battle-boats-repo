@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -20,13 +21,16 @@ public class ComputerController extends Thread {
 
 	@Override
 	public void run() {
-		this.gc = new GameController(false, settings, Constants.LOCAL_IP, PlayerType.COMPUTER);
+		try {
+			this.gc = new GameController(false, settings, Constants.LOCAL_IP, PlayerType.COMPUTER);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setBoats();
 		
 		gc.getGame().setReady();
-		while (true) {
-
-		}
+		gc.start();
 	}
 
 	private void setBoats() {

@@ -68,19 +68,18 @@ public class Board {
 	 *            The Move to execute
 	 * @return Whether the move was a Hit or a Miss.
 	 */
-	public MoveState move(Move move) {
+	public SquareState move(Move move) {
 		SquareState state = boardState.get(move.y).get(move.x);
 
 		if (state == SquareState.HIT) {
 			boardState.get(move.y).set(move.x, SquareState.HIT);
-			return MoveState.HIT;
+			return SquareState.HIT;
 		} else if (state == SquareState.MISS) {
 			boardState.get(move.y).set(move.x, SquareState.MISS);
-			return MoveState.MISS;
+			return SquareState.MISS;
 		} else {
-			return MoveState.MISS;
+			return SquareState.MISS;
 		}
-
 	}
 
 	@Override
@@ -279,6 +278,10 @@ public class Board {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public void setState(Move move, SquareState state) {
+		boardState.get(move.x).set(move.y,SquareState.MISS);
 	}
 
 }

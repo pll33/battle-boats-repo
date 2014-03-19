@@ -3,6 +3,7 @@ package model.player;
 import java.util.Random;
 
 import utils.RandomHelper;
+import model.Board;
 import model.Move;
 import core.PlayerType;
 
@@ -19,8 +20,8 @@ public class ComputerPlayer extends Player {
 	 * @param game
 	 *            The game object that this player will be playing in.
 	 */
-	public ComputerPlayer() {
-		super("Computer", PlayerType.COMPUTER);
+	public ComputerPlayer(final Board board) {
+		super("Computer", PlayerType.COMPUTER,board);
 	}
 
 	@Override

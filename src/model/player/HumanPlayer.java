@@ -1,6 +1,7 @@
 
 package model.player;
 
+import model.Board;
 import model.Move;
 import core.PlayerType;
 
@@ -10,13 +11,15 @@ import core.PlayerType;
  */
 public class HumanPlayer extends Player {
 
-        public HumanPlayer(String playerName) {
-                super(playerName, PlayerType.HUMAN);
+        public HumanPlayer(String playerName, final Board board) {
+                super(playerName, PlayerType.HUMAN,board);
         }
 
         @Override
         public Move getMove() {
-                return this.nextMove;
+                Move m = this.nextMove;
+                this.nextMove = null;
+                return m;
         }
 
         @Override

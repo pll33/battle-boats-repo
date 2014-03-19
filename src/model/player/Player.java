@@ -21,13 +21,17 @@ public abstract class Player {
 	
 	protected Move nextMove;
 	
-	public Player(final String playerName, final PlayerType playerType){
+	public Player(final String playerName, final PlayerType playerType, final Board board){
 		this.playerName = playerName;
 		this.nextMove = null;
+		movedBoard = new Board(board);
 	}
 	
 	public abstract void setNextMove(final Move m);
 	
 	public abstract Move getMove();
-
+	
+	public Board getMovedBoard(){
+		return movedBoard;
+	}
 }

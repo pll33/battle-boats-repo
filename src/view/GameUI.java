@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -26,7 +27,7 @@ import javax.swing.border.TitledBorder;
 
 import model.Board;
 import model.Game;
-
+import model.Move;
 import controller.GameController;
 
 public class GameUI extends JFrame {
@@ -40,6 +41,8 @@ public class GameUI extends JFrame {
 	private JTextField timerLabel;
 	private Timer timer;
 	
+	private ArrayList<Move> moves;
+	
 	private Game game;
 	private GameController gc;
 	
@@ -51,6 +54,7 @@ public class GameUI extends JFrame {
 	private String opponentName;
 	
 	public GameUI() {
+		
 		contentPane = getContentPane();
 //		super(frame, true);
 //		content = getContentPane();
@@ -75,6 +79,7 @@ public class GameUI extends JFrame {
 		playerBoardUI = new GameBoardUI(rows, cols, playerBoard, false);
 		opposingBoardUI = new GameBoardUI(rows, cols);
 		createComponents();
+		moves = new ArrayList<Move>();
 	}
 	
 	public void init() {
@@ -83,7 +88,8 @@ public class GameUI extends JFrame {
 		setResizable(false);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //TODO show BattleBoatsUI on close
-		
+
+		gc.start();
 	}
 	private void createComponents() {
 		createPlayerScreen(1);
@@ -205,7 +211,7 @@ public class GameUI extends JFrame {
 		
 		endTurnButton = new JButton("End Turn");
 		endTurnButton.addActionListener(new NextTurnListener());
-		endTurnButton.setEnabled(false);
+		endTurnButton.setEnabled(true);
 		buttonPane.add(endTurnButton);
 		buttonPane.add(Box.createHorizontalGlue());
 		
@@ -215,7 +221,9 @@ public class GameUI extends JFrame {
 	}
 	
 	private void nextTurn() {
-		//TODO
+		Move move = new Move(opposingBoardUI.originLocation.x, opposingBoardUI.originLocation.y);
+		moves.add(move);
+		gc.getGame().getPlayer().setNextMove(move);
 	}
 	
 	private class TimerListener implements ActionListener {
@@ -253,7 +261,7 @@ public class GameUI extends JFrame {
 	
 	private class NextTurnListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			nextTurn(); //TODO
+			nextTurn();
 		}
 	}
 }

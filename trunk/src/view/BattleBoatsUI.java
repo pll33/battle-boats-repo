@@ -48,6 +48,7 @@ public class BattleBoatsUI extends JFrame {
 	private void createComponents() {
 		createTitleScreen();
 		createNewGameScreen();
+		createWaitingScreen();
 		contentPaneCL.show(contentPane, "title");
 	}
 
@@ -102,7 +103,6 @@ public class BattleBoatsUI extends JFrame {
 				showGameSettingsDialog(2);
 			}
 		}, true);
-//		buttonPane.add(new JLabel("\n"));
 		addButton(buttonPane, "Back", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				contentPaneCL.show(contentPane, "title");
@@ -113,6 +113,14 @@ public class BattleBoatsUI extends JFrame {
 		
 		newGamePane.add(buttonPane);
 		contentPane.add(newGamePane, "newgame");		
+	}
+	
+	private void createWaitingScreen() {
+		JPanel waitingScreen = new JPanel();
+		waitingScreen.setLayout(new BoxLayout(waitingScreen, BoxLayout.Y_AXIS));
+		addLabel(waitingScreen, "Waiting For Players", FONT_SIZE_H1);
+		
+		contentPane.add(waitingScreen, "hostwait");
 	}
 	
 	private void addLabel(Container container, String text, float fontSize) {
@@ -140,10 +148,6 @@ public class BattleBoatsUI extends JFrame {
 	protected void showJoinGameDialog() {
 		ServerConnectDialog connectDialog = new ServerConnectDialog(this);
 		connectDialog.init();
-		
-//		if (connectDialog.changesMade) {
-//			
-//		}
 	}
 	
 	protected void showGameSettingsDialog(int numPlayers) {
@@ -153,15 +157,14 @@ public class BattleBoatsUI extends JFrame {
 		if (gsDialog.changesMade) {
 			try {
 				GameSettings settings = gsDialog.getSettings();	
-				if (!settings.isVsComputer()) {
-					JOptionPane.showMessageDialog(contentPane, "Waiting for Players...");
-				}
+				contentPaneCL.show(contentPane, "hostwait");
 				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
 				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);
 				placeUI.init();	
 			} catch (IOException ex) {
-				//TODO show dialog
+				JOptionPane.showMessageDialog(contentPane, "Error: Connection could not be made.",
+						"Connection Error", JOptionPane.ERROR_MESSAGE); 
 			}
 		}
 	}

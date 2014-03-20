@@ -188,9 +188,11 @@ public class GameUI extends JFrame {
 	private void nextTurn() {
 		Move move = new Move(opposingBoardUI.originLocation.x, opposingBoardUI.originLocation.y);
 		moves.add(move);
+		
+		// send move to opponent
 		gc.getGame().getPlayer().setNextMove(move);
 		
-		updateTurnTitle(false);
+		updateTurnTitle(false); // set title to "opponent's turn"
 		playerBoardUI.updateBoard(gc.getGame().getGameBoard());
 		opposingBoardUI.clearSelectedCell();
 		opposingBoardUI.updateBoard(gc.getGame().getPlayer().getMovedBoard()); 
@@ -206,6 +208,7 @@ public class GameUI extends JFrame {
 		}
 		playerBoardUI.repaint();
 		opposingBoardUI.repaint();
+		this.repaint();
 	}
 	
 	private void updateTurnTitle(boolean myTurn) {
@@ -216,12 +219,9 @@ public class GameUI extends JFrame {
 	
 	private class TargetSelectedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
-			// TODO Auto-generated method stub
 			if (evt.getPropertyName().equals(GameBoardUI.TARGET_ACQUIRED)) {
 				Point currentSelected = (Point) evt.getNewValue();
-				System.out.println(currentSelected);
 				if (currentSelected != null && gc.getTurn()) {
-					System.out.println("enabled");
 					endTurnButton.setEnabled(true);
 				}
 			}	

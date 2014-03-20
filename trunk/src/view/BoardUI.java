@@ -110,13 +110,13 @@ public class BoardUI extends JPanel {
     	return cell.x + (cell.y * numCols);
     }
     
-    protected Point getCurrentCell(int eX, int eY) {
-    	int xLoc = eX- BOARD_OFFSETX,
-			yLoc = eY - BOARD_OFFSETY,
+    protected Point getCurrentCell(int mouseX, int mouseY) {
+    	int xLoc = mouseX- BOARD_OFFSETX,
+			yLoc = mouseY - BOARD_OFFSETY,
             col = xLoc / CELL_WIDTH,
             row = yLoc / CELL_HEIGHT;
 
-//    	System.out.println("mouse: " + eX + ", " + eY);
+//    	System.out.println("mouse: " + mouseX + ", " + mouseY);
 //    	System.out.println("c, r: " + col + ", " + row);
     	
     	if ((xLoc >= 0 && yLoc >= 0) &&

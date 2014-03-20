@@ -144,8 +144,9 @@ public class GameController extends Thread{
 			startGame();
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
-			System.exit(0);;
-			e.printStackTrace();
+			win = true;
+			//System.exit(0);
+			//e.printStackTrace();
 		}
 	}
 }

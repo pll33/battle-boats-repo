@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import core.SquareState;
-
 import model.Board;
 import model.Boat;
 import model.Move;
@@ -74,24 +73,28 @@ public class GameBoardUI extends BoardUI {
 	    		ArrayList<Move> boatSquares = boat.getSquares();
 	      		for (Move cell : boatSquares) {
 	      			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
-	      			Color stateColor = getSquareStateColor(board, cell);
+	      			Color stateColor = getSquareStateColor(board, board.getSquareState(cell.x, cell.y));
 	      			g2d.setColor(stateColor);
 	      			g2d.fill(boatCell);
 	      		}
 	    	}
-	    	
+	    } else {
 	    	// draw hit/miss states
 	    	if (moveBoard != null) {
-	    		for (int r = 0; r < moveBoard.getHeight(); r++) {
-	    			for (int c = 0; c < moveBoard.getWidth(); c++) {
-	    				SquareState st = moveBoard.getSquareState(r, c);
-	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(r, c)));
-	    				g2d.setColor(getSquareStateColor(moveBoard, new Move(c, r)));
-	    	      		g2d.fill(boatCell);
+	    		for (int row = 0; row < moveBoard.getHeight(); row++) {
+	    			for (int col = 0; col < moveBoard.getWidth(); col++) {
+	    				SquareState st = moveBoard.getSquareState(row, col);
+	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(col, row)));
+	    	      		if (st == SquareState.HIT || st == SquareState.MISS) {
+	    	      			g2d.setColor(getSquareStateColor(moveBoard, st));
+		    	      		g2d.fill(boatCell);
+	    	      			//System.out.println("SOMETHING HAPPENED: " + col + ", " + row);
+	    	      			//System.out.println(st.toString());
+	    	      		}
 	    			}
 	    		}
 	    	}
-	    } else {
+	    	
 	    	// draw current highlighted cell
 	    	if (currentSelectedCell != null) {
 	        	int currentIndex = getCellIndex(currentSelectedCell);
@@ -114,8 +117,7 @@ public class GameBoardUI extends BoardUI {
 	    g2d.dispose();
 	}
 	
-	private Color getSquareStateColor(Board b, Move m) {
-		SquareState state = b.getSquareState(m.x, m.y);
+	private Color getSquareStateColor(Board b, SquareState state) {
 		switch(state) {
 			case BOAT:
 				return BOAT_CELL;

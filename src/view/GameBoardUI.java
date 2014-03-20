@@ -23,15 +23,16 @@ public class GameBoardUI extends BoardUI {
 	protected static final Color SELECTED_CELL_ORIGIN = Color.GREEN;
 	protected static final Color HIT_CELL = Color.RED;
 			
-	private Board board; // board with boats
-	private Board moveBoard; // hit/miss states
+	private Board boatBoard; // board w/ boats (player's left board)
+	private Board moveBoard; // board w/ hit/miss states (player's right board)
 	
 	private boolean isActive;
 	
+	//TODO possible split into ActiveGameBoard and InactiveGameBoard classes
 	public GameBoardUI(int rows, int cols, Board board, boolean active) {
 		super(rows, cols);
 		
-		this.board = board;
+		this.boatBoard = board;
 		this.moveBoard = null;
 		this.isActive = active;
 		this.addMouseMotionListener(new MouseMoveAdapter());		
@@ -44,7 +45,7 @@ public class GameBoardUI extends BoardUI {
 	public GameBoardUI(int rows, int cols) {
 		super(rows, cols);
 		
-		this.board = new Board(cols, rows);
+		this.boatBoard = new Board(cols, rows);
 		this.moveBoard = null;
 		this.isActive = true;
 		this.addMouseMotionListener(new MouseMoveAdapter());		
@@ -58,8 +59,12 @@ public class GameBoardUI extends BoardUI {
 		return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING)); // fix dimensions and offsets for row/col heads
     }
 	
-	public void updateMoveBoard(Board b) {
-		moveBoard = b;
+	public void updateBoard(Board b) {
+		if (isActive) {
+			moveBoard = b;
+		} else {
+			boatBoard = b;
+		}
 	}
 	
 	public void clearSelectedCell() {
@@ -75,16 +80,29 @@ public class GameBoardUI extends BoardUI {
 		//	(ex: player can only see their boats, not opposing player's)
 	    if (!isActive)
 	    {
-	    	// draw boats based on square state
-	    	ArrayList<Boat> placedBoats = board.getBoats();
-	    	for (Boat boat : placedBoats) {
-	    		ArrayList<Move> boatSquares = boat.getSquares();
-	      		for (Move cell : boatSquares) {
-	      			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
-	      			Color stateColor = getSquareStateColor(board, board.getSquareState(cell.x, cell.y));
-	      			g2d.setColor(stateColor);
-	      			g2d.fill(boatCell);
-	      		}
+//	    	// draw boats based on square state
+//	    	ArrayList<Boat> placedBoats = boatBoard.getBoats();
+//	    	for (Boat boat : placedBoats) {
+//	    		ArrayList<Move> boatSquares = boat.getSquares();
+//	      		for (Move cell : boatSquares) {
+//	      			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
+//	      			Color stateColor = getSquareStateColor(boatBoard, boatBoard.getSquareState(cell.x, cell.y));
+//	      			g2d.setColor(stateColor);
+//	      			g2d.fill(boatCell);
+//	      		}
+//	    	}
+	    	// draw states (hit/miss/boat)
+	    	if (boatBoard != null) {
+		    	for (int row = 0; row < boatBoard.getHeight(); row++) {
+	    			for (int col = 0; col < boatBoard.getWidth(); col++) {
+	    				SquareState st = boatBoard.getSquareState(row, col);
+	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(col, row)));
+	    	      		if (st == SquareState.HIT || st == SquareState.MISS || st == SquareState.BOAT) {
+	    	      			g2d.setColor(getSquareStateColor(boatBoard, st));
+		    	      		g2d.fill(boatCell);
+	    	      		}
+	    			}
+	    		}
 	    	}
 	    } else {
 	    	// draw hit/miss states
@@ -96,8 +114,6 @@ public class GameBoardUI extends BoardUI {
 	    	      		if (st == SquareState.HIT || st == SquareState.MISS) {
 	    	      			g2d.setColor(getSquareStateColor(moveBoard, st));
 		    	      		g2d.fill(boatCell);
-	    	      			//System.out.println("SOMETHING HAPPENED: " + col + ", " + row);
-	    	      			//System.out.println(st.toString());
 	    	      		}
 	    			}
 	    		}
@@ -145,7 +161,8 @@ public class GameBoardUI extends BoardUI {
 			if (currentSelectedCell != null) {
 				setCursor(CROSSHAIR_CURSOR);
 				if (!isActive) {
-					String squareState = board.getSquareState(currentSelectedCell.x, 
+					// show squareState as mouse tooltip if !isActive
+					String squareState = boatBoard.getSquareState(currentSelectedCell.x, 
 							currentSelectedCell.y).toString();
 					setToolTipText(squareState);
 				}
@@ -153,9 +170,6 @@ public class GameBoardUI extends BoardUI {
 				setCursor(DEFAULT_CURSOR);
 				setToolTipText(null);
 			}
-    		
-    		// show squareState as mouse tooltip if !isActive
-    		// TODO
             repaint();
         }
     }

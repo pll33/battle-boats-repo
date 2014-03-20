@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -19,8 +18,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -38,8 +35,6 @@ public class GameUI extends JFrame {
 
 //	private JLabel turnStatus;
 	private JButton endTurnButton;
-	private JTextField timerLabel;
-	private Timer timer;
 	private TitledBorder turnTitle;
 	
 	private ArrayList<Move> moves;
@@ -106,27 +101,10 @@ public class GameUI extends JFrame {
 	}
 	
 	private void createPlayerScreen() {
-//		createTimer();
 		createPanels();
 		createButtons();
 	}
-//	
-//	private void createTimer() {
-//		JPanel timerPane = new JPanel();
-//		timerPane.setLayout(new BoxLayout(timerPane, BoxLayout.Y_AXIS));
-//		timerPane.setAlignmentY(CENTER_ALIGNMENT);
-//		
-//		JLabel label = new JLabel("Time remaining");
-//		timerLabel = new JTextField();
-//		timerLabel.setEditable(false);
-//		timerPane.add(label);
-//		
-////		timer = new Timer(1000, new TimerListener());
-////		timerPane.add(timer);
-//		
-//		gamePane.add(timerPane, BorderLayout.NORTH);
-//	}
-//	
+
 	private void createPanels() {
 		JPanel boardsPane = new JPanel(),
 			   playerBoardPane = new JPanel(),
@@ -191,13 +169,6 @@ public class GameUI extends JFrame {
 		buttonPane.add(button);
 		buttonPane.add(Box.createHorizontalStrut(10));
 		
-		if (game.getGameSettings().isVsComputer()) {
-			button = new JButton("Save Game");
-			button.addActionListener(new SaveGameListener());
-			buttonPane.add(button);
-			buttonPane.add(Box.createHorizontalStrut(10));
-		}
-		
 		endTurnButton = new JButton("End Turn");
 		endTurnButton.addActionListener(new NextTurnListener());
 		endTurnButton.setEnabled(false);
@@ -215,15 +186,16 @@ public class GameUI extends JFrame {
 		moves.add(move);
 		gc.getGame().getPlayer().setNextMove(move);
 		
-		//updateTurnTitle(false);
+		playerBoardUI.updateBoard(gc.getGame().getGameBoard());
 		opposingBoardUI.clearSelectedCell();
-		opposingBoardUI.updateMoveBoard(gc.getGame().getPlayer().getMovedBoard()); 
+		opposingBoardUI.updateBoard(gc.getGame().getPlayer().getMovedBoard()); 
 		try {
 			Thread.sleep(900);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		playerBoardUI.repaint();
 		opposingBoardUI.repaint();
 	}
 	
@@ -232,20 +204,6 @@ public class GameUI extends JFrame {
 		turnTitle.setTitle(title);
 		gamePane.repaint();
 	}
-	
-	/*private class TimerListener implements ActionListener {
-	    int remainingSecs = 60;
-
-	    public void actionPerformed(ActionEvent evt){
-	    	remainingSecs--;
-	    	timerLabel.setText(String.valueOf(remainingSecs));
-	    	if(remainingSecs == 0) {
-	    		timer.stop();
-	    		//endTurn(); //TODO
-	        }
-	    }
-
-	}*/
 	
 	private class TargetSelectedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -272,12 +230,6 @@ public class GameUI extends JFrame {
 				// shut down server (if host)
 				// return to main menu
 			}
-		}
-	}
-	
-	private class SaveGameListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// TODO
 		}
 	}
 	

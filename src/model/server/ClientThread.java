@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import utils.Logger;
+import view.ThreadedDialog;
 import core.ReadyIndicator;
 import model.Move;
 import model.player.Player;
@@ -103,6 +104,7 @@ public class ClientThread extends Thread {
 					handleMessage(input);
 			}
 		} catch (IOException | ClassNotFoundException e) {
+			ThreadedDialog td = new ThreadedDialog("Client Unexpectedly closed...");
 			e.printStackTrace();
 		}
 	}

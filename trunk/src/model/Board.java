@@ -69,10 +69,10 @@ public class Board {
 	 * @return Whether the move was a Hit or a Miss.
 	 */
 	public SquareState move(Move move) {
-		SquareState state = boardState.get(move.y).get(move.x);
+		SquareState state = boardState.get(move.x).get(move.y);
 
 		if (state == SquareState.BOAT) {
-			boardState.get(move.y).set(move.x, SquareState.HIT);
+			boardState.get(move.x).set(move.y, SquareState.HIT);
 			return SquareState.HIT;
 		} else {
 			return SquareState.MISS;
@@ -200,7 +200,7 @@ public class Board {
 	public boolean removeBoat(Boat boat) {
 		for (Move move : boat.getSquares()) {
 			try {
-				if (boardState.get(move.y).get(move.x) != SquareState.BOAT) {
+				if (boardState.get(move.x).get(move.y) != SquareState.BOAT) {
 					return false;
 				}
 			} catch (IndexOutOfBoundsException e) {
@@ -208,7 +208,7 @@ public class Board {
 			}
 		}
 		for (Move move : boat.getSquares()) {
-			boardState.get(move.y).set(move.x, SquareState.EMPTY);
+			boardState.get(move.x).set(move.y, SquareState.EMPTY);
 		}
 		this.boats.remove(boat);
 		return true;
@@ -224,7 +224,7 @@ public class Board {
 	public boolean addBoat(Boat boat) {
 		for (Move move : boat.getSquares()) {
 			try {
-				if (boardState.get(move.y).get(move.x) != SquareState.EMPTY) {
+				if (boardState.get(move.x).get(move.y) != SquareState.EMPTY) {
 					return false;
 				}
 			} catch (IndexOutOfBoundsException e) {
@@ -232,7 +232,7 @@ public class Board {
 			}
 		}
 		for (Move move : boat.getSquares()) {
-			boardState.get(move.y).set(move.x, SquareState.BOAT);
+			boardState.get(move.x).set(move.y, SquareState.BOAT);
 		}
 		this.boats.add(boat);
 		return true;
@@ -280,5 +280,14 @@ public class Board {
 	public void setState(Move move, SquareState state) {
 		boardState.get(move.x).set(move.y,state);
 	}
-
+	public String toString(){
+		String str = "";
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				str+=boardState.get(j).get(i) + " ";
+			}
+			str+="\n";
+		}
+		return str;
+	}
 }

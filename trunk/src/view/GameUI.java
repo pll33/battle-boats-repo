@@ -203,6 +203,7 @@ public class GameUI extends JFrame {
 		Move move = new Move(opposingBoardUI.originLocation.x, opposingBoardUI.originLocation.y);
 		moves.add(move);
 		gc.getGame().getPlayer().setNextMove(move);
+		playerBoardUI.updateMoveBoard(gc.getGame().getPlayer().getMovedBoard()); 
 	}
 	
 	private class TimerListener implements ActionListener {

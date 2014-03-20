@@ -69,10 +69,13 @@ public class BoardUI extends JPanel {
     protected void paintBoardGrid(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g.create();
         
-    	// draw board cells outlines
-        g2d.setColor(BOARD_OUTLINE);
+    	// draw board cells outlines and background
         for (Rectangle cell : boardCellsUI) {
+        	//g2d.setColor(BG_CELL); //TODO
+            //g2d.fill(cell);
+            g2d.setColor(BOARD_OUTLINE);
             g2d.draw(cell);
+            
         }
         
         // draw board headings

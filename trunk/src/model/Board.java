@@ -56,9 +56,15 @@ public class Board {
 	 */
 	public Board(Board other) {
 		this.boats = other.boats;
-		this.boardState = other.boardState;
 		this.width = other.width;
 		this.height = other.height;
+		//		this.boardState = other.boardState;
+		reset();
+		for(int i=0;i<width;i++){
+			for(int j=0;j<height;j++){
+				this.boardState.get(i).set(j,other.boardState.get(i).get(j));
+			}
+		}
 	}
 
 	/**
@@ -75,6 +81,7 @@ public class Board {
 			boardState.get(move.x).set(move.y, SquareState.HIT);
 			return SquareState.HIT;
 		} else {
+			boardState.get(move.x).set(move.y, SquareState.MISS);
 			return SquareState.MISS;
 		}
 	}

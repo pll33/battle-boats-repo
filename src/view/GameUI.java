@@ -91,8 +91,20 @@ public class GameUI extends JFrame {
 	protected void paintComponent(Graphics g) {
 		super.paintComponents(g);
 		
-		if (gc.getTurn()) endTurnButton.setEnabled(true);
-		updateTurnTitle(gc.getTurn());
+		if (gc.getTurn()) {
+			endTurnButton.setEnabled(true);
+			updateTurnTitle(true);
+		}
+		
+		if (gc.getWin()) {
+			JOptionPane.showMessageDialog(contentPane, 
+					"Congratulations,\nYou win.\n\nThe program will now exit."); 
+			System.exit(0);
+		} else if (gc.getLose()) {
+			JOptionPane.showMessageDialog(contentPane, 
+					"You lose!\nPlayer wins.\n\nThe program will now exit.");
+			System.exit(0);
+		}
 	}
 	private void createComponents() {
 		createPlayerScreen();
@@ -148,15 +160,6 @@ public class GameUI extends JFrame {
 		JPanel bottomPane = new JPanel();
 		bottomPane.setLayout(new BoxLayout(bottomPane, BoxLayout.Y_AXIS));
 		
-//		JPanel statusPane = new JPanel();
-//		statusPane.setBorder(new EmptyBorder(0,0,10,0));
-//		statusPane.setLayout(new BoxLayout(statusPane, BoxLayout.Y_AXIS));
-//		turnStatus = new JLabel("");
-//		turnStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
-//		turnStatus.setFont(turnStatus.getFont().deriveFont(16.0f));
-//		statusPane.add(turnStatus);
-//		bottomPane.add(statusPane);
-		
 		JPanel buttonPane = new JPanel();
 		JButton button;
 		
@@ -186,6 +189,7 @@ public class GameUI extends JFrame {
 		moves.add(move);
 		gc.getGame().getPlayer().setNextMove(move);
 		
+		updateTurnTitle(false);
 		playerBoardUI.updateBoard(gc.getGame().getGameBoard());
 		opposingBoardUI.clearSelectedCell();
 		opposingBoardUI.updateBoard(gc.getGame().getPlayer().getMovedBoard()); 
@@ -194,6 +198,10 @@ public class GameUI extends JFrame {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if (gc.getGame().getGameSettings().isVsComputer()) {
+			updateTurnTitle(true);
 		}
 		playerBoardUI.repaint();
 		opposingBoardUI.repaint();
@@ -222,7 +230,7 @@ public class GameUI extends JFrame {
 	private class ForfeitGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int opt = JOptionPane.showConfirmDialog(null,
-					"Are you sure you want to forfeit the game?",
+					"Are you sure you want to forfeit the game?\n This will close the application.",
 					"Forfeit Game?", JOptionPane.YES_NO_OPTION);
 			if (opt == 0) {
 				System.exit(0);

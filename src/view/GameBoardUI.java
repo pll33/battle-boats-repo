@@ -62,8 +62,10 @@ public class GameBoardUI extends BoardUI {
 	public void updateBoard(Board b) {
 		if (isActive) {
 			moveBoard = b;
+			//System.out.println("active:\n" + b.toSimpleString());
 		} else {
 			boatBoard = b;
+			//System.out.println("inactiv:\n" +b.toSimpleString());
 		}
 	}
 	
@@ -80,7 +82,7 @@ public class GameBoardUI extends BoardUI {
 		//	(ex: player can only see their boats, not opposing player's)
 	    if (!isActive)
 	    {
-//	    	// draw boats based on square state
+	    	// draw boats based on square state
 //	    	ArrayList<Boat> placedBoats = boatBoard.getBoats();
 //	    	for (Boat boat : placedBoats) {
 //	    		ArrayList<Move> boatSquares = boat.getSquares();
@@ -93,13 +95,13 @@ public class GameBoardUI extends BoardUI {
 //	    	}
 	    	// draw states (hit/miss/boat)
 	    	if (boatBoard != null) {
-		    	for (int col = 0; col < boatBoard.getHeight(); col++) {
-	    			for (int row = 0; row < boatBoard.getWidth(); row++) {
-	    				SquareState st = boatBoard.getSquareState(row, col);
-	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(col, row)));
+		    	for (int col = 0; col < boatBoard.getWidth(); col++) {
+	    			for (int row = 0; row < boatBoard.getHeight(); row++) {
+	    				SquareState st = boatBoard.getSquareState(col, row);
+	    				Rectangle cell = boardCellsUI.get(getCellIndex(new Point(col, row)));
 	    	      		if (st == SquareState.HIT || st == SquareState.MISS || st == SquareState.BOAT) {
 	    	      			g2d.setColor(getSquareStateColor(boatBoard, st));
-		    	      		g2d.fill(boatCell);
+		    	      		g2d.fill(cell);
 	    	      		}
 	    			}
 	    		}
@@ -107,9 +109,9 @@ public class GameBoardUI extends BoardUI {
 	    } else {
 	    	// draw hit/miss states
 	    	if (moveBoard != null) {
-	    		for (int col = 0; col < boatBoard.getHeight(); col++) {
-	    			for (int row = 0; row < boatBoard.getWidth(); row++) {
-	    				SquareState st = moveBoard.getSquareState(row, col);
+	    		for (int col = 0; col < boatBoard.getWidth(); col++) {
+	    			for (int row = 0; row < boatBoard.getHeight(); row++) {
+	    				SquareState st = moveBoard.getSquareState(col, row);
 	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(col, row)));
 	    	      		if (st == SquareState.HIT || st == SquareState.MISS) {
 	    	      			g2d.setColor(getSquareStateColor(moveBoard, st));

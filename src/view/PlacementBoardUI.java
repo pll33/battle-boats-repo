@@ -45,7 +45,7 @@ public class PlacementBoardUI extends BoardUI {
 		this.placementBoatIndex = -1;
 		this.placementBoatSize = 0;
 		this.allowPickup = false;
-		this.placeBoard = new Board(rows, cols);
+		this.placeBoard = new Board(cols, rows);
 		this.boatPlacement = new ArrayList<Boolean>(boatSizes.size());
 		for (int i = 0; i < boatSizes.size(); i++) {
 			boatPlacement.add(i, false);
@@ -79,7 +79,6 @@ public class PlacementBoardUI extends BoardUI {
 		    g2d.setColor(HIGHLIGHTED_CELL);
 		    g2d.fill(currentCell);
         }
-
 
         if (prevSelectedCell != null && placementMouseMode == 0) {
     		int prevIndex = getCellIndex(prevSelectedCell);
@@ -230,6 +229,7 @@ public class PlacementBoardUI extends BoardUI {
 		originLocation = null;
 		prevSelectedCell = null;
 		resetPlacementBoatIndex(-1);
+		System.out.println(placeBoard.toString());
 	}
 	
 	// find boat based on boatLocation and remove

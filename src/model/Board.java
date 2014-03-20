@@ -272,8 +272,8 @@ public class Board {
 		reset();
 	}
 
-	public SquareState getSquareState(int row, int col) {
-		return boardState.get(col).get(row);
+	public SquareState getSquareState(int x, int y) {
+		return boardState.get(x).get(y);
 	}
 
 	public int getWidth() {
@@ -292,6 +292,21 @@ public class Board {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				str+=boardState.get(j).get(i) + " ";
+			}
+			str+="\n";
+		}
+		return str;
+	}
+	
+	public String toSimpleString() {
+		String str = "";
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				String cat;
+				if (boardState.get(j).get(i) == SquareState.BOAT) cat = "x";
+				else if (boardState.get(j).get(i) == SquareState.MISS) cat = "*";
+				else cat = "_";
+				str+=cat;
 			}
 			str+="\n";
 		}

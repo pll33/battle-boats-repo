@@ -50,8 +50,6 @@ public class PlacementUI extends JFrame {
 		
 		setTitle("BattleBoats Placement");
 		createComponents();
-		
-		 
 	}
 
 	public void init() {
@@ -87,9 +85,7 @@ public class PlacementUI extends JFrame {
 			});
 			boatButtons.add(tb);
 			boatButtonGroup.add(tb);			
-			boatlistPane.add(tb);
-			//createBoat(boatSizes.get(boatNum)); //TODO draw/create boat button based on size
-			
+			boatlistPane.add(tb);	
 		}
 		
 		button = new JButton("Randomize");
@@ -127,20 +123,16 @@ public class PlacementUI extends JFrame {
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gc.getGame().setReady();
-				//if (settings.isVsComputer()) {
-					// create and randomize board for computer player 
 					
-					// create gameUI
-					gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
-					GameUI gameUI = new GameUI(gc, boardPane.getPlacementBoats());
-					gameUI.init();
-					close();
-					
-					//gc.getGame().setGameBoard(new Board(boardPane.getPlacementBoats()));
-				//} 
-				
+				// create gameUI
+				gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
+				System.out.println("before rows: " + boardPane.getPlacementBoats().getHeight()  + ", cols: " + boardPane.getPlacementBoats().getWidth());
+				GameUI gameUI = new GameUI(gc, boardPane.getPlacementBoats());
+				gameUI.init();
+				close();
 				// TODO inefficient placement, attempts to add boats in order from placement to game,
 				// should just set getPlacementBoards to be the gameboard
+				//gc.getGame().setGameBoard(new Board(boardPane.getPlacementBoats()));
 			}
 		});
 		submitButton.setEnabled(false);

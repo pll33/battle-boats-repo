@@ -20,7 +20,7 @@ public class ThreadedDialog extends Thread{
 	}
 	
 	public void run(){
-		JOptionPane.showMessageDialog(contentPane, display); 
+		JOptionPane.showMessageDialog(contentPane, display, "Game Over", JOptionPane.PLAIN_MESSAGE); 
 		System.exit(0);
 	}
 	

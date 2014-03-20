@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -110,23 +111,13 @@ public class ServerConnectDialog extends JDialog {
 						
 						setVisible(false);
 					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(content, "Error: Could not connect to server.",
+								"Connection Error", JOptionPane.ERROR_MESSAGE); 
 						// dialog with "Error: Could not connect to server." //TODO
 					}
-					// does not check IP for connection (TODO, surround with try/catch)
-					
-					
-					
-					
-					// attempt connection with server 
-					
-					// show serverJoinDialog if successful
-//					ServerJoinDialog joinDialog = new ServerJoinDialog();
 				} else {
 					serverIP.setBackground(Constants.TEXTFIELD_ERROR);
 				}
-				
-//				changesMade = true;
-//				setVisible(false);
 			}	
 		});
 		pane.add(button);

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class BoardUI extends JPanel {
 
@@ -23,7 +24,7 @@ public class BoardUI extends JPanel {
 	protected static final int BOARD_OFFSETY = CELL_HEIGHT+15;//*2;
 
 	protected static final Color BOAT_CELL = Color.GRAY; //128, 128, 128
-	protected static final Color BG_CELL = new Color(0,191,255);
+	protected static final Color BG_CELL = UIManager.getColor("Panel.background"); //new Color(0,191,255);
 	protected static final Color HIT_CELL = Color.GREEN;
 	protected static final Color MISS_CELL = Color.BLUE;
 	protected static final Color HIGHLIGHTED_CELL = Color.LIGHT_GRAY; //192,192,192
@@ -58,26 +59,22 @@ public class BoardUI extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         
-    	// draw board cells background
+//    	// draw board cells background
 //      g2d.setColor(BG_CELL);
 //      for (Rectangle cell : boardCellsUI) {
 //          g2d.fill(cell);
 //      }
-        
-        
+  
         g2d.dispose();
     }
     
     protected void paintBoardGrid(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g.create();
         
-    	// draw board cells outlines and background
+    	// draw board cells outlines
         for (Rectangle cell : boardCellsUI) {
-        	//g2d.setColor(BG_CELL); //TODO
-            //g2d.fill(cell);
             g2d.setColor(BOARD_OUTLINE);
             g2d.draw(cell);
-            
         }
         
         // draw board headings

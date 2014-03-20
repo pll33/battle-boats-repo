@@ -24,7 +24,7 @@ public abstract class Player {
 	public Player(final String playerName, final PlayerType playerType, final Board board){
 		this.playerName = playerName;
 		this.nextMove = null;
-		movedBoard = new Board(board);
+		movedBoard = new Board(board.getWidth(),board.getHeight());
 	}
 	
 	public abstract void setNextMove(final Move m);

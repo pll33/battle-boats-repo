@@ -21,14 +21,16 @@ public class GameBoardUI extends BoardUI {
 	private static final long serialVersionUID = -1393648178219426556L;
 	protected static final String TARGET_ACQUIRED = "currentSelectedCell";
 	
-	private Board board;
-
+	private Board board; // board with boats
+	private Board moveBoard; // hit/miss states
+	
 	private boolean isActive;
 	
 	public GameBoardUI(int rows, int cols, Board board, boolean active) {
 		super(rows, cols);
 		
 		this.board = board;
+		this.moveBoard = null;
 		this.isActive = active;
 		this.addMouseMotionListener(new MouseMoveAdapter());		
 		
@@ -41,6 +43,7 @@ public class GameBoardUI extends BoardUI {
 		super(rows, cols);
 		
 		this.board = new Board(cols, rows);
+		this.moveBoard = null;
 		this.isActive = true;
 		this.addMouseMotionListener(new MouseMoveAdapter());		
 		
@@ -52,6 +55,10 @@ public class GameBoardUI extends BoardUI {
 	public Dimension getPreferredSize() {
 		return new Dimension(CELL_WIDTH*(numCols+BOARD_PADDING+1), CELL_HEIGHT*(numRows+BOARD_PADDING)); // fix dimensions and offsets for row/col heads
     }
+	
+	public void updateMoveBoard(Board b) {
+		moveBoard = b;
+	}
 	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -67,10 +74,22 @@ public class GameBoardUI extends BoardUI {
 	    		ArrayList<Move> boatSquares = boat.getSquares();
 	      		for (Move cell : boatSquares) {
 	      			Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(cell.x, cell.y)));
-	      			Color stateColor = getSquareStateColor(cell);
+	      			Color stateColor = getSquareStateColor(board, cell);
 	      			g2d.setColor(stateColor);
 	      			g2d.fill(boatCell);
 	      		}
+	    	}
+	    	
+	    	// draw hit/miss states
+	    	if (moveBoard != null) {
+	    		for (int r = 0; r < moveBoard.getHeight(); r++) {
+	    			for (int c = 0; c < moveBoard.getWidth(); c++) {
+	    				SquareState st = moveBoard.getSquareState(r, c);
+	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(r, c)));
+	    				g2d.setColor(getSquareStateColor(moveBoard, new Move(c, r)));
+	    	      		g2d.fill(boatCell);
+	    			}
+	    		}
 	    	}
 	    } else {
 	    	// draw current highlighted cell
@@ -95,13 +114,13 @@ public class GameBoardUI extends BoardUI {
 	    g2d.dispose();
 	}
 	
-	private Color getSquareStateColor(Move m) {
-		SquareState state = board.getSquareState(m.x, m.y);
+	private Color getSquareStateColor(Board b, Move m) {
+		SquareState state = b.getSquareState(m.x, m.y);
 		switch(state) {
 			case BOAT:
 				return BOAT_CELL;
 			case MISS:
-				return Color.MAGENTA;
+				return Color.BLUE;
 			case HIT:
 				return Color.RED;
 			default:

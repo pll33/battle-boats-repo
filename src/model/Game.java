@@ -175,6 +175,6 @@ public class Game {
 	}
 
 	public void setGameBoard(Board b) {
-		this.gameBoard = b;
+		this.gameBoard = new Board(b);
 	}
 }

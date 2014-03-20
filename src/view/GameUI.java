@@ -97,7 +97,7 @@ public class GameUI extends JFrame {
 		super.paintComponents(g);
 		
 		if (gc.getTurn()) endTurnButton.setEnabled(true);
-		updateTurnTitle();
+		updateTurnTitle(gc.getTurn());
 	}
 	private void createComponents() {
 		createPlayerScreen();
@@ -215,15 +215,22 @@ public class GameUI extends JFrame {
 		moves.add(move);
 		gc.getGame().getPlayer().setNextMove(move);
 		
-		updateTurnTitle();
-		opposingBoardUI.updateMoveBoard(gc.getGame().getPlayer().getMovedBoard()); 
+		//updateTurnTitle(false);
 		opposingBoardUI.clearSelectedCell();
+		opposingBoardUI.updateMoveBoard(gc.getGame().getPlayer().getMovedBoard()); 
+		try {
+			Thread.sleep(900);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		opposingBoardUI.repaint();
 	}
 	
-	private void updateTurnTitle() {
-		String title = gc.getTurn() ? "YOUR TURN" : "OPPONENT'S TURN";
+	private void updateTurnTitle(boolean myTurn) {
+		String title = myTurn ? "YOUR TURN" : "OPPONENT'S TURN";
 		turnTitle.setTitle(title);
+		gamePane.repaint();
 	}
 	
 	/*private class TimerListener implements ActionListener {
@@ -260,6 +267,7 @@ public class GameUI extends JFrame {
 					"Are you sure you want to forfeit the game?",
 					"Forfeit Game?", JOptionPane.YES_NO_OPTION);
 			if (opt == 0) {
+				System.exit(0);
 				//TODO
 				// shut down server (if host)
 				// return to main menu

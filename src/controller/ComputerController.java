@@ -25,6 +25,7 @@ public class ComputerController extends Thread {
 			this.gc = new GameController(false, settings, Constants.LOCAL_IP, PlayerType.COMPUTER);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.exit(0);
 			e.printStackTrace();
 		}
 		setBoats();

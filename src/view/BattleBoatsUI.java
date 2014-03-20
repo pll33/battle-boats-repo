@@ -188,11 +188,11 @@ public class BattleBoatsUI extends JFrame {
 			try {
 				GameSettings settings = gsDialog.getSettings();			
 				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
-				
+				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);
 				placeUI.init();
 				
-				setVisible(false);
+				
 			} catch (IOException ex) {
 				//TODO show dialog
 			}

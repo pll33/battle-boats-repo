@@ -20,6 +20,9 @@ public class GameBoardUI extends BoardUI {
 	private static final long serialVersionUID = -1393648178219426556L;
 	protected static final String TARGET_ACQUIRED = "currentSelectedCell";
 	
+	protected static final Color SELECTED_CELL_ORIGIN = Color.GREEN;
+	protected static final Color HIT_CELL = Color.RED;
+			
 	private Board board; // board with boats
 	private Board moveBoard; // hit/miss states
 	
@@ -61,6 +64,7 @@ public class GameBoardUI extends BoardUI {
 	
 	public void clearSelectedCell() {
 		currentSelectedCell = null;
+		originLocation = null;
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -126,9 +130,9 @@ public class GameBoardUI extends BoardUI {
 			case BOAT:
 				return BOAT_CELL;
 			case MISS:
-				return Color.BLUE;
+				return MISS_CELL;
 			case HIT:
-				return Color.RED;
+				return HIT_CELL;
 			default:
 				return BG_CELL;
 		}

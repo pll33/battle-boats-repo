@@ -71,12 +71,9 @@ public class Board {
 	public SquareState move(Move move) {
 		SquareState state = boardState.get(move.y).get(move.x);
 
-		if (state == SquareState.HIT) {
+		if (state == SquareState.BOAT) {
 			boardState.get(move.y).set(move.x, SquareState.HIT);
 			return SquareState.HIT;
-		} else if (state == SquareState.MISS) {
-			boardState.get(move.y).set(move.x, SquareState.MISS);
-			return SquareState.MISS;
 		} else {
 			return SquareState.MISS;
 		}
@@ -281,7 +278,7 @@ public class Board {
 	}
 
 	public void setState(Move move, SquareState state) {
-		boardState.get(move.x).set(move.y,SquareState.MISS);
+		boardState.get(move.x).set(move.y,state);
 	}
 
 }

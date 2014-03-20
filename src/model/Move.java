@@ -29,4 +29,9 @@ public class Move implements Serializable {
 		this.x = x;
 		this.y = y;
 	}
+	
+	@Override
+	public String toString(){
+		return "Move (" + x + ", " + y + ")";
+	}
 }

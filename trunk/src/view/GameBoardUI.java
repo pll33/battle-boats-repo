@@ -93,8 +93,8 @@ public class GameBoardUI extends BoardUI {
 //	    	}
 	    	// draw states (hit/miss/boat)
 	    	if (boatBoard != null) {
-		    	for (int row = 0; row < boatBoard.getHeight(); row++) {
-	    			for (int col = 0; col < boatBoard.getWidth(); col++) {
+		    	for (int col = 0; col < boatBoard.getHeight(); col++) {
+	    			for (int row = 0; row < boatBoard.getWidth(); row++) {
 	    				SquareState st = boatBoard.getSquareState(row, col);
 	    				Rectangle boatCell = boardCellsUI.get(getCellIndex(new Point(col, row)));
 	    	      		if (st == SquareState.HIT || st == SquareState.MISS || st == SquareState.BOAT) {

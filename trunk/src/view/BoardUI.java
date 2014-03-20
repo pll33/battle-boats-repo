@@ -24,6 +24,8 @@ public class BoardUI extends JPanel {
 
 	protected static final Color BOAT_CELL = Color.GRAY; //128, 128, 128
 	protected static final Color BG_CELL = new Color(0,191,255);
+	protected static final Color HIT_CELL = Color.GREEN;
+	protected static final Color MISS_CELL = Color.BLUE;
 	protected static final Color HIGHLIGHTED_CELL = Color.LIGHT_GRAY; //192,192,192
 	protected static final Color SELECTED_CELL_ORIGIN = new Color(255,100,100);
 	protected static final Color SELECTED_CELL_ERROR = Color.YELLOW;

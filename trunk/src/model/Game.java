@@ -133,15 +133,12 @@ public class Game {
 		return player.getMove();
 	}
 	
-	public Move getOtherPlayerMove(){
+	public Move getOtherPlayerMove() throws ClassNotFoundException, IOException{
 		System.out.println("Waiting for movee");
 		Object tmp = null;
 		do {
-			try {
-				tmp = in.readObject();
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
-			}
+			tmp = in.readObject();
+			
 		} while (!(tmp instanceof Move));
 		System.out.println("Computer player got move");
 		return (Move)tmp;
@@ -152,6 +149,7 @@ public class Game {
 		try {
 			out.writeObject(new ReadyIndicator());
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -160,30 +158,20 @@ public class Game {
 		// this.ready = true;
 	}
 
-	public SquareState sendMove(Move move) {
+	public SquareState sendMove(Move move) throws ClassNotFoundException, IOException {
 		System.out.println("SendingMove");
-		try {
-			out.writeObject(move);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
+		out.writeObject(move);
+		
 		Object tmp = null;
 		do {
-			try {
-				tmp = in.readObject();
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
-			}
+			tmp = in.readObject();
 		} while (!(tmp instanceof SquareState));
 		System.out.println("got Response");
 		return (SquareState) tmp;
 	}
 
-	public void sendState(SquareState state) {
-		try {
-			out.writeObject(state);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void sendState(SquareState state) throws IOException {
+		out.writeObject(state);
 	}
 }

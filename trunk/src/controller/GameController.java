@@ -69,10 +69,11 @@ public class GameController extends Thread{
 
 	/**
 	 * The main game loop
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
 	 */
-	public void startGame() {
+	public void startGame() throws ClassNotFoundException, IOException {
 		boolean gameOn = true;
-		
 		while (gameOn) {
 			//check if won, if so game over
 			//get move from UI and pass to this
@@ -124,6 +125,12 @@ public class GameController extends Thread{
 	public boolean getTurn() { return myTurn; }
 	@Override
 	public void run() {
-		startGame();
+		try {
+			startGame();
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			System.exit(0);;
+			e.printStackTrace();
+		}
 	}
 }

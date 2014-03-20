@@ -76,6 +76,7 @@ public class GameUI extends JFrame {
 		opposingBoardUI = new GameBoardUI(rows, cols);
 		createComponents();
 		moves = new ArrayList<Move>();
+		gc.setGameBoard(playerBoard);
 	}
 	
 	public void init() {
@@ -97,13 +98,13 @@ public class GameUI extends JFrame {
 		}
 		
 		if (gc.getWin()) {
-			JOptionPane.showMessageDialog(contentPane, 
-					"Congratulations,\nYou win.\n\nThe program will now exit."); 
-			System.exit(0);
+			ThreadedDialog td = new ThreadedDialog(
+					"Congratulations,\nYou win.\n\nThe program will now exit.",contentPane);
+			td.start();
 		} else if (gc.getLose()) {
-			JOptionPane.showMessageDialog(contentPane, 
-					"You lose!\nPlayer wins.\n\nThe program will now exit.");
-			System.exit(0);
+			ThreadedDialog td = new ThreadedDialog(
+					"You lose!\nPlayer wins.\n\nThe program will now exit.",contentPane);
+			td.start();
 		}
 	}
 	private void createComponents() {

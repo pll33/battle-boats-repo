@@ -10,6 +10,7 @@ import core.GameSettings;
 import core.MoveState;
 import core.PlayerType;
 import core.SquareState;
+import model.Board;
 import model.Boat;
 import model.Game;
 import model.Move;
@@ -89,8 +90,7 @@ public class GameController extends Thread{
 						e.printStackTrace();
 					}
 				}
-				game.getPlayer().getMovedBoard().move(move);
-				//TODO: submit move here
+				//game.getPlayer().getMovedBoard().move(move);
 				SquareState state = game.sendMove(move);
 				if(state == SquareState.WIN){
 					gameOn = false;
@@ -99,7 +99,7 @@ public class GameController extends Thread{
 					win = true;
 				}
 				game.getPlayer().getMovedBoard().setState(move,state);
-				//gameOn = !game.win();
+
 				myTurn = false;
 			}
 			
@@ -138,15 +138,19 @@ public class GameController extends Thread{
 	}
 	
 	public boolean getTurn() { return myTurn; }
+	
 	@Override
 	public void run() {
 		try {
 			startGame();
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			win = true;
 			//System.exit(0);
 			//e.printStackTrace();
 		}
 	}
+	public void setGameBoard(Board b){
+		game.setGameBoard(b);
+	}
+	
 }

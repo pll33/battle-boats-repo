@@ -114,7 +114,7 @@ public class ClientThread extends Thread {
 				server.sendMessageToAll(new ReadyIndicator());
 			}
 		} else if(message instanceof Move){
-			Logger.log("poopstains ", this);
+			Logger.log("poopstains " + ((Move)message).toString(), this);
 			server.sendMessageToAll(id, message);
 		}
 		else{

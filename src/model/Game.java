@@ -64,7 +64,6 @@ public class Game {
 		} else {
 			this.player = new ComputerPlayer(gameBoard);
 		}
-
 	}
 
 	private void waitForAllReady() {
@@ -173,5 +172,9 @@ public class Game {
 
 	public void sendState(SquareState state) throws IOException {
 		out.writeObject(state);
+	}
+
+	public void setGameBoard(Board b) {
+		this.gameBoard = b;
 	}
 }

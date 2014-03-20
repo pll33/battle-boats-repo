@@ -59,6 +59,10 @@ public class GameBoardUI extends BoardUI {
 		moveBoard = b;
 	}
 	
+	public void clearSelectedCell() {
+		currentSelectedCell = null;
+	}
+	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g.create();

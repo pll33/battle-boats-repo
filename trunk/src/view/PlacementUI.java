@@ -126,7 +126,8 @@ public class PlacementUI extends JFrame {
 		submitButton = new JButton(submitText);
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (settings.isVsComputer()) {
+				gc.getGame().setReady();
+				//if (settings.isVsComputer()) {
 					// create and randomize board for computer player 
 					
 					// create gameUI
@@ -136,18 +137,10 @@ public class PlacementUI extends JFrame {
 					close();
 					
 					//gc.getGame().setGameBoard(new Board(boardPane.getPlacementBoats()));
-				}
-				//TODO
-				// create game UI for player, send placed boats board to gameUI
-				//GameUI gameUI = new GameUI();
-				//startGame(boardPane.getPlacementBoats());
-				
-				System.out.println("Placement Submit pressed");
+				//} 
 				
 				// TODO inefficient placement, attempts to add boats in order from placement to game,
 				// should just set getPlacementBoards to be the gameboard
-				gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
-				gc.getGame().setReady();
 			}
 		});
 		submitButton.setEnabled(false);

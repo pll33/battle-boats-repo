@@ -18,6 +18,7 @@ public class Board {
 	 */
 	private ArrayList<Boat> boats;
 
+	private int hitCount;
 	/**
 	 * The Board tiles represented as SquareStates
 	 */
@@ -79,8 +80,12 @@ public class Board {
 
 		if (state == SquareState.BOAT) {
 			boardState.get(move.x).set(move.y, SquareState.HIT);
+			hitCount++;
 			return SquareState.HIT;
-		} else {
+		} else if(state == SquareState.HIT) {
+			return SquareState.HIT;
+		}
+		else {
 			boardState.get(move.x).set(move.y, SquareState.MISS);
 			return SquareState.MISS;
 		}
@@ -133,6 +138,7 @@ public class Board {
 	 * Sets the whole board to empty.
 	 */
 	private void reset() {
+		hitCount = 0;
 		boardState = new ArrayList<ArrayList<SquareState>>(width);
 		// Set whole boardState to empty
 		for (int i = 0; i < width; i++) {
@@ -144,6 +150,14 @@ public class Board {
 		}
 	}
 
+	public boolean allSunk(){
+		int totalBoatLength = 0;
+		for(int i=0;i<boats.size();i++){
+			totalBoatLength += boats.get(i).getSize();
+		}
+		return hitCount == totalBoatLength;
+	}
+	
 	public List<Boat> getValidPlacementsForBoat(final int size) {
 		ArrayList<Boat> validMoves = new ArrayList<Boat>();
 

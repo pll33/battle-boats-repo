@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Semaphore;
 
 import utils.Logger;
+import view.ThreadedDialog;
 import core.Constants;
 import core.GameSettings;
 import core.MoveState;
@@ -97,6 +98,8 @@ public class GameController extends Thread{
 					System.out.println("A WINNER IS YOU");
 					//we win;
 					win = true;
+					ThreadedDialog td = new ThreadedDialog("YOU WIN");
+					td.start();
 				}
 				game.getPlayer().getMovedBoard().setState(move,state);
 
@@ -109,6 +112,10 @@ public class GameController extends Thread{
 				state = SquareState.WIN;
 				gameOn = false;
 				lose = true;
+
+				System.out.println("A WINNER IS THEM");
+				ThreadedDialog td = new ThreadedDialog("YOU LOSE");
+				td.start();
 			}
 			// send win state to other player
 			game.sendState(state);			
@@ -117,12 +124,7 @@ public class GameController extends Thread{
 	}
 	
 	private boolean checkLose(){
-		for(Boat b: game.getGameBoard().getBoats()){
-			if(!b.isSunk()){
-				return false;
-			}
-		}
-		return true;
+		return game.getGameBoard().allSunk();
 	}
 
 	public Game getGame(){

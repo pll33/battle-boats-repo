@@ -32,7 +32,7 @@ public class RandomHelper {
 			randX = rand.nextInt(board.getWidth());
 			randY = rand.nextInt(board.getHeight());
 			ss = board.getSquareState(randX, randY);
-		} while (ss == SquareState.BOAT || ss == SquareState.HIT);
+		} while (ss == SquareState.MISS || ss == SquareState.HIT);
 
 		return new Move(randX, randY);
 	}

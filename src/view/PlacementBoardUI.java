@@ -142,7 +142,7 @@ public class PlacementBoardUI extends BoardUI {
 		
 		// Randomly places boats based on number of boats already placed. If no boats are
 		//  placed. randomize all. If >0 boats are placed, randomize remaining boats.
-		for (int i = 0; i < boatSizes.size(); i++) {
+		for (int i = boatSizes.size()-1;i>=0; i--) {
 			if (boatPlacement.get(i) == false) {
 				boolean placedBoat = false;
 				do{

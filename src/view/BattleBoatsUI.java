@@ -120,7 +120,7 @@ public class BattleBoatsUI extends JFrame {
 		waitingScreen.setLayout(new BoxLayout(waitingScreen, BoxLayout.Y_AXIS));
 		addLabel(waitingScreen, "Waiting For Players", FONT_SIZE_H1);
 		
-		contentPane.add(waitingScreen, "hostwait");
+		contentPaneCL.show(contentPane, "hostwait");
 	}
 	
 	private void addLabel(Container container, String text, float fontSize) {
@@ -158,7 +158,9 @@ public class BattleBoatsUI extends JFrame {
 			try {
 				GameSettings settings = gsDialog.getSettings();	
 				contentPaneCL.show(contentPane, "hostwait");
-				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
+				
+				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);	
+				gc.setMainMenu(this);
 				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);
 				placeUI.init();	

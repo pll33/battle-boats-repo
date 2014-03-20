@@ -46,10 +46,8 @@ public class BattleBoatsUI extends JFrame {
 	}
 
 	private void createComponents() {
-		//TODO GUI formatting
 		createTitleScreen();
 		createNewGameScreen();
-		createLoadGameScreen();
 		contentPaneCL.show(contentPane, "title");
 	}
 
@@ -72,11 +70,6 @@ public class BattleBoatsUI extends JFrame {
 			}
 		}, true);
 		
-		addButton(buttonPane, "Load Game", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				contentPaneCL.show(contentPane, "loadgame");
-			}
-		}, true);
 		addButton(buttonPane, "Exit", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int opt = JOptionPane.showConfirmDialog(null,
@@ -85,7 +78,7 @@ public class BattleBoatsUI extends JFrame {
 				if (opt == 0) System.exit(0);
 			}
 		}, true);
-		setSpringLayout(buttonPane, 4, 1);
+		setSpringLayout(buttonPane, 3, 1);
 		
 		titlePane.add(buttonPane);
 		contentPane.add(titlePane, "title");
@@ -120,33 +113,6 @@ public class BattleBoatsUI extends JFrame {
 		
 		newGamePane.add(buttonPane);
 		contentPane.add(newGamePane, "newgame");		
-	}
-	
-	private void createLoadGameScreen() {
-		/// Load Game Screen
-		JPanel loadGamePane = new JPanel();
-		loadGamePane.setLayout(new BoxLayout(loadGamePane, BoxLayout.Y_AXIS));
-		addLabel(loadGamePane, "Load Game", FONT_SIZE_H1);
-		
-		JPanel buttonPane = new JPanel(new SpringLayout());
-		
-		// placeholder load buttons
-		// if user has saved games, generate list of last 3 saved games,
-		// else, generate list of 3 <empty> games
-		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
-		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
-		addButton(buttonPane, "<Empty>", new LoadGameListener(), false);
-		addButton(buttonPane, "Back", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				contentPaneCL.show(contentPane, "title");
-			}
-		}, true);
-
-		setSpringLayout(buttonPane, 4, 1);
-		loadGamePane.add(buttonPane);
-		
-		contentPane.add(loadGamePane, "loadgame");
-		loadGamePane.setLayout(new BoxLayout(loadGamePane, BoxLayout.Y_AXIS));
 	}
 	
 	private void addLabel(Container container, String text, float fontSize) {
@@ -193,18 +159,10 @@ public class BattleBoatsUI extends JFrame {
 				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
 				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);
-				placeUI.init();
-				
-				
+				placeUI.init();	
 			} catch (IOException ex) {
 				//TODO show dialog
 			}
-		}
-	}
-	
-	private class LoadGameListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			// TODO load game if not <empty>
 		}
 	}
 }

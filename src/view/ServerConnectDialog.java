@@ -104,16 +104,17 @@ public class ServerConnectDialog extends JDialog {
 					try {
 						GameController gc = new GameController(false, null, IPstr);
 						
+						// create placementUI
 						PlacementUI placeUI = new PlacementUI(gc.getGame().getGameSettings(), gc);
 						placeUI.init();
 						
 						setVisible(false);
 					} catch (IOException ex) {
-						// dialog with "Error: Could not connect to server."
+						// dialog with "Error: Could not connect to server." //TODO
 					}
 					// does not check IP for connection (TODO, surround with try/catch)
 					
-					// create placementUI
+					
 					
 					
 					// attempt connection with server 

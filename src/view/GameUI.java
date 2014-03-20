@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ public class GameUI extends JFrame {
 	private JButton endTurnButton;
 	private JTextField timerLabel;
 	private Timer timer;
+	private TitledBorder turnTitle;
 	
 	private ArrayList<Move> moves;
 	
@@ -90,6 +92,13 @@ public class GameUI extends JFrame {
 
 		gc.start();
 	}
+
+	protected void paintComponent(Graphics g) {
+		super.paintComponents(g);
+		
+		if (gc.getTurn()) endTurnButton.setEnabled(true);
+		updateTurnTitle();
+	}
 	private void createComponents() {
 		createPlayerScreen();
 		
@@ -101,23 +110,23 @@ public class GameUI extends JFrame {
 		createPanels();
 		createButtons();
 	}
-	
-	private void createTimer() {
-		JPanel timerPane = new JPanel();
-		timerPane.setLayout(new BoxLayout(timerPane, BoxLayout.Y_AXIS));
-		timerPane.setAlignmentY(CENTER_ALIGNMENT);
-		
-		JLabel label = new JLabel("Time remaining");
-		timerLabel = new JTextField();
-		timerLabel.setEditable(false);
-		timerPane.add(label);
-		
-//		timer = new Timer(1000, new TimerListener());
-//		timerPane.add(timer);
-		
-		gamePane.add(timerPane, BorderLayout.NORTH);
-	}
-	
+//	
+//	private void createTimer() {
+//		JPanel timerPane = new JPanel();
+//		timerPane.setLayout(new BoxLayout(timerPane, BoxLayout.Y_AXIS));
+//		timerPane.setAlignmentY(CENTER_ALIGNMENT);
+//		
+//		JLabel label = new JLabel("Time remaining");
+//		timerLabel = new JTextField();
+//		timerLabel.setEditable(false);
+//		timerPane.add(label);
+//		
+////		timer = new Timer(1000, new TimerListener());
+////		timerPane.add(timer);
+//		
+//		gamePane.add(timerPane, BorderLayout.NORTH);
+//	}
+//	
 	private void createPanels() {
 		JPanel boardsPane = new JPanel(),
 			   playerBoardPane = new JPanel(),
@@ -147,11 +156,12 @@ public class GameUI extends JFrame {
 		boardsPane.add(opposingBoardPane);
 		boardsPane.add(Box.createHorizontalGlue());
 		
-		title = BorderFactory.createTitledBorder(
-				borderStyle, "YOUR TURN");
-		title.setTitleFont(label.getFont().deriveFont(16.0f));
-		title.setTitleJustification(TitledBorder.CENTER);
-		boardsPane.setBorder(title);
+		String turnStr = gc.getTurn() ? "YOUR TURN" : "OPPONENT'S TURN";
+		turnTitle = BorderFactory.createTitledBorder(
+				borderStyle, turnStr);
+		turnTitle.setTitleFont(label.getFont().deriveFont(16.0f));
+		turnTitle.setTitleJustification(TitledBorder.CENTER);
+		boardsPane.setBorder(turnTitle);
 
 		gamePane.add(boardsPane, BorderLayout.CENTER);
 	}
@@ -190,7 +200,7 @@ public class GameUI extends JFrame {
 		
 		endTurnButton = new JButton("End Turn");
 		endTurnButton.addActionListener(new NextTurnListener());
-		endTurnButton.setEnabled(true);
+		endTurnButton.setEnabled(false);
 		buttonPane.add(endTurnButton);
 		buttonPane.add(Box.createHorizontalGlue());
 		
@@ -199,15 +209,24 @@ public class GameUI extends JFrame {
 		
 	}
 	
+	
 	private void nextTurn() {
 		Move move = new Move(opposingBoardUI.originLocation.x, opposingBoardUI.originLocation.y);
 		moves.add(move);
 		gc.getGame().getPlayer().setNextMove(move);
+		
+		updateTurnTitle();
 		opposingBoardUI.updateMoveBoard(gc.getGame().getPlayer().getMovedBoard()); 
+		opposingBoardUI.clearSelectedCell();
 		opposingBoardUI.repaint();
 	}
 	
-	private class TimerListener implements ActionListener {
+	private void updateTurnTitle() {
+		String title = gc.getTurn() ? "YOUR TURN" : "OPPONENT'S TURN";
+		turnTitle.setTitle(title);
+	}
+	
+	/*private class TimerListener implements ActionListener {
 	    int remainingSecs = 60;
 
 	    public void actionPerformed(ActionEvent evt){
@@ -219,7 +238,7 @@ public class GameUI extends JFrame {
 	        }
 	    }
 
-	}
+	}*/
 	
 	private class TargetSelectedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -227,7 +246,7 @@ public class GameUI extends JFrame {
 			if (evt.getPropertyName().equals(GameBoardUI.TARGET_ACQUIRED)) {
 				Point currentSelected = (Point) evt.getNewValue();
 				System.out.println(currentSelected);
-				if (currentSelected != null) {
+				if (currentSelected != null && gc.getTurn()) {
 					System.out.println("enabled");
 					endTurnButton.setEnabled(true);
 				}
@@ -256,6 +275,7 @@ public class GameUI extends JFrame {
 	
 	private class NextTurnListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			endTurnButton.setEnabled(false);
 			nextTurn();
 		}
 	}

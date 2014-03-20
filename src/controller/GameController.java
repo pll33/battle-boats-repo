@@ -121,6 +121,7 @@ public class GameController extends Thread{
 		return this.game;
 	}
 
+	public boolean getTurn() { return myTurn; }
 	@Override
 	public void run() {
 		startGame();

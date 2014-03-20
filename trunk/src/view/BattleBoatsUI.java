@@ -186,7 +186,10 @@ public class BattleBoatsUI extends JFrame {
 		
 		if (gsDialog.changesMade) {
 			try {
-				GameSettings settings = gsDialog.getSettings();			
+				GameSettings settings = gsDialog.getSettings();	
+				if (!settings.isVsComputer()) {
+					JOptionPane.showMessageDialog(contentPane, "Waiting for Players...");
+				}
 				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);						
 				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);

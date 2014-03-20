@@ -26,6 +26,8 @@ public class GameController extends Thread{
 	 */
 	private Game game;
 	private boolean myTurn;
+	private boolean win;
+	private boolean lose;
 	
 	private Server server;
 
@@ -45,7 +47,8 @@ public class GameController extends Thread{
 			this.server = null;
 			myTurn = false;
 		}
-		
+		win = false;
+		lose = false;
 		//change IP to not be hard coded
 		this.game = new Game(IP, playerType);
 	}
@@ -91,7 +94,9 @@ public class GameController extends Thread{
 				SquareState state = game.sendMove(move);
 				if(state == SquareState.WIN){
 					gameOn = false;
+					System.out.println("A WINNER IS YOU");
 					//we win;
+					win = true;
 				}
 				game.getPlayer().getMovedBoard().setState(move,state);
 				//gameOn = !game.win();
@@ -103,7 +108,9 @@ public class GameController extends Thread{
 			if(checkLose()){
 				state = SquareState.WIN;
 				gameOn = false;
+				lose = true;
 			}
+			// send win state to other player
 			game.sendState(state);			
 			myTurn = true;
 		}
@@ -122,6 +129,14 @@ public class GameController extends Thread{
 		return this.game;
 	}
 
+	public boolean getWin(){
+		return win;
+	}
+	
+	public boolean getLose(){
+		return lose;
+	}
+	
 	public boolean getTurn() { return myTurn; }
 	@Override
 	public void run() {

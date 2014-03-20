@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -39,8 +40,10 @@ public class ComputerController extends Thread {
 		final Random rand = new Random();
 
 		do {
-			
-			for (final Integer size : settings.getBoatSizes()) {
+			List<Integer> boats = settings.getBoatSizes();
+			Collections.sort(boats);
+			for (int i=boats.size()-1; i >= 0;i--) {
+				final Integer size = boats.get(i);
 				final List<Boat> possibleLocations = board
 						.getValidPlacementsForBoat(size);
 

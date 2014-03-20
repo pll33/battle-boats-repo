@@ -133,13 +133,13 @@ public class Game {
 	}
 	
 	public Move getOtherPlayerMove() throws ClassNotFoundException, IOException{
-		System.out.println("Waiting for movee");
+		Logger.log("Waiting for move from other player",this);
 		Object tmp = null;
 		do {
 			tmp = in.readObject();
 			
 		} while (!(tmp instanceof Move));
-		System.out.println("Computer player got move");
+		Logger.log("Other player got move",this);
 		return (Move)tmp;
 	}
 
@@ -158,7 +158,7 @@ public class Game {
 	}
 
 	public SquareState sendMove(Move move) throws ClassNotFoundException, IOException {
-		System.out.println("SendingMove");
+		Logger.log("Sending move to other player",this);
 		
 		out.writeObject(move);
 		
@@ -166,7 +166,7 @@ public class Game {
 		do {
 			tmp = in.readObject();
 		} while (!(tmp instanceof SquareState));
-		System.out.println("got Response");
+		Logger.log("Received other player response",this);
 		return (SquareState) tmp;
 	}
 

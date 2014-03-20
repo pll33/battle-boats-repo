@@ -1,8 +1,11 @@
 package controller;
 
+import java.awt.Container;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.concurrent.Semaphore;
+
+import javax.swing.JFrame;
 
 import utils.Logger;
 import view.ThreadedDialog;
@@ -27,6 +30,8 @@ public class GameController extends Thread{
 	 * The game.
 	 */
 	private Game game;
+	private JFrame mainMenu;
+	private Container parentContainer;
 	private boolean myTurn;
 	private boolean win;
 	private boolean lose;
@@ -153,6 +158,14 @@ public class GameController extends Thread{
 	}
 	public void setGameBoard(Board b){
 		game.setGameBoard(b);
+	}
+	
+	public void setMainMenu(JFrame menu) {
+		this.mainMenu = menu;
+	}
+	
+	public void setParentContainer(Container c) {
+		this.parentContainer = c;
 	}
 	
 }

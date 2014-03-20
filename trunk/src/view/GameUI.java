@@ -77,6 +77,7 @@ public class GameUI extends JFrame {
 		createComponents();
 		moves = new ArrayList<Move>();
 		gc.setGameBoard(playerBoard);
+		gc.setParentContainer(this);
 	}
 	
 	public void init() {

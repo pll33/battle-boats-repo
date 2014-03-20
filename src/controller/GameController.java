@@ -103,7 +103,7 @@ public class GameController extends Thread{
 					System.out.println("A WINNER IS YOU");
 					//we win;
 					win = true;
-					ThreadedDialog td = new ThreadedDialog("YOU WIN");
+					ThreadedDialog td = new ThreadedDialog("YOU WIN",parentContainer);
 					td.start();
 				}
 				game.getPlayer().getMovedBoard().setState(move,state);
@@ -119,7 +119,7 @@ public class GameController extends Thread{
 				lose = true;
 
 				System.out.println("A WINNER IS THEM");
-				ThreadedDialog td = new ThreadedDialog("YOU LOSE");
+				ThreadedDialog td = new ThreadedDialog("YOU LOSE",parentContainer);
 				td.start();
 			}
 			// send win state to other player

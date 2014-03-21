@@ -41,7 +41,7 @@ public class ServerConnectDialog extends JDialog {
 	
 	public ServerConnectDialog(JFrame frame) {
 		super(frame, true);
-		frame = mainMenu;
+		mainMenu = frame;
 		content = getContentPane();
 		changesMade = false;
 		
@@ -108,7 +108,7 @@ public class ServerConnectDialog extends JDialog {
 						// create placementUI
 						PlacementUI placeUI = new PlacementUI(gc.getGame().getGameSettings(), gc);
 						placeUI.init();
-						
+						mainMenu.setVisible(false);
 						setVisible(false);
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(content, "Error: Could not connect to server.",

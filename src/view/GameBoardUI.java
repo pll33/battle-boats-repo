@@ -156,7 +156,7 @@ public class GameBoardUI extends BoardUI {
 		}
 	}
 	
-    private class MouseMoveAdapter extends MouseAdapter {
+    public class MouseMoveAdapter extends MouseAdapter {
     	@Override
     	public void mouseMoved(MouseEvent e) {
 			currentSelectedCell = getCurrentCell(e.getX(), e.getY());

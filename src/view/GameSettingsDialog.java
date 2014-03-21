@@ -74,6 +74,7 @@ public class GameSettingsDialog extends JDialog {
 			tfBoatSizesArr.add(Integer.parseInt(boatSizeStr[i].trim()));
 		}
 		return tfBoatSizesArr;
+		
 	}
 	
 	private void createComponents() {

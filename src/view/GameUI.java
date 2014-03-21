@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import view.GameBoardUI.MouseMoveAdapter;
 
 import model.Board;
 import model.Game;
@@ -78,6 +82,8 @@ public class GameUI extends JFrame {
 		moves = new ArrayList<Move>();
 		gc.setGameBoard(playerBoard);
 		gc.setParentContainer(this);
+		
+		this.addMouseMotionListener(new MouseMoveAdapter());
 	}
 	
 	public void init() {
@@ -90,24 +96,11 @@ public class GameUI extends JFrame {
 		gc.start();
 	}
 
-	protected void paintComponent(Graphics g) {
-		super.paintComponents(g);
-		
-		if (gc.getTurn()) {
-			endTurnButton.setEnabled(true);
-			updateTurnTitle(true);
-		}
-		
-		if (gc.getWin()) {
-			ThreadedDialog td = new ThreadedDialog(
-					"Congratulations,\nYou win.\n\nThe program will now exit.",contentPane);
-			td.start();
-		} else if (gc.getLose()) {
-			ThreadedDialog td = new ThreadedDialog(
-					"You lose!\nPlayer wins.\n\nThe program will now exit.",contentPane);
-			td.start();
-		}
+	public void update(boolean playerTurn) {
+		endTurnButton.setEnabled(playerTurn);
+		updateTurnTitle(playerTurn);
 	}
+	
 	private void createComponents() {
 		createPlayerScreen();
 		
@@ -209,21 +202,32 @@ public class GameUI extends JFrame {
 		}
 		playerBoardUI.repaint();
 		opposingBoardUI.repaint();
-		this.repaint();
 	}
+	
 	
 	private void updateTurnTitle(boolean myTurn) {
 		String title = myTurn ? "YOUR TURN" : "OPPONENT'S TURN";
 		turnTitle.setTitle(title);
-		gamePane.repaint();
 	}
+	
+	private class MouseMoveAdapter extends MouseAdapter {
+    	@Override
+    	public void mouseMoved(MouseEvent e) {
+    		if (!game.getGameSettings().isVsComputer()) {
+    			update(gc.getTurn());
+    		}
+        }
+    }
 	
 	private class TargetSelectedListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (evt.getPropertyName().equals(GameBoardUI.TARGET_ACQUIRED)) {
 				Point currentSelected = (Point) evt.getNewValue();
 				if (currentSelected != null && gc.getTurn()) {
+					playerBoardUI.updateBoard(gc.getGame().getGameBoard());
+					playerBoardUI.repaint();
 					endTurnButton.setEnabled(true);
+					
 				}
 			}	
 		}
@@ -236,17 +240,18 @@ public class GameUI extends JFrame {
 					"Forfeit Game?", JOptionPane.YES_NO_OPTION);
 			if (opt == 0) {
 				System.exit(0);
-				//TODO
-				// shut down server (if host)
-				// return to main menu
 			}
 		}
 	}
 	
 	private class NextTurnListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			endTurnButton.setEnabled(false);
-			nextTurn();
+			if (opposingBoardUI.originLocation != null) {
+				endTurnButton.setEnabled(false);
+				nextTurn();
+			}
 		}
 	}
+	
+	
 }

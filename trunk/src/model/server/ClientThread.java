@@ -101,10 +101,10 @@ public class ClientThread extends Thread {
 		Object input; //what the client sends in		
 		try {			
 			while(running == true && (input = in.readObject()) != null){
-					handleMessage(input);
+				handleMessage(input);
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			ThreadedDialog td = new ThreadedDialog("Client Unexpectedly closed...");
+			ThreadedDialog td = new ThreadedDialog("Client unexpectedly closed...");
 			e.printStackTrace();
 		}
 	}

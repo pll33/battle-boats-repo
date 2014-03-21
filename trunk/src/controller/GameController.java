@@ -106,7 +106,8 @@ public class GameController extends Thread{
 					//we win;
 					win = true;
 					if(game.getPlayer() instanceof HumanPlayer){
-						ThreadedDialog td = new ThreadedDialog("YOU WIN",parentContainer);
+						ThreadedDialog td = new ThreadedDialog(
+								"Congratulations, you win!\nThe program will now exit.", parentContainer);
 						td.start();
 					}
 				}
@@ -124,7 +125,8 @@ public class GameController extends Thread{
 
 				//System.out.println("A WINNER IS THEM");
 				if(game.getPlayer() instanceof HumanPlayer){
-					ThreadedDialog td = new ThreadedDialog("YOU LOSE", parentContainer);
+					ThreadedDialog td = new ThreadedDialog(
+							"You lose! Your opponent has won.\nThe program will now exit.", parentContainer);
 					td.start();
 				}
 			}
@@ -157,7 +159,9 @@ public class GameController extends Thread{
 		try {
 			startGame();
 		} catch (ClassNotFoundException | IOException e) {
-			win = true;
+			ThreadedDialog td = new ThreadedDialog(
+					"Congratulations, you win!\nThe program will now exit.", parentContainer);
+			td.start();
 			//System.exit(0);
 			//e.printStackTrace();
 		}

@@ -126,7 +126,7 @@ public class PlacementUI extends JFrame {
 					
 				// create gameUI
 				gc.getGame().getGameBoard().addBoats(boardPane.getPlacementBoats().getBoats());
-				System.out.println("before rows: " + boardPane.getPlacementBoats().getHeight()  + ", cols: " + boardPane.getPlacementBoats().getWidth());
+				//System.out.println("before rows: " + boardPane.getPlacementBoats().getHeight()  + ", cols: " + boardPane.getPlacementBoats().getWidth());
 				GameUI gameUI = new GameUI(gc, boardPane.getPlacementBoats());
 				gameUI.init();
 				close();

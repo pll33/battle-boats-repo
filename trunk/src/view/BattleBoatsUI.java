@@ -160,7 +160,7 @@ public class BattleBoatsUI extends JFrame {
 				contentPaneCL.show(contentPane, "hostwait");
 				
 				GameController gc = new GameController(true, settings, Constants.LOCAL_IP);	
-				gc.setMainMenu(this);
+				//gc.setMainMenu(this);
 				setVisible(false);
 				PlacementUI placeUI = new PlacementUI(settings, gc);
 				placeUI.init();	

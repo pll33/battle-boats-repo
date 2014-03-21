@@ -229,7 +229,7 @@ public class PlacementBoardUI extends BoardUI {
 		originLocation = null;
 		prevSelectedCell = null;
 		resetPlacementBoatIndex(-1);
-		System.out.println(placeBoard.toString());
+		//System.out.println(placeBoard.toString());
 	}
 	
 	// find boat based on boatLocation and remove
@@ -290,14 +290,14 @@ public class PlacementBoardUI extends BoardUI {
     private class MousePressAdapter extends MouseAdapter {
     	@Override
 		public void mousePressed(MouseEvent e) {
-    		System.out.println(placementBoatSize);
+    		//System.out.println(placementBoatSize);
     		if (placementBoatSize > 0 || allowPickup) {
 				//System.out.println("press: " + e.getX() + ", " + e.getY());
 				//System.out.println("placeMode: " + placementMouseMode);
 				prevSelectedCell = currentSelectedCell;
 				currentSelectedCell = getCurrentCell(e.getX(),  e.getY());
 				if (currentSelectedCell != null && placementBoatIndex > -1) {
-					System.out.println("pt: " + currentSelectedCell.x + ", " + currentSelectedCell.y);
+					//System.out.println("pt: " + currentSelectedCell.x + ", " + currentSelectedCell.y);
 					if (placementMouseMode == 0) {
 						SquareState currentCellState = placeBoard.getSquareState(currentSelectedCell.x, currentSelectedCell.y);
 						if (currentCellState == SquareState.EMPTY) { // selected cell = cell state is empty
@@ -337,6 +337,8 @@ public class PlacementBoardUI extends BoardUI {
 						removeBoat(currentSelectedCell);
 					}
 				}
+			} else {
+				System.out.println("No boat selected for placement.");
 			}
 			repaint();
 			

@@ -18,6 +18,8 @@ import model.Board;
 import model.Boat;
 import model.Game;
 import model.Move;
+import model.player.ComputerPlayer;
+import model.player.HumanPlayer;
 import model.server.Server;
 
 /**
@@ -103,8 +105,10 @@ public class GameController extends Thread{
 					System.out.println("A WINNER IS YOU");
 					//we win;
 					win = true;
-					ThreadedDialog td = new ThreadedDialog("YOU WIN",parentContainer);
-					td.start();
+					if(game.getPlayer() instanceof HumanPlayer){
+						ThreadedDialog td = new ThreadedDialog("YOU WIN",parentContainer);
+						td.start();
+					}
 				}
 				game.getPlayer().getMovedBoard().setState(move,state);
 
@@ -118,9 +122,11 @@ public class GameController extends Thread{
 				gameOn = false;
 				lose = true;
 
-				System.out.println("A WINNER IS THEM");
-				ThreadedDialog td = new ThreadedDialog("YOU LOSE",parentContainer);
-				td.start();
+				//System.out.println("A WINNER IS THEM");
+				if(game.getPlayer() instanceof HumanPlayer){
+					ThreadedDialog td = new ThreadedDialog("YOU LOSE", parentContainer);
+					td.start();
+				}
 			}
 			// send win state to other player
 			game.sendState(state);			

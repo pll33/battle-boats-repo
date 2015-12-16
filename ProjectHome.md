@@ -1,0 +1,1 @@
+This is a networked clone of battleship
